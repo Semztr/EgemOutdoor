@@ -7,7 +7,7 @@ const Header = () => {
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       {/* Top bar */}
-      <div className="bg-accent text-accent-foreground py-2 px-4 text-center text-sm">
+      <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
         <div className="container mx-auto flex items-center justify-between">
           <span>Tüm Siparişlerinizde 24 Saat İçinde Kargoda!</span>
           <div className="flex items-center gap-4">
@@ -79,7 +79,7 @@ const Header = () => {
             <Link to="/caki-bicak" className="text-foreground hover:text-primary transition-smooth font-medium">
               Çakı & Bıçak
             </Link>
-            <Link to="/kisiye-ozel" className="text-accent hover:text-accent-glow transition-smooth font-medium">
+            <Link to="/kisiye-ozel" className="text-primary hover:text-primary-glow transition-smooth font-medium">
               Kişiye Özel
             </Link>
             <Link to="/blog" className="text-foreground hover:text-primary transition-smooth font-medium">
