@@ -2,64 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Professional fishing equipment design system. All colors MUST be HSL. */
+/* Siyah ve turuncu ağırlıklı balık malzemeleri tasarım sistemi. Tüm renkler HSL formatında. */
 
 @layer base {
   :root {
-    /* Main backgrounds - Deep navy professional theme */
-    --background: 210 30% 8%;
-    --foreground: 0 0% 95%;
+    /* Ana arka planlar - Saf siyah tema */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
     
-    /* Cards and surfaces */
-    --card: 210 25% 12%;
-    --card-foreground: 0 0% 95%;
+    /* Kartlar ve yüzeyler */
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
     
-    /* Popover components */
-    --popover: 210 25% 12%;
-    --popover-foreground: 0 0% 95%;
+    /* Popover bileşenleri */
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 98%;
     
-    /* Primary brand colors - Professional blue-teal */
-    --primary: 195 85% 45%;
-    --primary-foreground: 210 30% 8%;
-    --primary-glow: 195 85% 55%;
+    /* Ana marka renkleri - Turuncu */
+    --primary: 25 100% 55%;
+    --primary-foreground: 0 0% 5%;
+    --primary-glow: 25 100% 65%;
     
-    /* Secondary accent - Warm orange/red for highlights */
-    --secondary: 15 85% 55%;
-    --secondary-foreground: 0 0% 95%;
-    --secondary-glow: 15 90% 65%;
+    /* İkincil renk - Koyu gri/siyah */
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --secondary-glow: 0 0% 25%;
     
-    /* Muted backgrounds for subtle elements */
-    --muted: 210 20% 15%;
-    --muted-foreground: 0 0% 70%;
+    /* Sessiz arka planlar */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 75%;
     
-    /* Accent color - Bright fishing orange */
-    --accent: 25 95% 60%;
-    --accent-foreground: 210 30% 8%;
+    /* Vurgu rengi - Parlak turuncu */
+    --accent: 20 100% 60%;
+    --accent-foreground: 0 0% 5%;
     
-    /* Destructive/warning */
-    --destructive: 0 75% 55%;
-    --destructive-foreground: 0 0% 95%;
+    /* Uyarı/hata */
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 98%;
     
-    /* Borders and inputs */
-    --border: 210 20% 20%;
-    --input: 210 20% 18%;
-    --ring: 195 85% 45%;
+    /* Kenarlıklar ve giriş alanları */
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 25 100% 55%;
     
-    /* Design system tokens */
+    /* Tasarım sistem tokenları */
     --radius: 0.75rem;
     
-    /* Custom gradients for fishing theme */
-    --gradient-hero: linear-gradient(135deg, hsl(210 30% 8%), hsl(210 25% 12%));
-    --gradient-card: linear-gradient(145deg, hsl(210 25% 12%), hsl(210 20% 15%));
-    --gradient-primary: linear-gradient(135deg, hsl(195 85% 45%), hsl(195 85% 55%));
-    --gradient-accent: linear-gradient(135deg, hsl(25 95% 60%), hsl(15 85% 55%));
+    /* Siyah-turuncu tema için özel gradienler */
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 5%), hsl(0 0% 8%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 8%), hsl(0 0% 12%));
+    --gradient-primary: linear-gradient(135deg, hsl(25 100% 55%), hsl(25 100% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(20 100% 60%), hsl(25 100% 55%));
     
-    /* Professional shadows */
-    --shadow-card: 0 8px 32px hsl(210 30% 5% / 0.3);
-    --shadow-primary: 0 8px 32px hsl(195 85% 45% / 0.2);
-    --shadow-accent: 0 8px 32px hsl(25 95% 60% / 0.2);
+    /* Profesyonel gölgeler */
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4);
+    --shadow-primary: 0 8px 32px hsl(25 100% 55% / 0.3);
+    --shadow-accent: 0 8px 32px hsl(20 100% 60% / 0.3);
     
-    /* Smooth transitions */
+    /* Smooth geçişler */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
@@ -81,36 +81,36 @@
   }
 
   .dark {
-    /* Enhanced dark theme for professional fishing equipment */
-    --background: 210 35% 6%;
+    /* Siyah-turuncu koyu tema */
+    --background: 0 0% 3%;
     --foreground: 0 0% 98%;
     
-    --card: 210 30% 9%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 98%;
     
-    --popover: 210 30% 9%;
+    --popover: 0 0% 6%;
     --popover-foreground: 0 0% 98%;
     
-    --primary: 195 90% 50%;
-    --primary-foreground: 210 35% 6%;
-    --primary-glow: 195 90% 60%;
+    --primary: 25 100% 60%;
+    --primary-foreground: 0 0% 3%;
+    --primary-glow: 25 100% 70%;
     
-    --secondary: 15 90% 60%;
+    --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 98%;
-    --secondary-glow: 15 95% 70%;
+    --secondary-glow: 0 0% 20%;
     
-    --muted: 210 25% 12%;
-    --muted-foreground: 0 0% 75%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 80%;
     
-    --accent: 25 100% 65%;
-    --accent-foreground: 210 35% 6%;
+    --accent: 20 100% 65%;
+    --accent-foreground: 0 0% 3%;
     
-    --destructive: 0 80% 60%;
+    --destructive: 0 90% 65%;
     --destructive-foreground: 0 0% 98%;
     
-    --border: 210 25% 18%;
-    --input: 210 25% 15%;
-    --ring: 195 90% 50%;
+    --border: 0 0% 18%;
+    --input: 0 0% 12%;
+    --ring: 25 100% 60%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
