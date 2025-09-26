@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ShoppingCart, User, Search, Menu, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '@/contexts/CartContext';
 
 const Header = () => {
+  const { state } = useCart();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/urunler?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
       {/* Top bar */}
@@ -33,14 +45,16 @@ const Header = () => {
 
           {/* Search bar */}
           <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-            <div className="relative w-full">
+            <form onSubmit={handleSearch} className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <input
                 type="text"
                 placeholder="Ürün, marka veya kategori ara..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-smooth"
               />
-            </div>
+            </form>
           </div>
 
           {/* Right side buttons */}
@@ -57,7 +71,7 @@ const Header = () => {
                 <ShoppingCart className="h-5 w-5" />
                 <span className="hidden md:inline ml-2">Sepetim</span>
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                  0
+                  {state.itemCount}
                 </span>
               </Button>
             </Link>

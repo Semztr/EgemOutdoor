@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CartProvider } from "@/contexts/CartContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import UrunKategorileri from "./pages/UrunKategorileri";
@@ -10,20 +11,23 @@ import CategoryPage from "./pages/CategoryPage";
 import Products from "./pages/Products";
 import Auth from "./pages/Auth";
 import Cart from "./pages/Cart";
+import ProductDetail from "./pages/ProductDetail";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+    <CartProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/urun-kategorileri" element={<UrunKategorileri />} />
           <Route path="/kategori/:categorySlug" element={<CategoryPage />} />
           <Route path="/urunler" element={<Products />} />
+          <Route path="/urun/:productId" element={<ProductDetail />} />
           <Route path="/giris" element={<Auth />} />
           <Route path="/sepet" element={<Cart />} />
           
@@ -51,6 +55,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+  </CartProvider>
   </QueryClientProvider>
 );
 
