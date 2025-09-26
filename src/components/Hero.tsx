@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-fishing.jpg';
 
 const Hero = () => {
@@ -41,13 +42,17 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <Button variant="hero" size="xl" className="group">
-              Ürünleri Keşfet
-              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-            <Button variant="outline" size="xl">
-              Kişiye Özel Teklif Al
-            </Button>
+            <Link to="/urunler">
+              <Button variant="hero" size="xl" className="group">
+                Ürünleri Keşfet
+                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            <Link to="/kisiye-ozel-teklif">
+              <Button variant="outline" size="xl">
+                Kişiye Özel Teklif Al
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-3 gap-8 text-center">

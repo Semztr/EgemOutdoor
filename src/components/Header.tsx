@@ -45,18 +45,22 @@ const Header = () => {
 
           {/* Right side buttons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" className="hidden md:flex">
-              <User className="h-4 w-4" />
-              <span>Üye Girişi</span>
-            </Button>
+            <Link to="/giris">
+              <Button variant="ghost" size="sm" className="hidden md:flex">
+                <User className="h-4 w-4" />
+                <span>Üye Girişi</span>
+              </Button>
+            </Link>
             
-            <Button variant="ghost" size="sm" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-              <span className="hidden md:inline ml-2">Sepetim</span>
-              <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                0
-              </span>
-            </Button>
+            <Link to="/sepet">
+              <Button variant="ghost" size="sm" className="relative">
+                <ShoppingCart className="h-5 w-5" />
+                <span className="hidden md:inline ml-2">Sepetim</span>
+                <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                  0
+                </span>
+              </Button>
+            </Link>
 
             <Button variant="ghost" size="sm" className="md:hidden">
               <Menu className="h-5 w-5" />
@@ -82,8 +86,8 @@ const Header = () => {
             <Link to="/kisiye-ozel" className="text-primary hover:text-primary-glow transition-smooth font-medium">
               Kişiye Özel
             </Link>
-            <Link to="/blog" className="text-foreground hover:text-primary transition-smooth font-medium">
-              Blog
+            <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium">
+              Ürün Kategorileri
             </Link>
           </div>
         </nav>

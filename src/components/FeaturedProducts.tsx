@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
 
 const FeaturedProducts = () => {
@@ -195,9 +196,11 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="hover:bg-primary hover:text-primary-foreground">
-            Tüm Ürünleri Görüntüle
-          </Button>
+          <Link to="/urunler">
+            <Button variant="outline" size="lg" className="hover:bg-primary hover:text-primary-foreground">
+              Tüm Ürünleri Görüntüle
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
