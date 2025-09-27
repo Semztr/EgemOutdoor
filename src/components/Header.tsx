@@ -52,8 +52,15 @@ const Header = () => {
                 placeholder="Ürün, marka veya kategori ara..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-smooth"
+                className="w-full pl-10 pr-16 py-3 rounded-lg bg-input border border-border text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-smooth"
               />
+              <Button 
+                type="submit" 
+                size="sm"
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 px-3"
+              >
+                <Search className="h-4 w-4" />
+              </Button>
             </form>
           </div>
 

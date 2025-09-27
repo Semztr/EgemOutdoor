@@ -397,7 +397,7 @@ const CategoryPage = () => {
                         {/* Rating */}
                         <div className="flex items-center gap-2 mb-3">
                           <div className="flex items-center">
-                            <Star className="h-4 w-4 fill-accent text-accent" />
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                             <span className="ml-1 text-sm font-medium">{product.rating}</span>
                           </div>
                           <span className="text-xs text-muted-foreground">({product.reviews} değerlendirme)</span>

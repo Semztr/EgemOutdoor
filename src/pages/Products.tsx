@@ -147,7 +147,12 @@ const Products = () => {
             </div>
             
             {/* Search Bar */}
-            <div className="max-w-2xl mx-auto flex gap-4">
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (localSearchQuery.trim()) {
+                window.location.href = `/urunler?search=${encodeURIComponent(localSearchQuery.trim())}`;
+              }
+            }} className="max-w-2xl mx-auto flex gap-4">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                 <Input
@@ -158,11 +163,15 @@ const Products = () => {
                   onChange={(e) => setLocalSearchQuery(e.target.value)}
                 />
               </div>
-              <Button variant="outline">
+              <Button type="submit" variant="default">
+                <Search className="h-4 w-4 mr-2" />
+                Ara
+              </Button>
+              <Button type="button" variant="outline">
                 <Filter className="h-4 w-4 mr-2" />
                 Filtrele
               </Button>
-            </div>
+            </form>
           </div>
         </section>
 
