@@ -10,7 +10,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company info */}
           <div>
-            <div className="flex items-center space-x-2 mb-6">
+            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2 mb-6 hover:opacity-80 transition-opacity cursor-pointer">
               <div className="gradient-primary p-2 rounded-lg">
                 <div className="text-primary-foreground font-bold text-xl">🎣</div>
               </div>
@@ -18,24 +18,32 @@ const Footer = () => {
                 <h3 className="text-xl font-bold text-foreground">BalıkPro</h3>
                 <p className="text-xs text-muted-foreground">Kişiye Özel Balık Malzemeleri</p>
               </div>
-            </div>
+            </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
               15 yıllık deneyimimizle, profesyonel balıkçılık için en kaliteli 
               ve kişiye özel malzemeleri sunuyoruz.
             </p>
             <div className="flex space-x-3">
-              <Button variant="ghost" size="icon" className="hover:text-primary">
-                <Facebook className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
-                <Instagram className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
-                <Twitter className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="hover:text-primary">
-                <Youtube className="h-5 w-5" />
-              </Button>
+              <a href="https://facebook.com/balikpro" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <Facebook className="h-5 w-5" />
+                </Button>
+              </a>
+              <a href="https://instagram.com/balikpro" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <Instagram className="h-5 w-5" />
+                </Button>
+              </a>
+              <a href="https://twitter.com/balikpro" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <Twitter className="h-5 w-5" />
+                </Button>
+              </a>
+              <a href="https://youtube.com/@balikpro" target="_blank" rel="noopener noreferrer">
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <Youtube className="h-5 w-5" />
+                </Button>
+              </a>
             </div>
           </div>
 
@@ -44,27 +52,27 @@ const Footer = () => {
             <h4 className="font-semibold text-foreground mb-6">Hızlı Erişim</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/balik-av-malzemeleri" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Balık Av Malzemeleri
                 </Link>
               </li>
               <li>
-                <Link to="/outdoor-giyim" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/outdoor-giyim" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Outdoor Giyim
                 </Link>
               </li>
               <li>
-                <Link to="/kamp-malzemeleri" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/kamp-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Kamp Malzemeleri
                 </Link>
               </li>
               <li>
-                <Link to="/kisiye-ozel" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/kisiye-ozel" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Kişiye Özel Ürünler
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/blog" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Blog
                 </Link>
               </li>
@@ -76,27 +84,27 @@ const Footer = () => {
             <h4 className="font-semibold text-foreground mb-6">Müşteri Hizmetleri</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/hesabim" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/hesabim" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Hesabım
                 </Link>
               </li>
               <li>
-                <Link to="/siparis-takip" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/siparis-takip" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Sipariş Takip
                 </Link>
               </li>
               <li>
-                <Link to="/iade-degisim" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/iade-degisim" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   İade & Değişim
                 </Link>
               </li>
               <li>
-                <Link to="/kargo-bilgileri" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/kargo-bilgileri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Kargo Bilgileri
                 </Link>
               </li>
               <li>
-                <Link to="/sss" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/sss" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors">
                   Sıkça Sorulan Sorular
                 </Link>
               </li>
@@ -140,13 +148,13 @@ const Footer = () => {
               © 2024 BalıkPro. Tüm hakları saklıdır.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link to="/gizlilik-politikasi" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+              <Link to="/gizlilik-politikasi" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary text-sm transition-colors">
                 Gizlilik Politikası
               </Link>
-              <Link to="/kullanim-kosullari" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+              <Link to="/kullanim-kosullari" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary text-sm transition-colors">
                 Kullanım Koşulları
               </Link>
-              <Link to="/cerez-politikasi" className="text-muted-foreground hover:text-primary text-sm transition-colors">
+              <Link to="/cerez-politikasi" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary text-sm transition-colors">
                 Çerez Politikası
               </Link>
             </div>
