@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock, User, Phone } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const Auth = () => {
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
@@ -21,15 +22,24 @@ const Auth = () => {
   });
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-md mx-auto">
-          <Card className="border-border">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-foreground">Hoş Geldiniz</CardTitle>
-              <p className="text-muted-foreground">Hesabınıza giriş yapın veya yeni hesap oluşturun</p>
-            </CardHeader>
+    <>
+      <Helmet>
+        <title>Üye Girişi & Kayıt | BalıkPro</title>
+        <meta name="description" content="BalıkPro hesabınıza giriş yapın veya yeni hesap oluşturun. Özel indirimler ve hızlı alışveriş imkanından yararlanın." />
+        <meta name="keywords" content="üye girişi, kayıt ol, balikpro giriş, hesap oluştur" />
+        <link rel="canonical" href="https://balikpro.com/giris" />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <Header />
+        <main className="container mx-auto px-4 py-12">
+          <div className="max-w-md mx-auto animate-fade-in">
+            <Card className="border-border hover-scale transition-smooth">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl font-bold text-foreground">Hoş Geldiniz</CardTitle>
+                <p className="text-muted-foreground">Hesabınıza giriş yapın veya yeni hesap oluşturun</p>
+              </CardHeader>
             <CardContent>
               <Tabs defaultValue="login" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
@@ -78,7 +88,7 @@ const Auth = () => {
                     </Link>
                   </div>
                   
-                  <Button className="w-full">Giriş Yap</Button>
+                  <Button className="w-full hover-scale transition-smooth">Giriş Yap</Button>
                 </TabsContent>
                 
                 <TabsContent value="register" className="space-y-4">
@@ -176,27 +186,28 @@ const Auth = () => {
                     </span>
                   </label>
                   
-                  <Button className="w-full">Kayıt Ol</Button>
+                  <Button className="w-full hover-scale transition-smooth">Kayıt Ol</Button>
                 </TabsContent>
               </Tabs>
               
               <div className="mt-6 text-center">
                 <p className="text-sm text-muted-foreground mb-4">veya</p>
                 <div className="space-y-2">
-                  <Button variant="outline" className="w-full">
-                    Google ile Giriş Yap
-                  </Button>
-                  <Button variant="outline" className="w-full">
-                    Facebook ile Giriş Yap
-                  </Button>
+                   <Button variant="outline" className="w-full hover-scale transition-smooth">
+                     Google ile Giriş Yap
+                   </Button>
+                   <Button variant="outline" className="w-full hover-scale transition-smooth">
+                     Facebook ile Giriş Yap
+                   </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 

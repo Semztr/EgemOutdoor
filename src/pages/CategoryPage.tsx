@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Heart, ShoppingCart, Star, Filter, Grid, List } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
+import { Helmet } from 'react-helmet-async';
 
 const CategoryPage = () => {
   const { categorySlug } = useParams<{ categorySlug: string }>();
@@ -293,17 +294,26 @@ const CategoryPage = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary">Ana Sayfa</Link>
-          <span>/</span>
-          <Link to="/urun-kategorileri" className="hover:text-primary">Ürün Kategorileri</Link>
-          <span>/</span>
-          <span className="text-foreground">{categoryData.title}</span>
-        </nav>
+    <>
+      <Helmet>
+        <title>{categoryData.title} | BalıkPro - {categoryData.description}</title>
+        <meta name="description" content={`${categoryData.description} ${categoryData.totalProducts} ürün ile geniş seçenek. Ücretsiz kargo fırsatı.`} />
+        <meta name="keywords" content={`${categoryData.title.toLowerCase()}, ${categoryData.title}, balık av malzemeleri, outdoor`} />
+        <link rel="canonical" href={`https://balikpro.com${currentPath}`} />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <Header />
+        <main className="container mx-auto px-4 py-8 animate-fade-in">
+          {/* Breadcrumb */}
+          <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
+            <Link to="/" className="hover:text-primary" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Ana Sayfa</Link>
+            <span>/</span>
+            <Link to="/urun-kategorileri" className="hover:text-primary" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Ürün Kategorileri</Link>
+            <span>/</span>
+            <span className="text-foreground">{categoryData.title}</span>
+          </nav>
 
         {/* Category Header */}
         <div className="mb-8">
@@ -384,9 +394,9 @@ const CategoryPage = () => {
 
             {/* Products */}
             <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" : "space-y-4 mb-8"}>
-              {filteredProducts.map((product) => (
-                <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden">
-                  <Link to={`/urun/${product.id}`} className="block">
+              {filteredProducts.map((product, index) => (
+                <Card key={product.id} className="group hover:shadow-lg hover-scale transition-all duration-300 cursor-pointer overflow-hidden animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
+                  <Link to={`/urun/${product.id}`} className="block" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                     <div className="relative">
                       {/* Badge */}
                       {product.badge && (
@@ -398,7 +408,7 @@ const CategoryPage = () => {
                       )}
 
                       {/* Heart icon */}
-                      <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
+                      <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover-scale">
                         <Heart className="h-4 w-4" />
                       </Button>
 
@@ -451,7 +461,7 @@ const CategoryPage = () => {
                             handleAddToCart(product);
                           }}
                           size="sm" 
-                          className="w-full" 
+                          className="w-full hover-scale transition-smooth" 
                           disabled={!product.inStock}
                         >
                           <ShoppingCart className="h-4 w-4 mr-2" />
@@ -477,6 +487,7 @@ const CategoryPage = () => {
       </main>
       <Footer />
     </div>
+  </>
   );
 };
 

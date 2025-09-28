@@ -173,7 +173,42 @@
     @apply transition-smooth hover:scale-105 hover:shadow-primary;
   }
   
+  .hover-scale {
+    @apply transition-smooth hover:scale-105;
+  }
+  
   .hover-glow {
     @apply transition-smooth hover:shadow-accent;
+  }
+  
+  /* Animation keyframes for smooth transitions */
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes scale-in {
+    0% {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.6s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.4s ease-out;
   }
 }

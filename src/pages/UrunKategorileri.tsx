@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Package } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 
 const UrunKategorileri = () => {
   const categories = [
@@ -176,23 +177,32 @@ const UrunKategorileri = () => {
   ];
 
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Ürün Kategorileri</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Outdoor yaşam ve balıkçılıkla ilgili ihtiyacınız olan tüm ürünleri kategoriler halinde keşfedin.
-          </p>
-        </div>
+    <>
+      <Helmet>
+        <title>Ürün Kategorileri | BalıkPro - Balıkçılık & Outdoor Ürün Kategorileri</title>
+        <meta name="description" content="BalıkPro'da balık av malzemeleri, outdoor giyim, kamp ekipmanları ve daha fazlası. Tüm kategorileri keşfedin ve ihtiyacınız olan ürünleri bulun." />
+        <meta name="keywords" content="ürün kategorileri, balık av malzemeleri, outdoor giyim, kamp malzemeleri, dağcılık, dalış, tekne" />
+        <link rel="canonical" href="https://balikpro.com/urun-kategorileri" />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="text-center mb-12 animate-fade-in">
+            <h1 className="text-4xl font-bold text-foreground mb-4">Ürün Kategorileri</h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Outdoor yaşam ve balıkçılıkla ilgili ihtiyacınız olan tüm ürünleri kategoriler halinde keşfedin.
+            </p>
+          </div>
 
         {/* Ana Kategoriler */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-foreground mb-8">Ana Kategoriler</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
-              <Link key={category.slug} to={`/kategori/${category.slug}`}>
-                <Card className="hover-lift transition-smooth border-border bg-card">
+            {categories.map((category, index) => (
+              <Link key={category.slug} to={`/kategori/${category.slug}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                <Card className="hover-scale transition-smooth border-border bg-card animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -227,9 +237,9 @@ const UrunKategorileri = () => {
         <div>
           <h2 className="text-2xl font-bold text-foreground mb-8">Özel Kategoriler</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {specialCategories.map((category) => (
-              <Link key={category.slug} to={`/kategori/${category.slug}`}>
-                <Card className="hover-lift transition-smooth border-border bg-card">
+            {specialCategories.map((category, index) => (
+              <Link key={category.slug} to={`/kategori/${category.slug}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                <Card className="hover-scale transition-smooth border-border bg-card animate-fade-in" style={{ animationDelay: `${(index + categories.length) * 100}ms` }}>
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
@@ -250,6 +260,7 @@ const UrunKategorileri = () => {
       </main>
       <Footer />
     </div>
+  </>
   );
 };
 

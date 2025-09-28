@@ -10,6 +10,7 @@ import { Heart, ShoppingCart, Star, Search, Filter } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import FeaturedProducts from '@/components/FeaturedProducts';
+import { Helmet } from 'react-helmet-async';
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -128,13 +129,22 @@ const Products = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <Header />
+    <>
+      <Helmet>
+        <title>{searchQuery ? `"${searchQuery}" Arama Sonuçları | BalıkPro` : 'Tüm Ürünler | BalıkPro - Balık Av Malzemeleri & Outdoor Ürünleri'}</title>
+        <meta name="description" content={searchQuery ? `"${searchQuery}" için ${filteredProducts.length} ürün bulundu. Balık av malzemeleri ve outdoor ürünlerinde en iyi fiyatlar.` : 'Balık av malzemeleri, outdoor giyim ve kamp ekipmanları. Daiwa, Shimano, Penn gibi markaların tüm ürünlerini keşfedin.'} />
+        <meta name="keywords" content="balık av malzemeleri, ürünler, olta kamışı, makara, outdoor giyim" />
+        <link rel="canonical" href={`https://balikpro.com/urunler${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`} />
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <Header />
       <main>
         {/* Search Header */}
         <section className="bg-muted/50 py-12">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-8">
+            <div className="text-center mb-8 animate-fade-in">
               <h1 className="text-4xl font-bold text-foreground mb-4">
                 {searchQuery ? `"${searchQuery}" için arama sonuçları` : 'Tüm Ürünler'}
               </h1>
@@ -163,11 +173,11 @@ const Products = () => {
                   onChange={(e) => setLocalSearchQuery(e.target.value)}
                 />
               </div>
-              <Button type="submit" variant="default">
+              <Button type="submit" variant="default" className="hover-scale transition-smooth">
                 <Search className="h-4 w-4 mr-2" />
                 Ara
               </Button>
-              <Button type="button" variant="outline">
+              <Button type="button" variant="outline" className="hover-scale transition-smooth">
                 <Filter className="h-4 w-4 mr-2" />
                 Filtrele
               </Button>
@@ -231,7 +241,7 @@ const Products = () => {
                                 handleAddToCart(product);
                               }}
                               size="sm" 
-                              className="w-full" 
+                              className="w-full hover-scale transition-smooth" 
                               disabled={!product.inStock}
                             >
                               <ShoppingCart className="h-4 w-4 mr-2" />
@@ -250,8 +260,8 @@ const Products = () => {
                   <p className="text-muted-foreground mb-6">
                     "{searchQuery}" için hiçbir ürün bulunamadı. Farklı kelimeler deneyebilirsiniz.
                   </p>
-                  <Button asChild>
-                    <Link to="/urunler">Tüm Ürünleri Görüntüle</Link>
+                  <Button asChild className="hover-scale transition-smooth">
+                    <Link to="/urunler" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Tüm Ürünleri Görüntüle</Link>
                   </Button>
                 </div>
               )}
@@ -278,7 +288,9 @@ const Products = () => {
                     <Link 
                       key={index} 
                       to={category.path}
-                      className="text-center p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group"
+                      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                      className="text-center p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer group hover-scale animate-fade-in"
+                      style={{ animationDelay: `${index * 100}ms` }}
                     >
                       <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{category.icon}</div>
                       <h3 className="font-medium text-foreground mb-1 group-hover:text-primary">{category.name}</h3>
@@ -293,6 +305,7 @@ const Products = () => {
       </main>
       <Footer />
     </div>
+  </>
   );
 };
 
