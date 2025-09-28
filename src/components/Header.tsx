@@ -33,7 +33,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2">
             <div className="gradient-primary p-2 rounded-lg">
               <div className="text-primary-foreground font-bold text-xl">🎣</div>
             </div>
@@ -92,22 +92,22 @@ const Header = () => {
         {/* Navigation */}
         <nav className="mt-4 border-t border-border pt-4">
           <div className="flex items-center justify-center space-x-8 text-sm">
-            <Link to="/balik-av-malzemeleri" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
               Balık Av Malzemeleri
             </Link>
-            <Link to="/outdoor-giyim" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link to="/outdoor-giyim" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
               Outdoor Giyim
             </Link>
-            <Link to="/kamp-malzemeleri" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link to="/kamp-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
               Kamp Malzemeleri
             </Link>
-            <Link to="/caki-bicak" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link to="/caki-bicak" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
               Çakı & Bıçak
             </Link>
-            <Link to="/kisiye-ozel" className="text-primary hover:text-primary-glow transition-smooth font-medium">
+            <Link to="/kisiye-ozel" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-primary hover:text-primary-glow transition-smooth font-medium">
               Kişiye Özel
             </Link>
-            <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium">
+            <Link to="/urun-kategorileri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
               Ürün Kategorileri
             </Link>
           </div>
