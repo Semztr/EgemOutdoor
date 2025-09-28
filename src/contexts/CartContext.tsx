@@ -22,9 +22,13 @@ type CartAction =
   | { type: 'CLEAR_CART' };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
+  console.log('Cart Action:', action.type, 'payload' in action ? action.payload : 'no payload');
+  console.log('Current State:', state);
+  
   switch (action.type) {
     case 'ADD_ITEM': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
+      console.log('Existing Item:', existingItem);
       
       let newItems;
       if (existingItem) {
@@ -39,6 +43,9 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       
       const total = newItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
+      
+      console.log('New Items:', newItems);
+      console.log('New ItemCount:', itemCount);
       
       return { items: newItems, total, itemCount };
     }

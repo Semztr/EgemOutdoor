@@ -13,6 +13,7 @@ const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/urunler?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
     }
   };
 

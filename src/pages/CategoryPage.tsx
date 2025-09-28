@@ -16,6 +16,7 @@ const CategoryPage = () => {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState('grid');
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
 
   // Determine category from URL
   const currentPath = location.pathname;
@@ -251,6 +252,31 @@ const CategoryPage = () => {
 
   const categoryData = getCategoryData();
 
+  // Filter products based on active filters
+  const filteredProducts = categoryData.products.filter(product => {
+    return Object.entries(activeFilters).every(([filterName, values]) => {
+      if (values.length === 0) return true;
+      
+      // Simple filtering logic - you can enhance this based on your needs
+      if (filterName === 'Marka') {
+        return values.includes(product.brand);
+      }
+      // Add more filter logic here for other filter types
+      return true;
+    });
+  });
+
+  const handleFilterChange = (filterName: string, value: string, checked: boolean) => {
+    setActiveFilters(prev => {
+      const currentValues = prev[filterName] || [];
+      if (checked) {
+        return { ...prev, [filterName]: [...currentValues, value] };
+      } else {
+        return { ...prev, [filterName]: currentValues.filter(v => v !== value) };
+      }
+    });
+  };
+
   const handleAddToCart = (product: any) => {
     addItem({
       id: product.id,
@@ -302,12 +328,17 @@ const CategoryPage = () => {
                 <div key={index} className="mb-6 last:mb-0">
                   <h4 className="font-medium text-foreground mb-3">{filterGroup.name}</h4>
                   <div className="space-y-2">
-                    {filterGroup.options.map((option, optionIndex) => (
-                      <label key={optionIndex} className="flex items-center space-x-2 cursor-pointer">
-                        <input type="checkbox" className="rounded border-border" />
-                        <span className="text-sm text-muted-foreground hover:text-foreground">{option}</span>
-                      </label>
-                    ))}
+                     {filterGroup.options.map((option, optionIndex) => (
+                       <label key={optionIndex} className="flex items-center space-x-2 cursor-pointer">
+                         <input 
+                           type="checkbox" 
+                           className="rounded border-border"
+                           checked={(activeFilters[filterGroup.name] || []).includes(option)}
+                           onChange={(e) => handleFilterChange(filterGroup.name, option, e.target.checked)}
+                         />
+                         <span className="text-sm text-muted-foreground hover:text-foreground">{option}</span>
+                       </label>
+                     ))}
                   </div>
                 </div>
               ))}
@@ -353,7 +384,7 @@ const CategoryPage = () => {
 
             {/* Products */}
             <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" : "space-y-4 mb-8"}>
-              {categoryData.products.map((product) => (
+              {filteredProducts.map((product) => (
                 <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden">
                   <Link to={`/urun/${product.id}`} className="block">
                     <div className="relative">
