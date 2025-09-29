@@ -131,10 +131,10 @@ const Products = () => {
   return (
     <>
       <Helmet>
-        <title>{searchQuery ? `"${searchQuery}" Arama Sonuçları | BalıkPro` : 'Tüm Ürünler | BalıkPro - Balık Av Malzemeleri & Outdoor Ürünleri'}</title>
+        <title>{searchQuery ? `"${searchQuery}" Arama Sonuçları | EgemOutdoor` : 'Tüm Ürünler | EgemOutdoor - Balık Av Malzemeleri & Outdoor Ürünleri'}</title>
         <meta name="description" content={searchQuery ? `"${searchQuery}" için ${filteredProducts.length} ürün bulundu. Balık av malzemeleri ve outdoor ürünlerinde en iyi fiyatlar.` : 'Balık av malzemeleri, outdoor giyim ve kamp ekipmanları. Daiwa, Shimano, Penn gibi markaların tüm ürünlerini keşfedin.'} />
         <meta name="keywords" content="balık av malzemeleri, ürünler, olta kamışı, makara, outdoor giyim" />
-        <link rel="canonical" href={`https://balikpro.com/urunler${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`} />
+        <link rel="canonical" href={`https://egemoutdoor.com/urunler${searchQuery ? `?search=${encodeURIComponent(searchQuery)}` : ''}`} />
         <meta name="robots" content="index, follow" />
       </Helmet>
       
@@ -176,10 +176,6 @@ const Products = () => {
               <Button type="submit" variant="default" className="hover-scale transition-smooth">
                 <Search className="h-4 w-4 mr-2" />
                 Ara
-              </Button>
-              <Button type="button" variant="outline" className="hover-scale transition-smooth">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtrele
               </Button>
             </form>
           </div>
