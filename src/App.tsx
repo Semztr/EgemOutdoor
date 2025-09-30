@@ -14,6 +14,14 @@ import Auth from "./pages/Auth";
 import Cart from "./pages/Cart";
 import ProductDetail from "./pages/ProductDetail";
 import Blog from "./pages/Blog";
+import Checkout from "./pages/Checkout";
+import Account from "./pages/Account";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import FAQ from "./pages/FAQ";
+import Returns from "./pages/Returns";
+import Shipping from "./pages/Shipping";
+import OrderTracking from "./pages/OrderTracking";
 
 const queryClient = new QueryClient();
 
@@ -44,12 +52,17 @@ const App = () => (
           <Route path="/kisiye-ozel" element={<CategoryPage />} />
           <Route path="/kisiye-ozel-teklif" element={<CategoryPage />} />
           
-          {/* Placeholder routes for footer links */}
-          <Route path="/hesabim" element={<Auth />} />
-          <Route path="/siparis-takip" element={<NotFound />} />
-          <Route path="/iade-degisim" element={<NotFound />} />
-          <Route path="/kargo-bilgileri" element={<NotFound />} />
-          <Route path="/sss" element={<NotFound />} />
+          {/* E-commerce pages */}
+          <Route path="/odeme" element={<Checkout />} />
+          <Route path="/hesabim" element={<Account />} />
+          <Route path="/iletisim" element={<Contact />} />
+          <Route path="/hakkimizda" element={<About />} />
+          <Route path="/siparis-takip" element={<OrderTracking />} />
+          <Route path="/iade-degisim" element={<Returns />} />
+          <Route path="/kargo-bilgileri" element={<Shipping />} />
+          <Route path="/sss" element={<FAQ />} />
+          
+          {/* Legal pages - placeholder */}
           <Route path="/gizlilik-politikasi" element={<NotFound />} />
           <Route path="/kullanim-kosullari" element={<NotFound />} />
           <Route path="/cerez-politikasi" element={<NotFound />} />

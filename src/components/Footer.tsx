@@ -15,13 +15,13 @@ const Footer = () => {
                 <div className="text-primary-foreground font-bold text-xl">🎣</div>
               </div>
               <div>
-                <h3 className="text-xl font-bold text-foreground">BalıkPro</h3>
-                <p className="text-xs text-muted-foreground">Kişiye Özel Balık Malzemeleri</p>
+                <h3 className="text-xl font-bold text-foreground">EgemOutdoor</h3>
+                <p className="text-xs text-muted-foreground">Kişiye Özel Outdoor Ürünleri</p>
               </div>
             </Link>
             <p className="text-muted-foreground mb-6 leading-relaxed">
-              15 yıllık deneyimimizle, profesyonel balıkçılık için en kaliteli 
-              ve kişiye özel malzemeleri sunuyoruz.
+              Profesyonel outdoor ve balıkçılık ekipmanları için en kaliteli 
+              ve kişiye özel ürünleri sunuyoruz.
             </p>
             <div className="flex space-x-3">
               <a href="https://facebook.com/balikpro" target="_blank" rel="noopener noreferrer">
@@ -120,8 +120,8 @@ const Footer = () => {
                 <span className="text-muted-foreground">0262 321 6 314</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">info@balikpro.com</span>
+              <Mail className="h-5 w-5 text-primary" />
+                <span className="text-muted-foreground">info@egemoutdoor.com</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-primary mt-1" />
@@ -145,7 +145,7 @@ const Footer = () => {
         <div className="border-t border-border mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-muted-foreground text-sm">
-              © 2024 BalıkPro. Tüm hakları saklıdır.
+              © 2024 EgemOutdoor. Tüm hakları saklıdır.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <Link to="/gizlilik-politikasi" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary text-sm transition-colors">

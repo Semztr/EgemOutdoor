@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { Helmet } from 'react-helmet-async';
 const Cart = () => {
   const { state, removeItem, updateQuantity } = useCart();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleRemoveItem = (id: number) => {
     removeItem(id);
@@ -165,7 +166,11 @@ const Cart = () => {
                       <span>₺{total.toLocaleString()}</span>
                     </div>
                     
-                    <Button className="w-full hover-scale transition-smooth" size="lg">
+                    <Button 
+                      className="w-full hover-scale transition-smooth" 
+                      size="lg"
+                      onClick={() => navigate('/odeme')}
+                    >
                       Ödemeye Geç
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>

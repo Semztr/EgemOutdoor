@@ -32,13 +32,13 @@ const Hero = () => {
           <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
             Kişiye Özel
             <span className="gradient-primary bg-clip-text text-transparent block">
-              Balık Malzemeleri
+              Outdoor Ürünleri
             </span>
           </h1>
           
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-            Profesyonel balıkçılık deneyimi için özel tasarlanmış, kaliteli ve kişiye özel 
-            balık avlama malzemeleri. Deneyimli ekibimizle size en uygun ekipmanları sunuyoruz.
+            Profesyonel outdoor ve balıkçılık ekipmanları. Kaliteli ve kişiye özel 
+            ürünlerle doğada kendinizi güvende hissedin.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
