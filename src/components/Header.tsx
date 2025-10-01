@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
-import { ShoppingCart, User, Search, Menu, Phone } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, Phone, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import SearchAutocomplete from '@/components/SearchAutocomplete';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const Header = () => {
   const { state } = useCart();
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -52,12 +61,37 @@ const Header = () => {
 
           {/* Right side buttons */}
           <div className="flex items-center space-x-4">
-            <Link to="/giris">
-              <Button variant="ghost" size="sm" className="hidden md:flex">
-                <User className="h-4 w-4" />
-                <span>Üye Girişi</span>
-              </Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="hidden md:flex">
+                    <User className="h-4 w-4" />
+                    <span>Hesabım</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate('/hesabim')}>
+                    <User className="h-4 w-4 mr-2" />
+                    Hesabım
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate('/siparis-takip')}>
+                    Siparişlerim
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Çıkış Yap
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link to="/giris">
+                <Button variant="ghost" size="sm" className="hidden md:flex">
+                  <User className="h-4 w-4" />
+                  <span>Üye Girişi</span>
+                </Button>
+              </Link>
+            )}
             
             <Link to="/sepet">
               <Button variant="ghost" size="sm" className="relative">
