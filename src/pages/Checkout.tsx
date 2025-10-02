@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,29 +8,161 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { useCart } from '@/contexts/CartContext';
-import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Loader2 } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { z } from 'zod';
+
+const checkoutSchema = z.object({
+  firstName: z.string().min(2, 'Ad en az 2 karakter olmalı'),
+  lastName: z.string().min(2, 'Soyad en az 2 karakter olmalı'),
+  email: z.string().email('Geçerli bir e-posta adresi girin'),
+  phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
+  address: z.string().min(10, 'Adres en az 10 karakter olmalı'),
+  city: z.string().min(2, 'Şehir giriniz'),
+  district: z.string().min(2, 'İlçe giriniz'),
+});
 
 const Checkout = () => {
   const { state, clearCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [paymentMethod, setPaymentMethod] = useState('credit-card');
   const [sameAddress, setSameAddress] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    district: '',
+    zipCode: '',
+    billingAddress: '',
+    billingCity: '',
+    billingDistrict: '',
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (!authLoading && !user) {
+      toast({
+        title: "Giriş Yapın",
+        description: "Sipariş vermek için giriş yapmalısınız.",
+        variant: "destructive"
+      });
+      navigate('/auth');
+    }
+  }, [user, authLoading, navigate, toast]);
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        email: user.email || ''
+      }));
+    }
+  }, [user]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    toast({
-      title: "Siparişiniz Alındı!",
-      description: "Siparişiniz başarıyla oluşturuldu. En kısa sürede kargoya verilecektir.",
-    });
-    
-    clearCart();
-    navigate('/');
+    if (!user) {
+      toast({
+        title: "Hata",
+        description: "Giriş yapmalısınız.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      // Form validasyonu
+      checkoutSchema.parse(formData);
+
+      // Sipariş oluştur
+      const shippingAddress = {
+        address: formData.address,
+        city: formData.city,
+        district: formData.district,
+        zipCode: formData.zipCode
+      };
+
+      const billingAddress = sameAddress ? shippingAddress : {
+        address: formData.billingAddress,
+        city: formData.billingCity,
+        district: formData.billingDistrict
+      };
+
+      const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          user_id: user.id,
+          total_amount: state.total,
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
+          payment_method: paymentMethod,
+          status: 'pending'
+        })
+        .select()
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Sipariş kalemlerini ekle
+      const orderItems = state.items.map(item => ({
+        order_id: order.id,
+        product_id: String(item.id),
+        quantity: item.quantity,
+        price: item.price
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItems);
+
+      if (itemsError) throw itemsError;
+
+      toast({
+        title: "Siparişiniz Alındı!",
+        description: `Sipariş numaranız: ${order.id.slice(0, 8)}. En kısa sürede kargoya verilecektir.`,
+      });
+      
+      clearCart();
+      navigate(`/siparis-takip?order=${order.id}`);
+    } catch (error: any) {
+      console.error('Sipariş oluşturulurken hata:', error);
+      
+      if (error instanceof z.ZodError) {
+        toast({
+          title: "Form Hatası",
+          description: error.errors[0].message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Hata",
+          description: "Sipariş oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (state.items.length === 0) {
@@ -77,20 +210,43 @@ const Checkout = () => {
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="firstName">Ad *</Label>
-                        <Input id="firstName" required />
+                        <Input 
+                          id="firstName" 
+                          value={formData.firstName}
+                          onChange={handleInputChange}
+                          required 
+                        />
                       </div>
                       <div>
                         <Label htmlFor="lastName">Soyad *</Label>
-                        <Input id="lastName" required />
+                        <Input 
+                          id="lastName" 
+                          value={formData.lastName}
+                          onChange={handleInputChange}
+                          required 
+                        />
                       </div>
                     </div>
                     <div>
                       <Label htmlFor="email">E-posta *</Label>
-                      <Input id="email" type="email" required />
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        disabled
+                        className="bg-muted"
+                      />
                     </div>
                     <div>
                       <Label htmlFor="phone">Telefon *</Label>
-                      <Input id="phone" type="tel" required />
+                      <Input 
+                        id="phone" 
+                        type="tel" 
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required 
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -103,21 +259,40 @@ const Checkout = () => {
                   <CardContent className="space-y-4">
                     <div>
                       <Label htmlFor="address">Adres *</Label>
-                      <Input id="address" required />
+                      <Input 
+                        id="address" 
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        required 
+                      />
                     </div>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="city">İl *</Label>
-                        <Input id="city" required />
+                        <Input 
+                          id="city" 
+                          value={formData.city}
+                          onChange={handleInputChange}
+                          required 
+                        />
                       </div>
                       <div>
                         <Label htmlFor="district">İlçe *</Label>
-                        <Input id="district" required />
+                        <Input 
+                          id="district" 
+                          value={formData.district}
+                          onChange={handleInputChange}
+                          required 
+                        />
                       </div>
                     </div>
                     <div>
                       <Label htmlFor="zipCode">Posta Kodu</Label>
-                      <Input id="zipCode" />
+                      <Input 
+                        id="zipCode" 
+                        value={formData.zipCode}
+                        onChange={handleInputChange}
+                      />
                     </div>
                   </CardContent>
                 </Card>
@@ -141,16 +316,31 @@ const Checkout = () => {
                       <div className="space-y-4 pt-4">
                         <div>
                           <Label htmlFor="billingAddress">Adres *</Label>
-                          <Input id="billingAddress" required />
+                          <Input 
+                            id="billingAddress" 
+                            value={formData.billingAddress}
+                            onChange={handleInputChange}
+                            required 
+                          />
                         </div>
                         <div className="grid md:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="billingCity">İl *</Label>
-                            <Input id="billingCity" required />
+                            <Input 
+                              id="billingCity" 
+                              value={formData.billingCity}
+                              onChange={handleInputChange}
+                              required 
+                            />
                           </div>
                           <div>
                             <Label htmlFor="billingDistrict">İlçe *</Label>
-                            <Input id="billingDistrict" required />
+                            <Input 
+                              id="billingDistrict" 
+                              value={formData.billingDistrict}
+                              onChange={handleInputChange}
+                              required 
+                            />
                           </div>
                         </div>
                       </div>
@@ -237,7 +427,8 @@ const Checkout = () => {
                       <span>{state.total.toFixed(2)} ₺</span>
                     </div>
 
-                    <Button type="submit" className="w-full" size="lg">
+                    <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                      {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                       Siparişi Tamamla
                     </Button>
 
