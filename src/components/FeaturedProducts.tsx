@@ -4,8 +4,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Heart, ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
+import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/hooks/use-toast';
 
 const FeaturedProducts = () => {
+  const { addItem } = useCart();
+  const { toast } = useToast();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
     slidesToScroll: 1,
@@ -180,7 +184,25 @@ const FeaturedProducts = () => {
 
                     {/* Buttons */}
                     <div className="flex gap-2">
-                      <Button variant="default" size="sm" className="flex-1">
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addItem({
+                            id: product.id,
+                            name: product.name,
+                            price: product.price,
+                            image: product.image,
+                            brand: product.brand,
+                          });
+                          toast({
+                            title: "Ürün sepete eklendi!",
+                            description: `${product.name} sepetinize eklendi.`,
+                          });
+                        }}
+                      >
                         <ShoppingCart className="h-4 w-4" />
                         Sepete Ekle
                       </Button>
