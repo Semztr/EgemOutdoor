@@ -22,6 +22,7 @@ import FAQ from "./pages/FAQ";
 import Returns from "./pages/Returns";
 import Shipping from "./pages/Shipping";
 import OrderTracking from "./pages/OrderTracking";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +62,9 @@ const App = () => (
           <Route path="/iade-degisim" element={<Returns />} />
           <Route path="/kargo-bilgileri" element={<Shipping />} />
           <Route path="/sss" element={<FAQ />} />
+          
+          {/* Admin */}
+          <Route path="/admin" element={<Admin />} />
           
           {/* Legal pages - placeholder */}
           <Route path="/gizlilik-politikasi" element={<NotFound />} />

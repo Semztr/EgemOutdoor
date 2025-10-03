@@ -188,64 +188,71 @@ const Products = () => {
               {filteredProducts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {filteredProducts.map((product) => (
-                    <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 cursor-pointer overflow-hidden">
-                      <Link to={`/urun/${product.id}`} className="block">
-                        <div className="relative">
-                          {product.badge && (
-                            <div className="absolute top-3 left-3 z-10">
-                              <Badge variant={product.badge === 'İndirimde' ? 'destructive' : 'default'}>
-                                {product.badge}
-                              </Badge>
-                            </div>
-                          )}
+                    <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
+                      <div className="relative">
+                        {product.badge && (
+                          <div className="absolute top-3 left-3 z-10">
+                            <Badge variant={product.badge === 'İndirimde' ? 'destructive' : 'default'}>
+                              {product.badge}
+                            </Badge>
+                          </div>
+                        )}
 
-                          <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
-                            <Heart className="h-4 w-4" />
-                          </Button>
+                        <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
+                          <Heart className="h-4 w-4" />
+                        </Button>
 
-                          <CardContent className="p-6">
-                            <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center text-6xl">
+                        <CardContent className="p-6">
+                          <Link to={`/urun/${product.id}`}>
+                            <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center text-6xl cursor-pointer hover:scale-105 transition-transform">
                               {product.image}
                             </div>
 
                             <div className="text-xs text-primary font-medium mb-2">{product.brand}</div>
 
-                            <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                            <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">
                               {product.name}
                             </h3>
+                          </Link>
 
-                            <div className="flex items-center gap-2 mb-3">
-                              <div className="flex items-center">
-                                <Star className="h-4 w-4 fill-accent text-accent" />
-                                <span className="ml-1 text-sm font-medium">{product.rating}</span>
-                              </div>
-                              <span className="text-xs text-muted-foreground">({product.reviews})</span>
+                          <div className="flex items-center gap-2 mb-3">
+                            <div className="flex items-center">
+                              <Star className="h-4 w-4 fill-accent text-accent" />
+                              <span className="ml-1 text-sm font-medium">{product.rating}</span>
                             </div>
+                            <span className="text-xs text-muted-foreground">({product.reviews})</span>
+                          </div>
 
-                            <div className="flex items-center gap-2 mb-4">
-                              <span className="text-xl font-bold text-primary">{product.price}₺</span>
-                              {product.originalPrice && (
-                                <span className="text-sm text-muted-foreground line-through">
-                                  {product.originalPrice}₺
-                                </span>
-                              )}
-                            </div>
+                          <div className="flex items-center gap-2 mb-4">
+                            <span className="text-xl font-bold text-primary">{product.price}₺</span>
+                            {product.originalPrice && (
+                              <span className="text-sm text-muted-foreground line-through">
+                                {product.originalPrice}₺
+                              </span>
+                            )}
+                          </div>
 
+                          <div className="flex gap-2">
                             <Button 
                               onClick={(e) => {
-                                e.preventDefault();
+                                e.stopPropagation();
                                 handleAddToCart(product);
                               }}
                               size="sm" 
-                              className="w-full hover-scale transition-smooth" 
+                              className="flex-1 hover-scale transition-smooth" 
                               disabled={!product.inStock}
                             >
                               <ShoppingCart className="h-4 w-4 mr-2" />
                               {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
                             </Button>
-                          </CardContent>
-                        </div>
-                      </Link>
+                            <Link to={`/urun/${product.id}`}>
+                              <Button variant="outline" size="sm">
+                                İncele
+                              </Button>
+                            </Link>
+                          </div>
+                        </CardContent>
+                      </div>
                     </Card>
                   ))}
                 </div>

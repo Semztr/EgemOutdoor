@@ -184,9 +184,11 @@ const FeaturedProducts = () => {
                         <ShoppingCart className="h-4 w-4" />
                         Sepete Ekle
                       </Button>
-                      <Button variant="outline" size="sm">
-                        İncele
-                      </Button>
+                      <Link to={`/urun/${product.id}`}>
+                        <Button variant="outline" size="sm">
+                          İncele
+                        </Button>
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>

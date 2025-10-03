@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, User, Search, Menu, Phone, LogOut } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, Phone, LogOut, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
@@ -11,7 +11,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '@/components/ui/navigation-menu';
 
 const Header = () => {
   const { state } = useCart();
@@ -111,26 +121,118 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="mt-4 border-t border-border pt-4">
-          <div className="flex items-center justify-center space-x-8 text-sm">
-            <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
-              Balık Av Malzemeleri
-            </Link>
-            <Link to="/outdoor-giyim" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
-              Outdoor Giyim
-            </Link>
-            <Link to="/kamp-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
-              Kamp Malzemeleri
-            </Link>
-            <Link to="/caki-bicak" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
-              Çakı & Bıçak
-            </Link>
-            <Link to="/kisiye-ozel" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-primary hover:text-primary-glow transition-smooth font-medium">
-              Kişiye Özel
-            </Link>
-            <Link to="/urun-kategorileri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-foreground hover:text-primary transition-smooth font-medium">
-              Ürün Kategorileri
-            </Link>
-          </div>
+          <NavigationMenu className="mx-auto">
+            <NavigationMenuList className="space-x-6">
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                  Balık Av Malzemeleri
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-48 p-2">
+                    <Link to="/balik-av-malzemeleri/oltalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Oltalar
+                    </Link>
+                    <Link to="/balik-av-malzemeleri/makaralar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Makaralar
+                    </Link>
+                    <Link to="/balik-av-malzemeleri/misina" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Misina & İp
+                    </Link>
+                    <Link to="/balik-av-malzemeleri/yemler" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Yemler
+                    </Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Aksesuarlar
+                    </Link>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                  Outdoor Giyim
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-48 p-2">
+                    <Link to="/outdoor-giyim/montlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Mont & Ceket
+                    </Link>
+                    <Link to="/outdoor-giyim/pantolonlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Pantolon
+                    </Link>
+                    <Link to="/outdoor-giyim/yelek" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Yelek
+                    </Link>
+                    <Link to="/outdoor-giyim/ayakkabi" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Ayakkabı & Bot
+                    </Link>
+                    <Link to="/outdoor-giyim/sapka" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Şapka & Bone
+                    </Link>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                  Kamp Malzemeleri
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-48 p-2">
+                    <Link to="/kamp-malzemeleri/cadirlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Çadırlar
+                    </Link>
+                    <Link to="/kamp-malzemeleri/uyku-tulumu" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Uyku Tulumu
+                    </Link>
+                    <Link to="/kamp-malzemeleri/matara" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Matara & Termos
+                    </Link>
+                    <Link to="/kamp-malzemeleri/aydinlatma" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Aydınlatma
+                    </Link>
+                    <Link to="/kamp-malzemeleri/mutfak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Kamp Mutfağı
+                    </Link>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                  Çakı & Bıçak
+                </NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <div className="w-48 p-2">
+                    <Link to="/caki-bicak/caklar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Çakılar
+                    </Link>
+                    <Link to="/caki-bicak/sabit-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Sabit Bıçak
+                    </Link>
+                    <Link to="/caki-bicak/katlanir-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Katlanır Bıçak
+                    </Link>
+                    <Link to="/caki-bicak/multitool" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Multitool
+                    </Link>
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link to="/kisiye-ozel" className="text-primary hover:text-primary-glow transition-smooth font-medium inline-flex items-center justify-center h-10 px-4 py-2">
+                  Kişiye Özel
+                </Link>
+              </NavigationMenuItem>
+
+              <NavigationMenuItem>
+                <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium inline-flex items-center justify-center h-10 px-4 py-2">
+                  Ürün Kategorileri
+                </Link>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
         </nav>
       </div>
     </header>
