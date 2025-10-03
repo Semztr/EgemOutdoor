@@ -128,13 +128,9 @@ const Header = () => {
                   Balık Av Malzemeleri
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-64 p-2">
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm font-semibold hover:bg-muted rounded">
-                      Tüm Ürünler
-                    </Link>
-                    <div className="my-2 border-t border-border"></div>
+                  <div className="w-48 p-2">
                     <Link to="/balik-av-malzemeleri/oltalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Olta Kamışları
+                      Oltalar
                     </Link>
                     <Link to="/balik-av-malzemeleri/makaralar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Makaralar
@@ -143,16 +139,10 @@ const Header = () => {
                       Misina & İp
                     </Link>
                     <Link to="/balik-av-malzemeleri/yemler" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Yemler & Oltalar
-                    </Link>
-                    <Link to="/balik-av-malzemeleri/cantalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Balık Çantaları
+                      Yemler
                     </Link>
                     <Link to="/balik-av-malzemeleri/aksesuarlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Aksesuarlar
-                    </Link>
-                    <Link to="/balik-av-malzemeleri/tekneler" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Tekne Aksesuarları
                     </Link>
                   </div>
                 </NavigationMenuContent>
@@ -163,31 +153,21 @@ const Header = () => {
                   Outdoor Giyim
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-64 p-2">
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm font-semibold hover:bg-muted rounded">
-                      Tüm Ürünler
-                    </Link>
-                    <div className="my-2 border-t border-border"></div>
+                  <div className="w-48 p-2">
                     <Link to="/outdoor-giyim/montlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Mont & Ceket
                     </Link>
-                    <Link to="/outdoor-giyim/yagmurluk" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Yağmurluk
-                    </Link>
                     <Link to="/outdoor-giyim/pantolonlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Pantolon & Şort
+                      Pantolon
                     </Link>
                     <Link to="/outdoor-giyim/yelek" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Yelek & Balıkçı Yeleği
+                      Yelek
                     </Link>
                     <Link to="/outdoor-giyim/ayakkabi" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Ayakkabı & Bot
                     </Link>
                     <Link to="/outdoor-giyim/sapka" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Şapka & Bone
-                    </Link>
-                    <Link to="/outdoor-giyim/eldiven" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Eldiven & Termal
                     </Link>
                   </div>
                 </NavigationMenuContent>
@@ -198,34 +178,21 @@ const Header = () => {
                   Kamp Malzemeleri
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-64 p-2">
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm font-semibold hover:bg-muted rounded">
-                      Tüm Ürünler
-                    </Link>
-                    <div className="my-2 border-t border-border"></div>
+                  <div className="w-48 p-2">
                     <Link to="/kamp-malzemeleri/cadirlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Çadırlar & Barınaklar
+                      Çadırlar
                     </Link>
                     <Link to="/kamp-malzemeleri/uyku-tulumu" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Uyku Tulumu & Şişme Yatak
+                      Uyku Tulumu
                     </Link>
                     <Link to="/kamp-malzemeleri/matara" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Matara & Termos
                     </Link>
-                    <Link to="/kamp-malzemeleri/ocak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Kamp Ocakları
-                    </Link>
                     <Link to="/kamp-malzemeleri/aydinlatma" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Aydınlatma & Fener
+                      Aydınlatma
                     </Link>
                     <Link to="/kamp-malzemeleri/mutfak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Kamp Mutfağı
-                    </Link>
-                    <Link to="/kamp-malzemeleri/mobilya" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Kamp Mobilyası
-                    </Link>
-                    <Link to="/kamp-malzemeleri/cantalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Sırt Çantaları
                     </Link>
                   </div>
                 </NavigationMenuContent>
@@ -236,16 +203,9 @@ const Header = () => {
                   Çakı & Bıçak
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-64 p-2">
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm font-semibold hover:bg-muted rounded">
-                      Tüm Ürünler
-                    </Link>
-                    <div className="my-2 border-t border-border"></div>
-                    <Link to="/caki-bicak/cep-caki" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Cep Çakıları
-                    </Link>
-                    <Link to="/caki-bicak/isviçre-caki" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      İsviçre Çakıları
+                  <div className="w-48 p-2">
+                    <Link to="/caki-bicak/caklar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Çakılar
                     </Link>
                     <Link to="/caki-bicak/sabit-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Sabit Bıçak
@@ -253,14 +213,8 @@ const Header = () => {
                     <Link to="/caki-bicak/katlanir-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Katlanır Bıçak
                     </Link>
-                    <Link to="/caki-bicak/av-bicagi" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Av Bıçakları
-                    </Link>
-                    <Link to="/caki-bicak/balik-bicagi" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Balık Bıçakları
-                    </Link>
                     <Link to="/caki-bicak/multitool" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Multitool & Pense
+                      Multitool
                     </Link>
                   </div>
                 </NavigationMenuContent>
