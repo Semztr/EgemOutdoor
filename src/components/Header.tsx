@@ -38,7 +38,7 @@ const Header = () => {
   };
 
   return (
-    <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+    <header className="border-b border-border bg-card/95 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-sm">
       {/* Top bar */}
       <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
         <div className="container mx-auto flex items-center justify-between">
@@ -124,13 +124,22 @@ const Header = () => {
           <NavigationMenu className="mx-auto">
             <NavigationMenuList className="space-x-6">
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
-                  Balık Av Malzemeleri
-                </NavigationMenuTrigger>
+                <Link 
+                  to="/balik-av-malzemeleri" 
+                  className="text-foreground hover:text-primary font-medium inline-flex items-center justify-center h-10 px-4 py-2 group"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                    Balık Av Malzemeleri
+                  </NavigationMenuTrigger>
+                </Link>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
+                  <div className="w-56 p-2 bg-card">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm font-medium hover:bg-muted rounded border-b border-border mb-1">
+                      Tüm Balık Av Malzemeleri
+                    </Link>
                     <Link to="/balik-av-malzemeleri/oltalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Oltalar
+                      Oltalar & Kamışlar
                     </Link>
                     <Link to="/balik-av-malzemeleri/makaralar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Makaralar
@@ -139,7 +148,13 @@ const Header = () => {
                       Misina & İp
                     </Link>
                     <Link to="/balik-av-malzemeleri/yemler" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Yemler
+                      Yemler & Sahte Yemler
+                    </Link>
+                    <Link to="/balik-av-malzemeleri/oltalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      İğneler & Kurşunlar
+                    </Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Balık Çantaları
                     </Link>
                     <Link to="/balik-av-malzemeleri/aksesuarlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Aksesuarlar
@@ -149,19 +164,28 @@ const Header = () => {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
-                  Outdoor Giyim
-                </NavigationMenuTrigger>
+                <Link 
+                  to="/outdoor-giyim" 
+                  className="text-foreground hover:text-primary font-medium inline-flex items-center justify-center h-10 px-4 py-2"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                    Outdoor Giyim
+                  </NavigationMenuTrigger>
+                </Link>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
+                  <div className="w-56 p-2 bg-card">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm font-medium hover:bg-muted rounded border-b border-border mb-1">
+                      Tüm Outdoor Giyim
+                    </Link>
                     <Link to="/outdoor-giyim/montlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Mont & Ceket
                     </Link>
                     <Link to="/outdoor-giyim/pantolonlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Pantolon
+                      Pantolon & Şort
                     </Link>
                     <Link to="/outdoor-giyim/yelek" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Yelek
+                      Yelek & Softshell
                     </Link>
                     <Link to="/outdoor-giyim/ayakkabi" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Ayakkabı & Bot
@@ -169,52 +193,85 @@ const Header = () => {
                     <Link to="/outdoor-giyim/sapka" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Şapka & Bone
                     </Link>
+                    <Link to="/outdoor-giyim/eldiven" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Eldiven & Atkı
+                    </Link>
+                    <Link to="/outdoor-giyim/corap" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Çorap & İç Giyim
+                    </Link>
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
-                  Kamp Malzemeleri
-                </NavigationMenuTrigger>
+                <Link 
+                  to="/kamp-malzemeleri" 
+                  className="text-foreground hover:text-primary font-medium inline-flex items-center justify-center h-10 px-4 py-2"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                    Kamp Malzemeleri
+                  </NavigationMenuTrigger>
+                </Link>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
+                  <div className="w-56 p-2 bg-card">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm font-medium hover:bg-muted rounded border-b border-border mb-1">
+                      Tüm Kamp Malzemeleri
+                    </Link>
                     <Link to="/kamp-malzemeleri/cadirlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Çadırlar
+                      Çadırlar & Barınaklar
                     </Link>
                     <Link to="/kamp-malzemeleri/uyku-tulumu" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Uyku Tulumu
+                      Uyku Tulumu & Mat
                     </Link>
                     <Link to="/kamp-malzemeleri/matara" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Matara & Termos
                     </Link>
                     <Link to="/kamp-malzemeleri/aydinlatma" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Aydınlatma
+                      Aydınlatma & Fener
                     </Link>
                     <Link to="/kamp-malzemeleri/mutfak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Kamp Mutfağı
+                      Kamp Mutfağı & Ocak
+                    </Link>
+                    <Link to="/kamp-malzemeleri/sandalye" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Sandalye & Masa
+                    </Link>
+                    <Link to="/kamp-malzemeleri/cantalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Çantalar & Sırt Çantası
                     </Link>
                   </div>
                 </NavigationMenuContent>
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
-                  Çakı & Bıçak
-                </NavigationMenuTrigger>
+                <Link 
+                  to="/caki-bicak" 
+                  className="text-foreground hover:text-primary font-medium inline-flex items-center justify-center h-10 px-4 py-2"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                    Çakı & Bıçak
+                  </NavigationMenuTrigger>
+                </Link>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
+                  <div className="w-56 p-2 bg-card">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm font-medium hover:bg-muted rounded border-b border-border mb-1">
+                      Tüm Çakı & Bıçak
+                    </Link>
                     <Link to="/caki-bicak/caklar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Çakılar
+                      Çakılar & İsviçre Çakısı
                     </Link>
                     <Link to="/caki-bicak/sabit-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Sabit Bıçak
+                      Sabit Bıçak & Av Bıçağı
                     </Link>
                     <Link to="/caki-bicak/katlanir-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Katlanır Bıçak
                     </Link>
                     <Link to="/caki-bicak/multitool" className="block px-4 py-2 text-sm hover:bg-muted rounded">
-                      Multitool
+                      Multitool & Çok Amaçlı
+                    </Link>
+                    <Link to="/caki-bicak/bileme" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Bileme & Bakım
                     </Link>
                   </div>
                 </NavigationMenuContent>
