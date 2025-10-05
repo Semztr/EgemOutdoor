@@ -38,42 +38,42 @@ const CategoryPage = () => {
           products: [
             {
               id: 1,
-              name: "Daiwa Ninja X Spinning Rod 2.40m 10-40g",
+              name: "Daiwa Saltiga Dogfight Olta Makinesi",
               brand: "Daiwa",
-              price: 850,
-              originalPrice: 950,
-              rating: 4.8,
-              reviews: 124,
-              image: "🎣",
+              price: 12850,
+              originalPrice: 14500,
+              rating: 4.9,
+              reviews: 156,
+              image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop",
               badge: "İndirimde",
               inStock: true,
-              specs: ["2.40m", "10-40g", "2 Parça"]
+              specs: ["Ultra Dayanıklı", "Profesyonel", "10kg"]
             },
             {
               id: 2,
-              name: "Shimano Catana EX Spinning 2.70m 5-25g",
-              brand: "Shimano",
-              price: 680,
+              name: "Savage Gear 3D Suicide Duck Yem",
+              brand: "Savage Gear",
+              price: 485,
               originalPrice: null,
-              rating: 4.6,
-              reviews: 87,
-              image: "🎯",
-              badge: null,
+              rating: 4.8,
+              reviews: 234,
+              image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=500&fit=crop",
+              badge: "Çok Satan",
               inStock: true,
-              specs: ["2.70m", "5-25g", "2 Parça"]
+              specs: ["3D Gerçekçi", "Yüzer", "15cm"]
             },
             {
-              id: 3,
-              name: "Penn Battle III Surf Rod 3.60m 40-100g",
-              brand: "Penn",
-              price: 1240,
+              id: 7,
+              name: "Okuma Safina Pro Spinning Makara",
+              brand: "Okuma",
+              price: 2240,
               originalPrice: null,
-              rating: 4.9,
-              reviews: 45,
-              image: "⚙️",
+              rating: 4.7,
+              reviews: 98,
+              image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop&brightness=0.8",
               badge: "Yeni",
               inStock: true,
-              specs: ["3.60m", "40-100g", "3 Parça"]
+              specs: ["8 Rulman", "Hafif", "Güçlü"]
             }
           ]
         };
@@ -91,43 +91,43 @@ const CategoryPage = () => {
           ],
           products: [
             {
-              id: 4,
-              name: "Columbia Watertight II Yağmurluk",
-              brand: "Columbia",
-              price: 420,
-              originalPrice: 480,
-              rating: 4.7,
-              reviews: 203,
-              image: "🧥",
+              id: 3,
+              name: "Jack Wolfskin Texapore Outdoor Mont",
+              brand: "Jack Wolfskin",
+              price: 3240,
+              originalPrice: 3850,
+              rating: 4.9,
+              reviews: 189,
+              image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=500&fit=crop",
               badge: "İndirimde",
               inStock: true,
-              specs: ["Su Geçirmez", "Nefes Alır", "XS-XXL Beden"]
-            },
-            {
-              id: 5,
-              name: "The North Face Trekking Pantolon",
-              brand: "The North Face",
-              price: 650,
-              originalPrice: null,
-              rating: 4.8,
-              reviews: 156,
-              image: "👖",
-              badge: "Popüler",
-              inStock: true,
-              specs: ["Stretch Kumaş", "UPF 40+", "Hızlı Kurur"]
+              specs: ["Su Geçirmez", "Nefes Alır", "S-XXL"]
             },
             {
               id: 6,
-              name: "Merrell Hiking Bot",
-              brand: "Merrell",
-              price: 890,
-              originalPrice: null,
-              rating: 4.9,
-              reviews: 342,
-              image: "🥾",
-              badge: "Çok Satan",
+              name: "Helly Hansen Workwear Outdoor Pantolon",
+              brand: "Helly Hansen",
+              price: 1850,
+              originalPrice: 2100,
+              rating: 4.6,
+              reviews: 267,
+              image: "https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=500&h=500&fit=crop",
+              badge: "İndirimde",
               inStock: true,
-              specs: ["Su Geçirmez", "Vibram Taban", "36-45 Numara"]
+              specs: ["Stretch", "Su İtici", "46-62"]
+            },
+            {
+              id: 5,
+              name: "Asolo Falcon GV Trekking Botu",
+              brand: "Asolo",
+              price: 4580,
+              originalPrice: null,
+              rating: 5.0,
+              reviews: 178,
+              image: "https://images.unsplash.com/photo-1542840410-3092f99611a3?w=500&h=500&fit=crop",
+              badge: "Premium",
+              inStock: true,
+              specs: ["Gore-Tex", "Vibram", "40-46"]
             }
           ]
         };
@@ -145,43 +145,43 @@ const CategoryPage = () => {
           ],
           products: [
             {
-              id: 7,
+              id: 4,
+              name: "Stanley Adventure Soğuk Tutucu Termos 1L",
+              brand: "Stanley",
+              price: 890,
+              originalPrice: 1050,
+              rating: 4.7,
+              reviews: 421,
+              image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop",
+              badge: "İndirimde",
+              inStock: true,
+              specs: ["1 Litre", "24h Sıcak", "32h Soğuk"]
+            },
+            {
+              id: 8,
               name: "Coleman Sundome 4 Kişilik Çadır",
               brand: "Coleman",
               price: 1850,
               originalPrice: 2100,
               rating: 4.6,
               reviews: 278,
-              image: "⛺",
+              image: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=500&h=500&fit=crop",
               badge: "İndirimde",
               inStock: true,
               specs: ["4 Kişilik", "Su Geçirmez", "Kolay Kurulum"]
             },
             {
-              id: 8,
-              name: "Campingaz Party Grill 600 Ocak",
-              brand: "Campingaz",
+              id: 9,
+              name: "MSR PocketRocket 2 Mini Ocak",
+              brand: "MSR",
               price: 750,
               originalPrice: null,
               rating: 4.8,
-              reviews: 145,
-              image: "🔥",
-              badge: "Yeni",
-              inStock: true,
-              specs: ["Gazlı Ocak", "Izgara Özelliği", "Taşınabilir"]
-            },
-            {
-              id: 9,
-              name: "Thermos Paslanmaz Termos 1L",
-              brand: "Thermos",
-              price: 320,
-              originalPrice: null,
-              rating: 4.7,
-              reviews: 567,
-              image: "🍺",
+              reviews: 345,
+              image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500&h=500&fit=crop",
               badge: "Çok Satan",
               inStock: true,
-              specs: ["1 Litre", "24 Saat Sıcak", "Paslanmaz Çelik"]
+              specs: ["Gazlı", "Hafif", "Taşınabilir"]
             }
           ]
         };
@@ -206,10 +206,10 @@ const CategoryPage = () => {
               originalPrice: null,
               rating: 4.9,
               reviews: 1203,
-              image: "🔪",
+              image: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500&h=500&fit=crop",
               badge: "Klasik",
               inStock: true,
-              specs: ["15 Fonksiyon", "Paslanmaz Çelik", "İsviçre Yapımı"]
+              specs: ["15 Fonksiyon", "Paslanmaz", "İsviçre"]
             },
             {
               id: 11,
@@ -219,10 +219,10 @@ const CategoryPage = () => {
               originalPrice: null,
               rating: 4.8,
               reviews: 456,
-              image: "🗡️",
+              image: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=500&h=500&fit=crop",
               badge: "Popüler",
               inStock: true,
-              specs: ["Carbon Çelik", "Ergonomik Sap", "Kılıf Dahil"]
+              specs: ["Carbon Çelik", "Ergonomik", "Kılıflı"]
             },
             {
               id: 12,
@@ -232,10 +232,10 @@ const CategoryPage = () => {
               originalPrice: 220,
               rating: 4.7,
               reviews: 890,
-              image: "🪓",
+              image: "https://images.unsplash.com/photo-1593207728683-3c2d3fc39ef1?w=500&h=500&fit=crop",
               badge: "İndirimde",
               inStock: true,
-              specs: ["Ahşap Saplı", "Fransız Yapımı", "Güvenlik Kilidi"]
+              specs: ["Ahşap Saplı", "Fransız", "Güvenlik Kilidi"]
             }
           ]
         };
@@ -413,9 +413,13 @@ const CategoryPage = () => {
                       </Button>
 
                       <CardContent className="p-6">
-                        {/* Product image placeholder */}
-                        <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center text-6xl">
-                          {product.image}
+                        {/* Product image */}
+                        <div className="aspect-square bg-muted rounded-lg mb-4 overflow-hidden">
+                          <img 
+                            src={product.image} 
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
 
                         {/* Brand */}
