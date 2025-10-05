@@ -129,19 +129,31 @@ const Header = () => {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-48 p-2">
-                    <Link to="/balik-av-malzemeleri/oltalar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                      Tümünü Gör
+                    </Link>
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Oltalar
                     </Link>
-                    <Link to="/balik-av-malzemeleri/makaralar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Makaralar
                     </Link>
-                    <Link to="/balik-av-malzemeleri/misina" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Misina & İp
                     </Link>
-                    <Link to="/balik-av-malzemeleri/yemler" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Yemler
                     </Link>
-                    <Link to="/balik-av-malzemeleri/aksesuarlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      İğneler & Kurşunlar
+                    </Link>
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Balık Çantaları
+                    </Link>
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Kepçe & Sap
+                    </Link>
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Aksesuarlar
                     </Link>
                   </div>
@@ -154,20 +166,32 @@ const Header = () => {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-48 p-2">
-                    <Link to="/outdoor-giyim/montlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                      Tümünü Gör
+                    </Link>
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Mont & Ceket
                     </Link>
-                    <Link to="/outdoor-giyim/pantolonlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Pantolon
                     </Link>
-                    <Link to="/outdoor-giyim/yelek" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Yelek
                     </Link>
-                    <Link to="/outdoor-giyim/ayakkabi" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Ayakkabı & Bot
                     </Link>
-                    <Link to="/outdoor-giyim/sapka" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Şapka & Bone
+                    </Link>
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Eldiven
+                    </Link>
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Çorap
+                    </Link>
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Termal İçlik
                     </Link>
                   </div>
                 </NavigationMenuContent>
@@ -179,20 +203,32 @@ const Header = () => {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-48 p-2">
-                    <Link to="/kamp-malzemeleri/cadirlar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                      Tümünü Gör
+                    </Link>
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Çadırlar
                     </Link>
-                    <Link to="/kamp-malzemeleri/uyku-tulumu" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Uyku Tulumu
                     </Link>
-                    <Link to="/kamp-malzemeleri/matara" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Matara & Termos
                     </Link>
-                    <Link to="/kamp-malzemeleri/aydinlatma" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Aydınlatma
                     </Link>
-                    <Link to="/kamp-malzemeleri/mutfak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Kamp Mutfağı
+                    </Link>
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Sandalye & Masa
+                    </Link>
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Sırt Çantası
+                    </Link>
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Soğutucu & Buzluk
                     </Link>
                   </div>
                 </NavigationMenuContent>
@@ -204,17 +240,26 @@ const Header = () => {
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
                   <div className="w-48 p-2">
-                    <Link to="/caki-bicak/caklar" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                      Tümünü Gör
+                    </Link>
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Çakılar
                     </Link>
-                    <Link to="/caki-bicak/sabit-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Sabit Bıçak
                     </Link>
-                    <Link to="/caki-bicak/katlanir-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Katlanır Bıçak
                     </Link>
-                    <Link to="/caki-bicak/multitool" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
                       Multitool
+                    </Link>
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Av Bıçakları
+                    </Link>
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                      Bıçak Aksesuarları
                     </Link>
                   </div>
                 </NavigationMenuContent>
