@@ -45,7 +45,7 @@ const Header = () => {
           <span>Tüm Siparişlerinizde 24 Saat İçinde Kargoda!</span>
           <div className="flex items-center gap-4">
             <Phone className="h-4 w-4" />
-            <span>0262 321 6 314</span>
+            <span>0452 214 17 43</span>
           </div>
         </div>
       </div>

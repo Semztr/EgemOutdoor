@@ -117,7 +117,7 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Phone className="h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">0262 321 6 314</span>
+                <span className="text-muted-foreground">0452 214 17 43</span>
               </div>
               <div className="flex items-center space-x-3">
               <Mail className="h-5 w-5 text-primary" />
@@ -126,8 +126,8 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-primary mt-1" />
                 <span className="text-muted-foreground">
-                  Örnek Mahallesi, Balık Sokağı No:15<br />
-                  Kocaeli / Türkiye
+                  Düz Mah. Sırrıpaşa Cad. No:18<br />
+                  Altınordu / ORDU
                 </span>
               </div>
             </div>

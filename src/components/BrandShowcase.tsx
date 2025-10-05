@@ -16,14 +16,14 @@ const BrandShowcase = () => {
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   const brands = [
-    { name: 'Daiwa', logo: '🎯', description: 'Japonya\'nın en prestijli balık malzemeleri markası' },
-    { name: 'Shimano', logo: '⚙️', description: 'Dünya çapında tanınan kalite ve inovasyon' },
-    { name: 'Okuma', logo: '🎣', description: 'Profesyonel balıkçıların tercihi' },
-    { name: 'Penn', logo: '🌊', description: 'Deniz balıkçılığında güvenilir partner' },
-    { name: 'Abu Garcia', logo: '🏆', description: 'İsveç kalitesi ve dayanıklılık' },
+    { name: 'Salomon', logo: '⛷️', description: 'Outdoor sporlarında Fransız kalitesi' },
+    { name: 'Helly Hansen', logo: '⚓', description: 'Norveç\'ten denizcilik ve outdoor uzmanı' },
+    { name: 'Jack Wolfskin', logo: '🐺', description: 'Alman mühendisliği ile outdoor giyim' },
+    { name: 'Asolo', logo: '🥾', description: 'İtalyan trekking botu ustası' },
+    { name: 'Stanley', logo: '🏔️', description: 'Efsanevi termos ve kamp ekipmanları' },
     { name: 'Savage Gear', logo: '🦈', description: 'Yırtıcı balık avında uzman' },
-    { name: 'Berkley', logo: '🐟', description: 'Yapay yem teknolojisinde öncü' },
-    { name: 'Rapala', logo: '🎪', description: 'Finlandiya\'dan dünyaca ünlü yemler' }
+    { name: 'Daiwa', logo: '🎣', description: 'Japonya\'nın prestijli balık malzemeleri' },
+    { name: 'Okuma', logo: '🎯', description: 'Apnea ve profesyonel balıkçılık' }
   ];
 
   return (
@@ -84,25 +84,25 @@ const BrandShowcase = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="gradient-primary text-primary-foreground hover-lift cursor-pointer overflow-hidden shadow-primary">
             <CardContent className="p-8 text-center">
-              <div className="text-5xl mb-4">🎯</div>
-              <h3 className="text-xl font-bold mb-2">Daiwa Collection</h3>
-              <p className="text-primary-foreground/80">Profesyonel olta makineleri ve kamışları</p>
+              <div className="text-5xl mb-4">🎣</div>
+              <h3 className="text-xl font-bold mb-2">Balıkçılık Koleksiyonu</h3>
+              <p className="text-primary-foreground/80">Daiwa, Savage Gear ve Okuma ürünleri</p>
             </CardContent>
           </Card>
 
           <Card className="gradient-accent text-accent-foreground hover-lift cursor-pointer overflow-hidden shadow-accent">
             <CardContent className="p-8 text-center">
-              <div className="text-5xl mb-4">⚙️</div>
-              <h3 className="text-xl font-bold mb-2">Shimano Series</h3>
-              <p className="text-accent-foreground/80">Yüksek performanslı balık malzemeleri</p>
+              <div className="text-5xl mb-4">🏔️</div>
+              <h3 className="text-xl font-bold mb-2">Outdoor Giyim & Ekipman</h3>
+              <p className="text-accent-foreground/80">Jack Wolfskin, Helly Hansen, Salomon</p>
             </CardContent>
           </Card>
 
           <Card className="gradient-card border-border hover-lift cursor-pointer overflow-hidden shadow-card">
             <CardContent className="p-8 text-center">
-              <div className="text-5xl mb-4">🏆</div>
-              <h3 className="text-xl font-bold mb-2">Premium Brands</h3>
-              <p className="text-muted-foreground">Tüm premium markaları keşfedin</p>
+              <div className="text-5xl mb-4">🥾</div>
+              <h3 className="text-xl font-bold mb-2">Trekking & Kamp</h3>
+              <p className="text-muted-foreground">Asolo, Stanley ve tüm kamp malzemeleri</p>
             </CardContent>
           </Card>
         </div>

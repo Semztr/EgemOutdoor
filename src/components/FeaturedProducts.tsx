@@ -36,75 +36,81 @@ const FeaturedProducts = () => {
   const products = [
     {
       id: 1,
-      name: "Profesyonel Olta Makinesi Pro-X 4000",
-      brand: "BalıkPro",
-      price: 2850,
-      originalPrice: 3200,
-      rating: 4.8,
-      reviews: 124,
-      image: "🎣",
-      badge: "10% İndirim",
-      isNew: true
+      name: "Daiwa Saltiga Dogfight Olta Makinesi",
+      brand: "Daiwa",
+      price: 12850,
+      originalPrice: 14500,
+      rating: 4.9,
+      reviews: 156,
+      image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop",
+      badge: "11% İndirim",
+      isNew: true,
+      description: "Profesyonel balıkçılar için üstün performans ve dayanıklılık"
     },
     {
       id: 2,
-      name: "Karbon Fiber Olta Kamışı Elite 3.5m",
-      brand: "BalıkPro",
-      price: 1240,
+      name: "Savage Gear 3D Suicide Duck Yem",
+      brand: "Savage Gear",
+      price: 485,
       originalPrice: null,
-      rating: 4.9,
-      reviews: 87,
-      image: "🎯",
-      badge: "Yeni Ürün",
-      isNew: true
+      rating: 4.8,
+      reviews: 234,
+      image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=500&fit=crop",
+      badge: "Çok Satan",
+      isNew: false,
+      description: "Gerçekçi hareket ve ses ile yırtıcı balıkları cezbeder"
     },
     {
       id: 3,
-      name: "Kişiye Özel Makara Seti Premium",
-      brand: "BalıkPro Custom",
-      price: 4200,
-      originalPrice: null,
-      rating: 5.0,
-      reviews: 45,
-      image: "⚙️",
-      badge: "Özel Yapım",
-      isNew: false
+      name: "Jack Wolfskin Texapore Outdoor Mont",
+      brand: "Jack Wolfskin",
+      price: 3240,
+      originalPrice: 3850,
+      rating: 4.9,
+      reviews: 189,
+      image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=500&fit=crop",
+      badge: "16% İndirim",
+      isNew: true,
+      description: "Su geçirmez, nefes alır, tüm hava koşullarına uygun"
     },
     {
       id: 4,
-      name: "Profesyonel Balık Çantası Deluxe",
-      brand: "BalıkPro",
+      name: "Stanley Adventure Soğuk Tutucu Termos 1L",
+      brand: "Stanley",
       price: 890,
       originalPrice: 1050,
       rating: 4.7,
-      reviews: 156,
-      image: "🎒",
+      reviews: 421,
+      image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop",
       badge: "15% İndirim",
-      isNew: false
+      isNew: false,
+      description: "24 saat sıcak, 32 saat soğuk tutar, çelik gövde"
     },
     {
       id: 5,
-      name: "Titanium Balık Oltası Set",
-      brand: "BalıkPro Elite",
-      price: 1580,
+      name: "Asolo Falcon GV Trekking Botu",
+      brand: "Asolo",
+      price: 4580,
       originalPrice: null,
-      rating: 4.9,
-      reviews: 89,
-      image: "🪝",
+      rating: 5.0,
+      reviews: 178,
+      image: "https://images.unsplash.com/photo-1542840410-3092f99611a3?w=500&h=500&fit=crop",
       badge: "Premium",
-      isNew: true
+      isNew: true,
+      description: "Gore-Tex membran, Vibram taban, maksimum destek ve konfor"
     },
     {
       id: 6,
-      name: "Su Geçirmez Balık Kutusu",
-      brand: "BalıkPro",
-      price: 450,
-      originalPrice: 520,
+      name: "Helly Hansen Workwear Outdoor Pantolon",
+      brand: "Helly Hansen",
+      price: 1850,
+      originalPrice: 2100,
       rating: 4.6,
-      reviews: 203,
-      image: "📦",
-      badge: "13% İndirim",
-      isNew: false
+      reviews: 267,
+      image: "https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=500&h=500&fit=crop",
+      badge: "12% İndirim",
+      isNew: false,
+      description: "Dayanıklı kumaş, su itici kaplama, çok amaçlı cep sistemi"
     }
   ];
 
@@ -166,18 +172,27 @@ const FeaturedProducts = () => {
                   </Button>
 
                   <CardContent className="p-6">
-                    {/* Product image placeholder */}
-                    <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center text-6xl">
-                      {product.image}
+                    {/* Product image */}
+                    <div className="aspect-square bg-muted rounded-lg mb-4 overflow-hidden">
+                      <img 
+                        src={product.image} 
+                        alt={product.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
 
                     {/* Brand */}
                     <div className="text-xs text-primary font-medium mb-2">{product.brand}</div>
 
                     {/* Product name */}
-                    <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[48px] group-hover:text-primary transition-colors">
                       {product.name}
                     </h3>
+
+                    {/* Product description */}
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2 min-h-[32px]">
+                      {product.description}
+                    </p>
 
                     {/* Rating */}
                     <div className="flex items-center gap-2 mb-3">
