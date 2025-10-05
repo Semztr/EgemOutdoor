@@ -151,10 +151,7 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="mt-6 p-4 gradient-card rounded-lg">
-              
-              
-            </div>
+            
           </div>
         </div>
 
