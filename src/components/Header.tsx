@@ -15,13 +15,6 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from '@/components/ui/navigation-menu';
 
 const Header = () => {
   const { state } = useCart();
@@ -121,167 +114,227 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="mt-4 border-t border-border pt-4">
-          <NavigationMenu className="mx-auto" delayDuration={150}>
-            <NavigationMenuList className="space-x-6">
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+          <div className="flex items-center justify-center gap-6">
+            {/* Balık Av Malzemeleri */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-foreground hover:text-primary font-medium">
                   Balık Av Malzemeleri
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-48 p-2 bg-card">
-                    <Link 
-                      to="/balik-av-malzemeleri" 
-                      className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Tümünü Gör
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Oltalar
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Makaralar
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Misina & İp
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Yemler
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      İğneler & Kurşunlar
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Balık Çantaları
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Kepçe & Sap
-                    </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Aksesuarlar
-                    </Link>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-card z-50">
+                <DropdownMenuItem asChild>
+                  <Link to="/balik-av-malzemeleri" className="font-semibold">
+                    Tümünü Gör
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Oltalar</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Spinning Oltaları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Casting Oltaları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Teleskopik Oltalar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Jigging Oltaları</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
 
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Makaralar</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Spinning Makaralar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Casting Makaralar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Surf Casting Makaralar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Yemler & İğneler</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Suni Yemler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Silikon Yemler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Jig Başları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">İğne Setleri</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Kurşunlar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Misina & Örgü İp</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Balık Çantaları</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Kepçe & Sap</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri">Aksesuarlar</Link></DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Outdoor Giyim */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-foreground hover:text-primary font-medium">
                   Outdoor Giyim
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-48 p-2 bg-card">
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold" onClick={(e) => e.stopPropagation()}>
-                      Tümünü Gör
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Mont & Ceket
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Pantolon
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Yelek
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Ayakkabı & Bot
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Şapka & Bone
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Eldiven
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Çorap
-                    </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Termal İçlik
-                    </Link>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-card z-50">
+                <DropdownMenuItem asChild>
+                  <Link to="/outdoor-giyim" className="font-semibold">
+                    Tümünü Gör
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Mont & Ceket</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Yağmurluk</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Softshell Ceketler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Hardshell Ceketler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Polar Ceketler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Şişme Montlar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
 
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Pantolon</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Trekking Pantolonları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Yağmurluk Pantolonlar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Kargo Pantolonlar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Termal Taytlar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Ayakkabı & Bot</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Trekking Ayakkabıları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Dağcılık Botları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Su Geçirmez Botlar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/outdoor-giyim">Yaklaşım Ayakkabıları</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuItem asChild><Link to="/outdoor-giyim">Yelek</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/outdoor-giyim">Şapka & Bone</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/outdoor-giyim">Eldiven</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/outdoor-giyim">Çorap</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/outdoor-giyim">Termal İçlik</Link></DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Kamp Malzemeleri */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-foreground hover:text-primary font-medium">
                   Kamp Malzemeleri
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-48 p-2 bg-card">
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold" onClick={(e) => e.stopPropagation()}>
-                      Tümünü Gör
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Çadırlar
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Uyku Tulumu
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Matara & Termos
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Aydınlatma
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Kamp Mutfağı
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Sandalye & Masa
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Sırt Çantası
-                    </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Soğutucu & Buzluk
-                    </Link>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-card z-50">
+                <DropdownMenuItem asChild>
+                  <Link to="/kamp-malzemeleri" className="font-semibold">
+                    Tümünü Gör
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Çadırlar</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Kamp Çadırları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Dağcılık Çadırları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Plaj Çadırları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Pavyonlar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
 
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Uyku Ekipmanları</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Uyku Tulumları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Kamp Yatakları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">İzolasyon Matları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Yastıklar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Kamp Mutfağı</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Kamp Ocakları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Kamp Tüpleri</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Yemek Setleri</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Taşınabilir Griller</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Matara & Termos</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Aydınlatma</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Sandalye & Masa</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Sırt Çantası</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri">Soğutucu & Buzluk</Link></DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Çakı & Bıçak */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-foreground hover:text-primary font-medium">
                   Çakı & Bıçak
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-48 p-2 bg-card">
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold" onClick={(e) => e.stopPropagation()}>
-                      Tümünü Gör
-                    </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Çakılar
-                    </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Sabit Bıçak
-                    </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Katlanır Bıçak
-                    </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Multitool
-                    </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Av Bıçakları
-                    </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
-                      Bıçak Aksesuarları
-                    </Link>
-                  </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-card z-50">
+                <DropdownMenuItem asChild>
+                  <Link to="/caki-bicak" className="font-semibold">
+                    Tümünü Gör
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Çakılar</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">İsviçre Çakıları</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Klasik Çakılar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Tactical Çakılar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
 
-              <NavigationMenuItem>
-                <Link to="/kisiye-ozel" className="text-primary hover:text-primary-glow transition-smooth font-medium inline-flex items-center justify-center h-10 px-4 py-2">
-                  Kişiye Özel
-                </Link>
-              </NavigationMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Sabit Bıçak</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Survival Bıçaklar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Bushcraft Bıçaklar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Tactical Bıçaklar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
 
-              <NavigationMenuItem>
-                <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium inline-flex items-center justify-center h-10 px-4 py-2">
-                  Ürün Kategorileri
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Katlanır Bıçak</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card">
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">EDC Bıçaklar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Tactical Katlanır</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/caki-bicak">Gentleman Bıçaklar</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                <DropdownMenuItem asChild><Link to="/caki-bicak">Multitool</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/caki-bicak">Av Bıçakları</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/caki-bicak">Bıçak Bileme</Link></DropdownMenuItem>
+                <DropdownMenuItem asChild><Link to="/caki-bicak">Kılıf & Aksesuarlar</Link></DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Link to="/kisiye-ozel" className="text-primary hover:text-primary-glow transition-smooth font-medium px-4 py-2">
+              Kişiye Özel
+            </Link>
+
+            <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
+              Ürün Kategorileri
+            </Link>
+          </div>
         </nav>
       </div>
     </header>

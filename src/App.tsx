@@ -23,6 +23,9 @@ import Returns from "./pages/Returns";
 import Shipping from "./pages/Shipping";
 import OrderTracking from "./pages/OrderTracking";
 import Admin from "./pages/Admin";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
 
@@ -66,10 +69,10 @@ const App = () => (
           {/* Admin */}
           <Route path="/admin" element={<Admin />} />
           
-          {/* Legal pages - placeholder */}
-          <Route path="/gizlilik-politikasi" element={<NotFound />} />
-          <Route path="/kullanim-kosullari" element={<NotFound />} />
-          <Route path="/cerez-politikasi" element={<NotFound />} />
+          {/* Legal pages */}
+          <Route path="/gizlilik-politikasi" element={<PrivacyPolicy />} />
+          <Route path="/kullanim-kosullari" element={<TermsOfService />} />
+          <Route path="/cerez-politikasi" element={<CookiePolicy />} />
           <Route path="/sifremi-unuttum" element={<NotFound />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
