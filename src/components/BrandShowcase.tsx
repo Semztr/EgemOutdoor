@@ -16,14 +16,15 @@ const BrandShowcase = () => {
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   const brands = [
-    { name: 'Salomon', logo: '⛷️', description: 'Outdoor sporlarında Fransız kalitesi' },
-    { name: 'Helly Hansen', logo: '⚓', description: 'Norveç\'ten denizcilik ve outdoor uzmanı' },
-    { name: 'Jack Wolfskin', logo: '🐺', description: 'Alman mühendisliği ile outdoor giyim' },
-    { name: 'Asolo', logo: '🥾', description: 'İtalyan trekking botu ustası' },
-    { name: 'Stanley', logo: '🏔️', description: 'Efsanevi termos ve kamp ekipmanları' },
-    { name: 'Savage Gear', logo: '🦈', description: 'Yırtıcı balık avında uzman' },
-    { name: 'Daiwa', logo: '🎣', description: 'Japonya\'nın prestijli balık malzemeleri' },
-    { name: 'Okuma', logo: '🎯', description: 'Apnea ve profesyonel balıkçılık' }
+    { name: 'Salomon', logo: 'https://logos-world.net/wp-content/uploads/2021/03/Salomon-Logo.png', description: 'Outdoor sporlarında Fransız kalitesi' },
+    { name: 'Helly Hansen', logo: 'https://logos-world.net/wp-content/uploads/2021/03/Helly-Hansen-Logo.png', description: 'Norveç\'ten denizcilik ve outdoor uzmanı' },
+    { name: 'Jack Wolfskin', logo: 'https://logos-world.net/wp-content/uploads/2020/12/Jack-Wolfskin-Logo.png', description: 'Alman mühendisliği ile outdoor giyim' },
+    { name: 'Asolo', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR5YVbZKJN8qR3Oq0YqHVz7l6JN0BxdZbRdJA&s', description: 'İtalyan trekking botu ustası' },
+    { name: 'Stanley', logo: 'https://logos-world.net/wp-content/uploads/2020/11/Stanley-Logo.png', description: 'Efsanevi termos ve kamp ekipmanları' },
+    { name: 'Savage Gear', logo: 'https://www.savagegear.com/media/logo/stores/1/SAVAGE_GEAR_PRIMARY_LOGO_3x.png', description: 'Yırtıcı balık avında uzman' },
+    { name: 'Daiwa', logo: 'https://logos-world.net/wp-content/uploads/2022/12/Daiwa-Logo.png', description: 'Japonya\'nın prestijli balık malzemeleri' },
+    { name: 'Okuma', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiLrZRSZK3hqYWs6nSH4TQnY7YZq1Nz7Z0Og&s', description: 'Profesyonel balıkçılık ekipmanları' },
+    { name: 'Apnea', logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCq3hLQx2TqZH5xQXzQfQH5rNQ7yQJz8qUcA&s', description: 'Sualtı avı ve dalış ekipmanları' }
   ];
 
   return (
@@ -66,8 +67,12 @@ const BrandShowcase = () => {
               <div key={index} className="embla__slide flex-[0_0_200px] min-w-0">
                 <Card className="gradient-card border-border hover-glow transition-smooth cursor-pointer group shadow-card">
                   <CardContent className="p-6 text-center">
-                    <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
-                      {brand.logo}
+                    <div className="h-16 mb-3 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <img 
+                        src={brand.logo} 
+                        alt={`${brand.name} logo`}
+                        className="max-h-12 max-w-full object-contain"
+                      />
                     </div>
                     <h3 className="font-semibold text-foreground mb-2">{brand.name}</h3>
                     <p className="text-xs text-muted-foreground leading-relaxed">

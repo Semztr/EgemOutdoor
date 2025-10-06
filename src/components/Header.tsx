@@ -121,39 +121,43 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="mt-4 border-t border-border pt-4">
-          <NavigationMenu className="mx-auto">
+          <NavigationMenu className="mx-auto" delayDuration={150}>
             <NavigationMenuList className="space-x-6">
               <NavigationMenuItem>
                 <NavigationMenuTrigger className="text-foreground hover:text-primary font-medium">
                   Balık Av Malzemeleri
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                  <div className="w-48 p-2 bg-card">
+                    <Link 
+                      to="/balik-av-malzemeleri" 
+                      className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       Tümünü Gör
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Oltalar
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Makaralar
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Misina & İp
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Yemler
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       İğneler & Kurşunlar
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Balık Çantaları
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Kepçe & Sap
                     </Link>
-                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/balik-av-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Aksesuarlar
                     </Link>
                   </div>
@@ -165,32 +169,32 @@ const Header = () => {
                   Outdoor Giyim
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                  <div className="w-48 p-2 bg-card">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold" onClick={(e) => e.stopPropagation()}>
                       Tümünü Gör
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Mont & Ceket
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Pantolon
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Yelek
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Ayakkabı & Bot
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Şapka & Bone
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Eldiven
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Çorap
                     </Link>
-                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/outdoor-giyim" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Termal İçlik
                     </Link>
                   </div>
@@ -202,32 +206,32 @@ const Header = () => {
                   Kamp Malzemeleri
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                  <div className="w-48 p-2 bg-card">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold" onClick={(e) => e.stopPropagation()}>
                       Tümünü Gör
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Çadırlar
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Uyku Tulumu
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Matara & Termos
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Aydınlatma
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Kamp Mutfağı
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Sandalye & Masa
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Sırt Çantası
                     </Link>
-                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/kamp-malzemeleri" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Soğutucu & Buzluk
                     </Link>
                   </div>
@@ -239,26 +243,26 @@ const Header = () => {
                   Çakı & Bıçak
                 </NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <div className="w-48 p-2">
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold">
+                  <div className="w-48 p-2 bg-card">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded font-semibold" onClick={(e) => e.stopPropagation()}>
                       Tümünü Gör
                     </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Çakılar
                     </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Sabit Bıçak
                     </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Katlanır Bıçak
                     </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Multitool
                     </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Av Bıçakları
                     </Link>
-                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded">
+                    <Link to="/caki-bicak" className="block px-4 py-2 text-sm hover:bg-muted rounded" onClick={(e) => e.stopPropagation()}>
                       Bıçak Aksesuarları
                     </Link>
                   </div>
