@@ -211,6 +211,51 @@ const Header = () => {
                     <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/kasik-yemler" className="w-full">Kaşık Yemler</Link></DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
+
+                {/* Misineler */}
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Misineler</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
+                    <DropdownMenuItem asChild>
+                      <Link to="/balik-av-malzemeleri/misineler/monofilament" className="w-full">Monofilament Misineler</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/balik-av-malzemeleri/misineler/fluorocarbon" className="w-full">Fluorocarbon Misineler</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/balik-av-malzemeleri/misineler/ip-orgu" className="w-full">İp - Örgü Misineler</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                {/* İğne ve Jighead */}
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>İğne ve Jighead</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/kursunlar" className="w-full">Kurşunlar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/jighead-zoka" className="w-full">Jighead - Zoka</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/assist-jig-igneleri" className="w-full">Assist Jig İğneleri</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/uclu-igneler" className="w-full">Üçlü İğneler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/firdondu-klips-halkalar" className="w-full">Fırdöndü - Klips - Halkalar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/tekli-igneler" className="w-full">Tekli İğneler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/ofset-igneler" className="w-full">Ofset İğneler</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+
+                {/* Aksesuarlar */}
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>Aksesuarlar</DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/cizmeler-ve-tulum-cizmeler" className="w-full">Çizmeler - Tulum Çizmeler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/samandira-ve-stopler" className="w-full">Şamandıra ve Stopler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/fenerler" className="w-full">Fenerler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/pense-gripper-makas" className="w-full">Pense - Gripper - Makas</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/kepce-livar-kakic-tripod" className="w-full">Kepçe - Livar - Kakıç - Tripod</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/sisme-yataklar" className="w-full">Şişme Yataklar</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/alarm-zil-fosfor-boncuk" className="w-full">Alarm - Zil - Fosfor - Boncuk</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/gozlukler" className="w-full">Gözlükler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/digerleri" className="w-full">Diğerleri</Link></DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/balikci-kiyafetleri-ve-eldivenler" className="w-full">Balıkçı Kıyafetleri ve Eldivenler</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/canta-ve-kutular" className="w-full">Çanta ve Kutular</Link></DropdownMenuItem>
