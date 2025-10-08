@@ -10,14 +10,14 @@ const Index = () => {
   return (
     <>
       <Helmet>
-        <title>BalıkPro - Kişiye Özel Balık Malzemeleri | Balıkçılık & Outdoor Ürünleri</title>
-        <meta name="description" content="Profesyonel balık av malzemeleri, outdoor giyim ve kamp ekipmanları. Daiwa, Shimano, Penn markaları ile kişiye özel balıkçılık çözümleri. Ücretsiz kargo!" />
-        <meta name="keywords" content="balık av malzemeleri, olta kamışı, makara, outdoor giyim, kamp malzemeleri, balıkçılık, daiwa, shimano" />
-        <meta property="og:title" content="BalıkPro - Kişiye Özel Balık Malzemeleri" />
+        <title>EgemOutdoor - Kişiye Özel Balık Malzemeleri | Balıkçılık & Outdoor Ürünleri</title>
+        <meta name="description" content="EgemOutdoor: profesyonel balık av malzemeleri, outdoor giyim ve kamp ekipmanları. Hızlı teslimat, güvenilir alışveriş." />
+        <meta name="keywords" content="EgemOutdoor, balık av malzemeleri, olta kamışı, olta makinesi, outdoor giyim, kamp malzemeleri, balıkçılık" />
+        <meta property="og:title" content="EgemOutdoor - Kişiye Özel Balık Malzemeleri" />
         <meta property="og:description" content="Profesyonel balık av malzemeleri ve outdoor ürünleri. Ücretsiz kargo ile hızlı teslimat!" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://balikpro.com" />
-        <link rel="canonical" href="https://balikpro.com" />
+        <meta property="og:url" content="https://egemoutdoor.com" />
+        <link rel="canonical" href="https://egemoutdoor.com" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Helmet>
       

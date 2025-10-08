@@ -5,27 +5,33 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { CartProvider } from "@/contexts/CartContext";
+import { lazy, Suspense } from "react";
+import { Loader2 } from "lucide-react";
+
+// Eagerly loaded components
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import UrunKategorileri from "./pages/UrunKategorileri";
-import CategoryPage from "./pages/CategoryPage";
-import Products from "./pages/Products";
-import Auth from "./pages/Auth";
-import Cart from "./pages/Cart";
-import ProductDetail from "./pages/ProductDetail";
-import Blog from "./pages/Blog";
-import Checkout from "./pages/Checkout";
-import Account from "./pages/Account";
-import Contact from "./pages/Contact";
-import About from "./pages/About";
-import FAQ from "./pages/FAQ";
-import Returns from "./pages/Returns";
-import Shipping from "./pages/Shipping";
-import OrderTracking from "./pages/OrderTracking";
-import Admin from "./pages/Admin";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
-import CookiePolicy from "./pages/CookiePolicy";
+
+// Lazy loaded components
+const NotFound = lazy(() => import("./pages/NotFound"));
+const UrunKategorileri = lazy(() => import("./pages/UrunKategorileri"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const Products = lazy(() => import("./pages/Products"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Cart = lazy(() => import("./pages/Cart"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Blog = lazy(() => import("./pages/Blog"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const Account = lazy(() => import("./pages/Account"));
+const Contact = lazy(() => import("./pages/Contact"));
+const About = lazy(() => import("./pages/About"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Returns = lazy(() => import("./pages/Returns"));
+const Shipping = lazy(() => import("./pages/Shipping"));
+const OrderTracking = lazy(() => import("./pages/OrderTracking"));
+const Admin = lazy(() => import("./pages/Admin"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 
 const queryClient = new QueryClient();
 
@@ -39,44 +45,182 @@ const App = () => (
           <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/urun-kategorileri" element={<UrunKategorileri />} />
-          <Route path="/kategori/:categorySlug" element={<CategoryPage />} />
-          <Route path="/urunler" element={<Products />} />
-          <Route path="/urun/:productId" element={<ProductDetail />} />
-          <Route path="/giris" element={<Auth />} />
-          <Route path="/sepet" element={<Cart />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:postId" element={<Blog />} />
+          <Route path="/urun-kategorileri" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <UrunKategorileri />
+            </Suspense>
+          } />
+          <Route path="/kategori/:categorySlug" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/urunler" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Products />
+            </Suspense>
+          } />
+          <Route path="/urun/:productId" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <ProductDetail />
+            </Suspense>
+          } />
+          <Route path="/giris" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Auth />
+            </Suspense>
+          } />
+          <Route path="/sepet" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Cart />
+            </Suspense>
+          } />
+          <Route path="/blog" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Blog />
+            </Suspense>
+          } />
+          <Route path="/blog/:postId" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Blog />
+            </Suspense>
+          } />
           
           {/* Category routes */}
-          <Route path="/balik-av-malzemeleri" element={<CategoryPage />} />
-          <Route path="/outdoor-giyim" element={<CategoryPage />} />
-          <Route path="/kamp-malzemeleri" element={<CategoryPage />} />
-          <Route path="/caki-bicak" element={<CategoryPage />} />
-          <Route path="/kisiye-ozel" element={<CategoryPage />} />
-          <Route path="/kisiye-ozel-teklif" element={<CategoryPage />} />
+          <Route path="/balik-av-malzemeleri" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/balik-av-malzemeleri/*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/outdoor-giyim" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/outdoor-giyim/*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/kamp-malzemeleri" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/kamp-malzemeleri/*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/caki-bicak" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/caki-bicak/*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/kisiye-ozel" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          {/* Dalış Ürünleri */}
+          <Route path="/dalis-urunleri" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/dalis-urunleri/*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
           
           {/* E-commerce pages */}
-          <Route path="/odeme" element={<Checkout />} />
-          <Route path="/hesabim" element={<Account />} />
-          <Route path="/iletisim" element={<Contact />} />
-          <Route path="/hakkimizda" element={<About />} />
-          <Route path="/siparis-takip" element={<OrderTracking />} />
-          <Route path="/iade-degisim" element={<Returns />} />
-          <Route path="/kargo-bilgileri" element={<Shipping />} />
-          <Route path="/sss" element={<FAQ />} />
+          <Route path="/odeme" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Checkout />
+            </Suspense>
+          } />
+          <Route path="/hesabim" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Account />
+            </Suspense>
+          } />
+          <Route path="/iletisim" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Contact />
+            </Suspense>
+          } />
+          <Route path="/hakkimizda" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <About />
+            </Suspense>
+          } />
+          <Route path="/siparis-takip" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <OrderTracking />
+            </Suspense>
+          } />
+          <Route path="/iade-degisim" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Returns />
+            </Suspense>
+          } />
+          <Route path="/kargo-bilgileri" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Shipping />
+            </Suspense>
+          } />
+          <Route path="/sss" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <FAQ />
+            </Suspense>
+          } />
           
           {/* Admin */}
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Admin />
+            </Suspense>
+          } />
           
           {/* Legal pages */}
-          <Route path="/gizlilik-politikasi" element={<PrivacyPolicy />} />
-          <Route path="/kullanim-kosullari" element={<TermsOfService />} />
-          <Route path="/cerez-politikasi" element={<CookiePolicy />} />
-          <Route path="/sifremi-unuttum" element={<NotFound />} />
+          <Route path="/gizlilik-politikasi" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <PrivacyPolicy />
+            </Suspense>
+          } />
+          <Route path="/kullanim-kosullari" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <TermsOfService />
+            </Suspense>
+          } />
+          <Route path="/cerez-politikasi" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CookiePolicy />
+            </Suspense>
+          } />
+          <Route path="/sifremi-unuttum" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <NotFound />
+            </Suspense>
+          } />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <NotFound />
+            </Suspense>
+          } />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

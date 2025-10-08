@@ -301,6 +301,10 @@ const CategoryPage = () => {
         <meta name="keywords" content={`${categoryData.title.toLowerCase()}, ${categoryData.title}, balık av malzemeleri, outdoor`} />
         <link rel="canonical" href={`https://balikpro.com${currentPath}`} />
         <meta name="robots" content="index, follow" />
+        <meta property="og:title" content={`${categoryData.title} - BalıkPro`} />
+        <meta property="og:description" content={categoryData.description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://balikpro.com${currentPath}`} />
       </Helmet>
       
       <div className="min-h-screen">
@@ -418,6 +422,8 @@ const CategoryPage = () => {
                           <img 
                             src={product.image} 
                             alt={product.name}
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>

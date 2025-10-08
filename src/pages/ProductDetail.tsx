@@ -263,10 +263,15 @@ const ProductDetail = () => {
   return (
     <>
       <Helmet>
-        <title>{product.name} | EgemOutdoor - Balık Av Malzemeleri & Outdoor Ürünleri</title>
-        <meta name="description" content={`${product.name} - ${product.description} EgemOutdoor'da en uygun fiyatlarla.`} />
+        <title>{product.name} | BalıkPro - Balık Av Malzemeleri & Outdoor Ürünleri</title>
+        <meta name="description" content={`${product.name} - ${product.description} BalıkPro'da en uygun fiyatlarla.`} />
         <meta name="keywords" content={`${product.name.toLowerCase()}, ${product.brand.toLowerCase()}, olta makinesi, balık av malzemeleri`} />
-        <link rel="canonical" href={`https://egemoutdoor.com/urun/${product.id}`} />
+        <meta property="og:title" content={`${product.name} - BalıkPro`} />
+        <meta property="og:description" content={product.description.substring(0, 160)} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={`https://balikpro.com/urun/${product.id}`} />
+        <meta property="og:image" content={product.images[0]} />
+        <link rel="canonical" href={`https://balikpro.com/urun/${product.id}`} />
         <meta name="robots" content="index, follow" />
       </Helmet>
 
@@ -300,6 +305,8 @@ const ProductDetail = () => {
                 <img 
                   src={product.images[selectedImage]} 
                   alt={product.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -315,6 +322,8 @@ const ProductDetail = () => {
                     <img 
                       src={image} 
                       alt={`${product.name} ${index + 1}`}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover"
                     />
                   </button>

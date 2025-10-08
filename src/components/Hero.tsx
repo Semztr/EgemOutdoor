@@ -13,6 +13,8 @@ const Hero = () => {
           src={heroImage} 
           alt="Professional fishing equipment" 
           className="w-full h-full object-cover"
+          loading="lazy"
+          decoding="async"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent"></div>
       </div>
