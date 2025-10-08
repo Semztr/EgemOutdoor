@@ -141,6 +141,64 @@ const Header = () => {
                             </div>
                           </AccordionContent>
                         </AccordionItem>
+                        <AccordionItem value="outdoor">
+                          <AccordionTrigger className="px-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Outdoor Giyim</AccordionTrigger>
+                          <AccordionContent>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <Link to="/outdoor-giyim/erkek/pantolon" className="px-3 py-3 rounded-lg bg-card border">Pantolon</Link>
+                              <Link to="/outdoor-giyim/erkek/tisort" className="px-3 py-3 rounded-lg bg-card border">Tişört</Link>
+                              <Link to="/outdoor-giyim/erkek/gomlek" className="px-3 py-3 rounded-lg bg-card border">Gömlek</Link>
+                              <Link to="/outdoor-giyim/erkek/mont-ve-ceket" className="px-3 py-3 rounded-lg bg-card border">Mont ve Ceket</Link>
+                              <Link to="/outdoor-giyim/erkek/ayakkabi" className="px-3 py-3 rounded-lg bg-card border">Ayakkabı</Link>
+                              <Link to="/outdoor-giyim/erkek/bot" className="px-3 py-3 rounded-lg bg-card border">Bot</Link>
+                              <Link to="/outdoor-giyim/erkek/sweatshirts" className="px-3 py-3 rounded-lg bg-card border">Sweatshirts</Link>
+                              <Link to="/outdoor-giyim/erkek/polar" className="px-3 py-3 rounded-lg bg-card border">Polar</Link>
+                              <Link to="/outdoor-giyim/erkek/yelek" className="px-3 py-3 rounded-lg bg-card border">Yelek</Link>
+                              <Link to="/outdoor-giyim/erkek/sort" className="px-3 py-3 rounded-lg bg-card border">Şort</Link>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="kamp">
+                          <AccordionTrigger className="px-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Kamp Malzemeleri</AccordionTrigger>
+                          <AccordionContent>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <Link to="/kamp-malzemeleri/kamp-ocagi" className="px-3 py-3 rounded-lg bg-card border">Kamp Ocağı</Link>
+                              <Link to="/kamp-malzemeleri/kartuslar" className="px-3 py-3 rounded-lg bg-card border">Kartuşlar</Link>
+                              <Link to="/kamp-malzemeleri/cizmeler" className="px-3 py-3 rounded-lg bg-card border">Çizmeler</Link>
+                              <Link to="/kamp-malzemeleri/sisme-urunler-ve-matlar" className="px-3 py-3 rounded-lg bg-card border">Şişme Ürünler ve Matlar</Link>
+                              <Link to="/kamp-malzemeleri/purmuz" className="px-3 py-3 rounded-lg bg-card border">Pürmüz</Link>
+                              <Link to="/kamp-malzemeleri/kamp-cantasi" className="px-3 py-3 rounded-lg bg-card border">Kamp Çantası</Link>
+                              <Link to="/kamp-malzemeleri/aydinlatma" className="px-3 py-3 rounded-lg bg-card border">Aydınlatma</Link>
+                              <Link to="/kamp-malzemeleri/cadirlar" className="px-3 py-3 rounded-lg bg-card border">Çadırlar</Link>
+                              <Link to="/kamp-malzemeleri/uyku-tulumlari" className="px-3 py-3 rounded-lg bg-card border">Uyku Tulumları</Link>
+                              <Link to="/kamp-malzemeleri/fenerler/kafa-lambasi" className="px-3 py-3 rounded-lg bg-card border">Kafa Lambası</Link>
+                              <Link to="/kamp-malzemeleri/fenerler/el-feneri" className="px-3 py-3 rounded-lg bg-card border">El Feneri</Link>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                        <AccordionItem value="dalis">
+                          <AccordionTrigger className="px-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Dalış Ürünleri</AccordionTrigger>
+                          <AccordionContent>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <Link to="/dalis-urunleri/denge-yelegi-bcd" className="px-3 py-3 rounded-lg bg-card border">Denge Yeleği (BCD)</Link>
+                              <Link to="/dalis-urunleri/dalis-bilgisayari" className="px-3 py-3 rounded-lg bg-card border">Dalış Bilgisayarı</Link>
+                              <Link to="/dalis-urunleri/dalis-bicak-ve-makaslar" className="px-3 py-3 rounded-lg bg-card border">Dalış Bıçak ve Makaslar</Link>
+                              <Link to="/dalis-urunleri/dalis-tup-ve-vanalar" className="px-3 py-3 rounded-lg bg-card border">Dalış Tüp ve Vanalar</Link>
+                              <Link to="/dalis-urunleri/regulatorler" className="px-3 py-3 rounded-lg bg-card border">Regülatörler</Link>
+                              <Link to="/dalis-urunleri/dalis-kemeri-ve-agirliklari" className="px-3 py-3 rounded-lg bg-card border">Dalış Kemeri ve Ağırlıkları</Link>
+                              <Link to="/dalis-urunleri/dalis-elbise-yelek-shorty" className="px-3 py-3 rounded-lg bg-card border">Dalış Elbise & Yelek & Shorty</Link>
+                              <Link to="/dalis-urunleri/konsol-pusula-manometre" className="px-3 py-3 rounded-lg bg-card border">Konsol & Pusula & Manometre</Link>
+                              <Link to="/dalis-urunleri/zepkin-modelleri" className="px-3 py-3 rounded-lg bg-card border">Zıpkın Modelleri</Link>
+                              <Link to="/dalis-urunleri/patik-eldiven-baslik" className="px-3 py-3 rounded-lg bg-card border">Patik & Eldiven & Başlık</Link>
+                              <Link to="/dalis-urunleri/dalis-samandiralari" className="px-3 py-3 rounded-lg bg-card border">Dalış Şamandıraları</Link>
+                              <Link to="/dalis-urunleri/zipkin-yedek-parcalari" className="px-3 py-3 rounded-lg bg-card border">Zıpkın Yedek Parçaları</Link>
+                              <Link to="/dalis-urunleri/dalis-yuzucu-paletleri" className="px-3 py-3 rounded-lg bg-card border">Dalış & Yüzücü Paletleri</Link>
+                              <Link to="/dalis-urunleri/dalis-cantalari" className="px-3 py-3 rounded-lg bg-card border">Dalış Çantaları</Link>
+                              <Link to="/dalis-urunleri/yedek-parca-ve-aksesuar" className="px-3 py-3 rounded-lg bg-card border">Yedek Parça ve Aksesuar</Link>
+                              <Link to="/dalis-urunleri/maske-snorkel-gozluk" className="px-3 py-3 rounded-lg bg-card border">Maske & Şnorkel & Gözlük</Link>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
                       </Accordion>
 
                       <Link to="/outdoor-giyim" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Outdoor Giyim</Link>

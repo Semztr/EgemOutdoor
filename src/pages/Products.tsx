@@ -180,13 +180,12 @@ const Products = () => {
             </form>
           </div>
         </section>
-
         {/* Search Results */}
         {searchQuery ? (
           <section className="py-12">
             <div className="container mx-auto px-4">
               {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
                   {filteredProducts.map((product) => (
                     <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
                       <div className="relative">
@@ -202,36 +201,31 @@ const Products = () => {
                           <Heart className="h-4 w-4" />
                         </Button>
 
-                        <CardContent className="p-6">
+                        <CardContent className="p-4 sm:p-5">
                           <Link to={`/urun/${product.id}`}>
-                            <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center text-6xl cursor-pointer hover:scale-105 transition-transform">
-                              {product.image}
+                            <div className="aspect-[4/5] bg-muted rounded-md mb-3 overflow-hidden flex items-center justify-center">
+                              <div className="w-full h-full flex items-center justify-center text-6xl">
+                                {product.image}
+                              </div>
                             </div>
-
-                            <div className="text-xs text-primary font-medium mb-2">{product.brand}</div>
-
-                            <h3 className="font-semibold text-foreground mb-2 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer">
+                            <div className="text-xs text-primary font-medium mb-1">{product.brand}</div>
+                            <h3 className="font-semibold text-foreground mb-1 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer text-sm sm:text-base">
                               {product.name}
                             </h3>
                           </Link>
-
-                          <div className="flex items-center gap-2 mb-3">
+                          <div className="flex items-center gap-2 mb-2">
                             <div className="flex items-center">
                               <Star className="h-4 w-4 fill-accent text-accent" />
                               <span className="ml-1 text-sm font-medium">{product.rating}</span>
                             </div>
                             <span className="text-xs text-muted-foreground">({product.reviews})</span>
                           </div>
-
-                          <div className="flex items-center gap-2 mb-4">
-                            <span className="text-xl font-bold text-primary">{product.price}₺</span>
+                          <div className="flex items-center gap-2 mb-3">
+                            <span className="text-base sm:text-lg font-semibold text-primary">{product.price}₺</span>
                             {product.originalPrice && (
-                              <span className="text-sm text-muted-foreground line-through">
-                                {product.originalPrice}₺
-                              </span>
+                              <span className="text-xs sm:text-sm text-muted-foreground line-through">{product.originalPrice}₺</span>
                             )}
                           </div>
-
                           <div className="flex gap-2">
                             <Button 
                               onClick={(e) => {
@@ -239,16 +233,14 @@ const Products = () => {
                                 handleAddToCart(product);
                               }}
                               size="sm" 
-                              className="flex-1 hover-scale transition-smooth" 
+                              className="flex-1 hover-scale transition-smooth min-h-10" 
                               disabled={!product.inStock}
                             >
                               <ShoppingCart className="h-4 w-4 mr-2" />
                               {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
                             </Button>
                             <Link to={`/urun/${product.id}`}>
-                              <Button variant="outline" size="sm">
-                                İncele
-                              </Button>
+                              <Button variant="outline" size="sm" className="min-h-10">İncele</Button>
                             </Link>
                           </div>
                         </CardContent>
@@ -260,9 +252,7 @@ const Products = () => {
                 <div className="text-center py-12">
                   <div className="text-6xl mb-4">🔍</div>
                   <h3 className="text-2xl font-bold text-foreground mb-2">Sonuç bulunamadı</h3>
-                  <p className="text-muted-foreground mb-6">
-                    "{searchQuery}" için hiçbir ürün bulunamadı. Farklı kelimeler deneyebilirsiniz.
-                  </p>
+                  <p className="text-muted-foreground mb-6">"{searchQuery}" için hiçbir ürün bulunamadı. Farklı kelimeler deneyebilirsiniz.</p>
                   <Button asChild className="hover-scale transition-smooth">
                     <Link to="/urunler" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Tüm Ürünleri Görüntüle</Link>
                   </Button>

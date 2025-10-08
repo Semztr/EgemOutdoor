@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-fishing.jpg';
 const Hero = () => {
   return (
-    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[40vh] md:min-h-[60vh] xl:min-h-[70vh] flex items-center justify-center overflow-hidden">
       {/* Background image with overlay */}
       <div className="absolute inset-0">
         <img 
@@ -19,7 +19,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-20">
+      <div className="relative z-10 container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-2xl">
           <div className="flex items-center gap-2 mb-4">
             <div className="flex text-accent">
@@ -56,7 +56,7 @@ const Hero = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center">
             <div>
               <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">1000+</div>
               <div className="text-xs sm:text-sm text-muted-foreground">Mutlu Müşteri</div>
