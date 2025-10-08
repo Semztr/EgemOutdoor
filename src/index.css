@@ -130,6 +130,29 @@
   body {
     @apply bg-background text-foreground font-sans antialiased;
   }
+
+  /* Global mobile UX improvements */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    overscroll-behavior-x: contain;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Media should not cause horizontal scroll */
+  img, video, canvas, svg {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Utility: prevent horizontal jitter on scroll containers */
+  .no-x-scroll {
+    overflow-x: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-y;
+  }
   
   /* Custom fishing-themed utilities */
   .gradient-hero {

@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heroImage from '@/assets/hero-fishing.jpg';
-
 const Hero = () => {
   return (
     <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
@@ -11,7 +10,7 @@ const Hero = () => {
       <div className="absolute inset-0">
         <img 
           src={heroImage} 
-          alt="Professional fishing equipment" 
+          alt="Professional fish equipment" 
           className="w-full h-full object-cover"
           loading="lazy"
           decoding="async"
@@ -31,14 +30,14 @@ const Hero = () => {
             <span className="text-sm text-muted-foreground">4.9/5 Müşteri Memnuniyeti</span>
           </div>
 
-          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
             Kişiye Özel
             <span className="gradient-primary bg-clip-text text-transparent block">
               Outdoor Ürünleri
             </span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
             Profesyonel outdoor ve balıkçılık ekipmanları. Kaliteli ve kişiye özel 
             ürünlerle doğada kendinizi güvende hissedin.
           </p>
@@ -57,18 +56,18 @@ const Hero = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-primary mb-1">1000+</div>
-              <div className="text-sm text-muted-foreground">Mutlu Müşteri</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">1000+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Mutlu Müşteri</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-1">500+</div>
-              <div className="text-sm text-muted-foreground">Özel Ürün</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">500+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Özel Ürün</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-primary mb-1">15+</div>
-              <div className="text-sm text-muted-foreground">Yıl Deneyim</div>
+              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">15+</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">Yıl Deneyim</div>
             </div>
           </div>
         </div>

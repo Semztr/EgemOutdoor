@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import SearchAutocomplete from '@/components/SearchAutocomplete';
 import { useAuth } from '@/hooks/useAuth';
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from '@/components/ui/sheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,10 +37,10 @@ const Header = () => {
       {/* Top bar */}
       <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
         <div className="container mx-auto flex items-center justify-between">
-          <span>Tüm Siparişlerinizde 24 Saat İçinde Kargoda!</span>
-          <div className="flex items-center gap-4">
+          <span className="text-xs md:text-sm">Tüm Siparişlerinizde 24 Saat İçinde Kargoda!</span>
+          <div className="hidden sm:flex items-center gap-2">
             <Phone className="h-4 w-4" />
-            <span>0452 214 17 43</span>
+            <span className="text-xs md:text-sm">0452 214 17 43</span>
           </div>
         </div>
       </div>
@@ -48,10 +49,10 @@ const Header = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2">
-            <img src="/favicon.png" alt="EgemOutdoor Logo" className="h-10 w-10 rounded" />
-            <div>
-              <h1 className="text-xl font-bold text-foreground">EgemOutdoor</h1>
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2 flex-shrink-0">
+            <img src="/favicon.png" alt="EgemOutdoor Logo" className="h-8 w-8 md:h-10 md:w-10 rounded" />
+            <div className="hidden sm:block">
+              <h1 className="text-lg md:text-xl font-bold text-foreground">EgemOutdoor</h1>
               <p className="text-xs text-muted-foreground">Kişiye Özel Outdoor Ürünleri</p>
             </div>
           </Link>
@@ -62,7 +63,7 @@ const Header = () => {
           </div>
 
           {/* Right side buttons */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -96,7 +97,7 @@ const Header = () => {
             )}
             
             <Link to="/sepet">
-              <Button variant="ghost" size="sm" className="relative">
+              <Button variant="ghost" size="sm" className="relative min-h-10 min-w-10">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="hidden md:inline ml-2">Sepetim</span>
                 <span className="absolute -top-1 -right-1 bg-accent text-accent-foreground rounded-full w-5 h-5 text-xs flex items-center justify-center">
@@ -105,15 +106,70 @@ const Header = () => {
               </Button>
             </Link>
 
-            <Button variant="ghost" size="sm" className="md:hidden">
-              <Menu className="h-5 w-5" />
-            </Button>
+            {/* Mobile Sheet for categories/brands */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="md:hidden min-h-10 min-w-10">
+                  <Menu className="h-6 w-6" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="pb-6 w-[85vw] sm:max-w-sm">
+                <SheetHeader className="pb-4">
+                  <SheetTitle className="text-center">Menü</SheetTitle>
+                </SheetHeader>
+                <div className="px-4 pb-2 space-y-6 max-h-[70vh] overflow-y-auto">
+                  {/* Search on mobile inside drawer */}
+                  <div className="md:hidden">
+                    <SearchAutocomplete className="w-full" />
+                  </div>
+
+                  {/* Categories */}
+                  <div>
+                    <div className="text-sm font-semibold text-muted-foreground mb-2">Kategoriler</div>
+                    <div className="grid grid-cols-1 gap-2">
+                      <Link to="/balik-av-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Balık Av Malzemeleri</Link>
+                      <Link to="/outdoor-giyim" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Outdoor Giyim</Link>
+                      <Link to="/kamp-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Kamp Malzemeleri</Link>
+                      <Link to="/dalis-urunleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Dalış Ürünleri</Link>
+                      <Link to="/urun-kategorileri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Tüm Kategoriler</Link>
+                    </div>
+                  </div>
+
+                  {/* Quick Links / Brands placeholder */}
+                  <div>
+                    <div className="text-sm font-semibold text-muted-foreground mb-2">Hızlı Linkler</div>
+                    <div className="grid grid-cols-1 gap-2">
+                      <Link to="/urunler" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Tüm Ürünler</Link>
+                      <Link to="/blog" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Blog</Link>
+                      <Link to="/iletisim" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">İletişim</Link>
+                      <Link to="/hakkimizda" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Hakkımızda</Link>
+                    </div>
+                  </div>
+
+                  {/* Auth / Account */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {user ? (
+                      <>
+                        <Link to="/hesabim" className="px-3 py-3 rounded-lg bg-primary text-primary-foreground text-center">Hesabım</Link>
+                        <button onClick={signOut} className="px-3 py-3 rounded-lg bg-destructive text-destructive-foreground">Çıkış Yap</button>
+                      </>
+                    ) : (
+                      <Link to="/giris" className="col-span-2 px-3 py-3 rounded-lg bg-primary text-primary-foreground text-center">Giriş Yap</Link>
+                    )}
+                  </div>
+
+                  <SheetClose asChild>
+                    <Button variant="outline" className="w-full mt-2">Kapat</Button>
+                  </SheetClose>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="mt-4 border-t border-border pt-4">
-          <div className="flex items-center justify-center gap-6">
+        {/* Navigation - Hidden on mobile */}
+        <nav className="hidden lg:block mt-4 border-t border-border pt-4">
+          <div className="flex items-center justify-center gap-6 flex-wrap">
             {/* Balık Av Malzemeleri */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -151,28 +207,11 @@ const Header = () => {
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Suni Yemler</DropdownMenuSubTrigger>
                   <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/hazir-olta-takimlari" className="w-full">Hazır Olta Takımları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/hazir-takim-ve-aksesuarlar" className="w-full">Hazır Takım ve Aksesuarları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/olta-makinaleri" className="w-full">Olta Makineleri</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/olta-kamislari" className="w-full">Olta Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/yapay-yemler" className="w-full">Yapay Yemler</Link></DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/olta-misina-ve-ipler" className="w-full">Olta Misina ve İpler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/olta-igne-jighead-zoka" className="w-full">Olta İğne & Jighead & Zoka</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/firdondu-klips-halka" className="w-full">Fırdöndü & Klips & Halka</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/canta-kutu-kova" className="w-full">Çanta & Kutu & Kova</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/balikci-giyim" className="w-full">Balıkçı Giyim</Link></DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/kepce-livar-pinter" className="w-full">Kepçe & Livar & Pinter</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/kamis-sehpa-tripod" className="w-full">Kamış Sehpa ve Tripod</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/yardimci-aksesuarlar" className="w-full">Yardımcı Aksesuarlar</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/tamir-bakim-yedek-parca" className="w-full">Tamir & Bakım & Yedek Parça</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/suni-yemler/balikci-cadir-mat-sandalye" className="w-full">Balıkçı Çadır & Mat & Sandalye</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/su-ustu-maketler" className="w-full">Su Üstü Maketler</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/kasik-yemler" className="w-full">Kaşık Yemler</Link></DropdownMenuItem>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/su-ustu-maketler" className="w-full">Su Üstü Maketler</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/kasik-yemler" className="w-full">Kaşık Yemler</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/balikci-kiyafetleri-ve-eldivenler" className="w-full">Balıkçı Kıyafetleri ve Eldivenler</Link></DropdownMenuItem>
                 <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/canta-ve-kutular" className="w-full">Çanta ve Kutular</Link></DropdownMenuItem>
               </DropdownMenuContent>
