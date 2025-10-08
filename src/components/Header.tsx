@@ -6,6 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 import SearchAutocomplete from '@/components/SearchAutocomplete';
 import { useAuth } from '@/hooks/useAuth';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from '@/components/ui/sheet';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -123,11 +124,25 @@ const Header = () => {
                     <SearchAutocomplete className="w-full" />
                   </div>
 
-                  {/* Categories */}
+                  {/* Categories with subcategories (mobile) */}
                   <div>
                     <div className="text-sm font-semibold text-muted-foreground mb-2">Kategoriler</div>
                     <div className="grid grid-cols-1 gap-2">
-                      <Link to="/balik-av-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Balık Av Malzemeleri</Link>
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="balik-av">
+                          <AccordionTrigger className="px-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Balık Av Malzemeleri</AccordionTrigger>
+                          <AccordionContent>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                              <Link to="/balik-av-malzemeleri/misineler" className="px-3 py-3 rounded-lg bg-card border">Misineler</Link>
+                              <Link to="/balik-av-malzemeleri/igne-jighead" className="px-3 py-3 rounded-lg bg-card border">İğne ve Jighead</Link>
+                              <Link to="/balik-av-malzemeleri/aksesuarlar" className="px-3 py-3 rounded-lg bg-card border">Aksesuarlar</Link>
+                              <Link to="/balik-av-malzemeleri/su-ustu-maketler" className="px-3 py-3 rounded-lg bg-card border">Su Üstü Maketler</Link>
+                              <Link to="/balik-av-malzemeleri/kasik-yemler" className="px-3 py-3 rounded-lg bg-card border">Kaşık Yemler</Link>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+
                       <Link to="/outdoor-giyim" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Outdoor Giyim</Link>
                       <Link to="/kamp-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Kamp Malzemeleri</Link>
                       <Link to="/dalis-urunleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Dalış Ürünleri</Link>
@@ -178,7 +193,7 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 bg-card z-50">
+              <DropdownMenuContent className="w-64 sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-2">
                 <DropdownMenuItem asChild>
                   <Link to="/balik-av-malzemeleri" className="font-semibold w-full">Tümünü Gör</Link>
                 </DropdownMenuItem>
@@ -270,7 +285,7 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-72 bg-card z-50">
+              <DropdownMenuContent className="w-72 sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-2">
                 <DropdownMenuItem asChild>
                   <Link to="/outdoor-giyim" className="font-semibold w-full">Tümünü Gör</Link>
                 </DropdownMenuItem>

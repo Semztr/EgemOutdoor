@@ -32,6 +32,10 @@ const Admin = lazy(() => import("./pages/Admin"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+// Category landing pages
+const Misineler = lazy(() => import("./pages/categories/Misineler"));
+const IgneJighead = lazy(() => import("./pages/categories/IgneJighead"));
+const Aksesuarlar = lazy(() => import("./pages/categories/Aksesuarlar"));
 
 const queryClient = new QueryClient();
 
@@ -90,6 +94,22 @@ const App = () => (
           <Route path="/balik-av-malzemeleri" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <CategoryPage />
+            </Suspense>
+          } />
+          {/* Fishing subcategory landing pages */}
+          <Route path="/balik-av-malzemeleri/misineler" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Misineler />
+            </Suspense>
+          } />
+          <Route path="/balik-av-malzemeleri/igne-jighead" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <IgneJighead />
+            </Suspense>
+          } />
+          <Route path="/balik-av-malzemeleri/aksesuarlar" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <Aksesuarlar />
             </Suspense>
           } />
           <Route path="/balik-av-malzemeleri/*" element={
