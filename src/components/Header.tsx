@@ -251,87 +251,67 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-2">
-                <DropdownMenuItem asChild>
-                  <Link to="/balik-av-malzemeleri" className="font-semibold w-full">Tümünü Gör</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Olta Makineleri</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-makineleri/spin" className="w-full">Spin Olta Makineleri</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-makineleri/lrf" className="w-full">LRF Olta Makineleri</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-makineleri/surf" className="w-full">Surf Olta Makineleri</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-makineleri/genel-kullanim" className="w-full">Genel Kullanım Olta Makineleri</Link></DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Olta Kamışları</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/telespin" className="w-full">Telespin Olta Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/teleskopik" className="w-full">Teleskopik Olta Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/spin" className="w-full">Spin Olta Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/lrf" className="w-full">LRF Olta Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/bot-tekne" className="w-full">Bot - Tekne Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/tatli-su" className="w-full">Tatlı Su Kamışları</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/olta-kamislari/light-spin" className="w-full">Light Spin Kamışlar</Link></DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Suni Yemler</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/su-ustu-maketler" className="w-full">Su Üstü Maketler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/kasik-yemler" className="w-full">Kaşık Yemler</Link></DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-
-                {/* Misineler */}
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Misineler</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild>
-                      <Link to="/balik-av-malzemeleri/misineler/monofilament" className="w-full">Monofilament Misineler</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/balik-av-malzemeleri/misineler/fluorocarbon" className="w-full">Fluorocarbon Misineler</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link to="/balik-av-malzemeleri/misineler/ip-orgu" className="w-full">İp - Örgü Misineler</Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                {/* İğne ve Jighead */}
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>İğne ve Jighead</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/kursunlar" className="w-full">Kurşunlar</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/jighead-zoka" className="w-full">Jighead - Zoka</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/assist-jig-igneleri" className="w-full">Assist Jig İğneleri</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/uclu-igneler" className="w-full">Üçlü İğneler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/firdondu-klips-halkalar" className="w-full">Fırdöndü - Klips - Halkalar</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/tekli-igneler" className="w-full">Tekli İğneler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/igne-jighead/ofset-igneler" className="w-full">Ofset İğneler</Link></DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-
-                {/* Aksesuarlar */}
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Aksesuarlar</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/cizmeler-ve-tulum-cizmeler" className="w-full">Çizmeler - Tulum Çizmeler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/samandira-ve-stopler" className="w-full">Şamandıra ve Stopler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/fenerler" className="w-full">Fenerler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/pense-gripper-makas" className="w-full">Pense - Gripper - Makas</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/kepce-livar-kakic-tripod" className="w-full">Kepçe - Livar - Kakıç - Tripod</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/sisme-yataklar" className="w-full">Şişme Yataklar</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/alarm-zil-fosfor-boncuk" className="w-full">Alarm - Zil - Fosfor - Boncuk</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/gozlukler" className="w-full">Gözlükler</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/aksesuarlar/digerleri" className="w-full">Diğerleri</Link></DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/balikci-kiyafetleri-ve-eldivenler" className="w-full">Balıkçı Kıyafetleri ve Eldivenler</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/balik-av-malzemeleri/canta-ve-kutular" className="w-full">Çanta ve Kutular</Link></DropdownMenuItem>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
+                <div className="mb-2">
+                  <Link to="/balik-av-malzemeleri" className="font-semibold">Tümünü Gör</Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Olta Makineleri</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/spin" className="text-sm block py-1">Spin Olta Makineleri</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/lrf" className="text-sm block py-1">LRF Olta Makineleri</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/surf" className="text-sm block py-1">Surf Olta Makineleri</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/genel-kullanim" className="text-sm block py-1">Genel Kullanım</Link>
+                  </div>
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Olta Kamışları</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/telespin" className="text-sm block py-1">Telespin</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/teleskopik" className="text-sm block py-1">Teleskopik</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/spin" className="text-sm block py-1">Spin</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/lrf" className="text-sm block py-1">LRF</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/bot-tekne" className="text-sm block py-1">Bot - Tekne</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/tatli-su" className="text-sm block py-1">Tatlı Su</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/light-spin" className="text-sm block py-1">Light Spin</Link>
+                  </div>
+                  <div className="col-span-1 xl:col-span-1 space-y-1">
+                    <DropdownMenuLabel className="px-0">Suni Yemler</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/su-ustu-maketler" className="text-sm block py-1">Su Üstü Maketler</Link>
+                    <Link to="/balik-av-malzemeleri/kasik-yemler" className="text-sm block py-1">Kaşık Yemler</Link>
+                  </div>
+                  <div className="col-span-1 xl:col-span-1 space-y-1">
+                    <DropdownMenuLabel className="px-0">Misineler</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/misineler/monofilament" className="text-sm block py-1">Monofilament</Link>
+                    <Link to="/balik-av-malzemeleri/misineler/fluorocarbon" className="text-sm block py-1">Fluorocarbon</Link>
+                    <Link to="/balik-av-malzemeleri/misineler/ip-orgu" className="text-sm block py-1">İp - Örgü</Link>
+                  </div>
+                  <div className="col-span-2 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">İğne ve Jighead</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/kursunlar" className="text-sm block py-1">Kurşunlar</Link>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/jighead-zoka" className="text-sm block py-1">Jighead - Zoka</Link>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/assist-jig-igneleri" className="text-sm block py-1">Assist Jig İğneleri</Link>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/uclu-igneler" className="text-sm block py-1">Üçlü İğneler</Link>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/firdondu-klips-halkalar" className="text-sm block py-1">Fırdöndü - Klips - Halkalar</Link>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/tekli-igneler" className="text-sm block py-1">Tekli İğneler</Link>
+                    <Link to="/balik-av-malzemeleri/igne-jighead/ofset-igneler" className="text-sm block py-1">Ofset İğneler</Link>
+                  </div>
+                  <div className="col-span-2 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Aksesuarlar</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/cizmeler-ve-tulum-cizmeler" className="text-sm block py-1">Çizmeler - Tulum</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/samandira-ve-stopler" className="text-sm block py-1">Şamandıra ve Stopler</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/fenerler" className="text-sm block py-1">Fenerler</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/pense-gripper-makas" className="text-sm block py-1">Pense - Gripper - Makas</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/kepce-livar-kakic-tripod" className="text-sm block py-1">Kepçe - Livar - Kakıç - Tripod</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/sisme-yataklar" className="text-sm block py-1">Şişme Yataklar</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/alarm-zil-fosfor-boncuk" className="text-sm block py-1">Alarm - Zil - Fosfor - Boncuk</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/gozlukler" className="text-sm block py-1">Gözlükler</Link>
+                    <Link to="/balik-av-malzemeleri/aksesuarlar/digerleri" className="text-sm block py-1">Diğerleri</Link>
+                  </div>
+                  <div className="col-span-2 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Diğer</DropdownMenuLabel>
+                    <Link to="/balik-av-malzemeleri/balikci-kiyafetleri-ve-eldivenler" className="text-sm block py-1">Balıkçı Kıyafetleri ve Eldivenler</Link>
+                    <Link to="/balik-av-malzemeleri/canta-ve-kutular" className="text-sm block py-1">Çanta ve Kutular</Link>
+                  </div>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -343,38 +323,40 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-72 sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-2">
-                <DropdownMenuItem asChild>
-                  <Link to="/outdoor-giyim" className="font-semibold w-full">Tümünü Gör</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                {/* Erkek sütunu */}
-                <DropdownMenuLabel>Erkek</DropdownMenuLabel>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/pantolon" className="w-full">Pantolon</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/tisort" className="w-full">Tişört</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/gomlek" className="w-full">Gömlek</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/mont-ve-ceket" className="w-full">Mont ve Ceket</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/ayakkabi" className="w-full">Ayakkabı</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/bot" className="w-full">Bot</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/sweatshirts" className="w-full">Sweatshirts</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/polar" className="w-full">Polar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/yelek" className="w-full">Yelek</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/erkek/sort" className="w-full">Şort</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                {/* Kadın sütunu */}
-                <DropdownMenuLabel>Kadın</DropdownMenuLabel>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/tisort" className="w-full">Tişört</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/ayakkabi" className="w-full">Ayakkabı</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/bot" className="w-full">Bot</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/mont-ve-ceket" className="w-full">Mont ve Ceket</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/pantolon" className="w-full">Pantolon</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/polar" className="w-full">Polar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/canta" className="w-full">Çanta</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/kadin/sapka" className="w-full">Şapka</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                {/* Diğer */}
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/bere" className="w-full">Bere</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/outdoor-giyim/termal-iclik" className="w-full">Termal İçlik</Link></DropdownMenuItem>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
+                <div className="mb-2">
+                  <Link to="/outdoor-giyim" className="font-semibold">Tümünü Gör</Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Erkek</DropdownMenuLabel>
+                    <Link to="/outdoor-giyim/erkek/pantolon" className="text-sm block py-1">Pantolon</Link>
+                    <Link to="/outdoor-giyim/erkek/tisort" className="text-sm block py-1">Tişört</Link>
+                    <Link to="/outdoor-giyim/erkek/gomlek" className="text-sm block py-1">Gömlek</Link>
+                    <Link to="/outdoor-giyim/erkek/mont-ve-ceket" className="text-sm block py-1">Mont ve Ceket</Link>
+                    <Link to="/outdoor-giyim/erkek/ayakkabi" className="text-sm block py-1">Ayakkabı</Link>
+                    <Link to="/outdoor-giyim/erkek/bot" className="text-sm block py-1">Bot</Link>
+                  </div>
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Kadın</DropdownMenuLabel>
+                    <Link to="/outdoor-giyim/kadin/tisort" className="text-sm block py-1">Tişört</Link>
+                    <Link to="/outdoor-giyim/kadin/ayakkabi" className="text-sm block py-1">Ayakkabı</Link>
+                    <Link to="/outdoor-giyim/kadin/bot" className="text-sm block py-1">Bot</Link>
+                    <Link to="/outdoor-giyim/kadin/mont-ve-ceket" className="text-sm block py-1">Mont ve Ceket</Link>
+                    <Link to="/outdoor-giyim/kadin/pantolon" className="text-sm block py-1">Pantolon</Link>
+                  </div>
+                  <div className="col-span-2 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Aksesuar</DropdownMenuLabel>
+                    <Link to="/outdoor-giyim/kadin/canta" className="text-sm block py-1">Çanta</Link>
+                    <Link to="/outdoor-giyim/kadin/sapka" className="text-sm block py-1">Şapka</Link>
+                    <Link to="/outdoor-giyim/bere" className="text-sm block py-1">Bere</Link>
+                    <Link to="/outdoor-giyim/termal-iclik" className="text-sm block py-1">Termal İçlik</Link>
+                    <Link to="/outdoor-giyim/erkek/sweatshirts" className="text-sm block py-1">Sweatshirts</Link>
+                    <Link to="/outdoor-giyim/erkek/polar" className="text-sm block py-1">Polar</Link>
+                    <Link to="/outdoor-giyim/erkek/yelek" className="text-sm block py-1">Yelek</Link>
+                    <Link to="/outdoor-giyim/erkek/sort" className="text-sm block py-1">Şort</Link>
+                  </div>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -386,36 +368,37 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-72 bg-card z-50">
-                <DropdownMenuItem asChild>
-                  <Link to="/kamp-malzemeleri" className="font-semibold w-full">Tümünü Gör</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/kamp-ocagi" className="w-full">Kamp Ocağı</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/kartuslar" className="w-full">Kartuşlar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/cizmeler" className="w-full">Çizmeler</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/sisme-urunler-ve-matlar" className="w-full">Şişme Ürünler ve Matlar</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/purmuz" className="w-full">Pürmüz</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/kamp-cantasi" className="w-full">Kamp Çantası</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/aydinlatma" className="w-full">Aydınlatma</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/cadirlar" className="w-full">Çadırlar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/uyku-tulumlari" className="w-full">Uyku Tulumları</Link></DropdownMenuItem>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Fenerler</DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="bg-card z-[100] pointer-events-auto">
-                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/fenerler/kafa-lambasi" className="w-full">Kafa Lambası</Link></DropdownMenuItem>
-                    <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/fenerler/el-feneri" className="w-full">El Feneri</Link></DropdownMenuItem>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/masalar-ve-sandalyeler" className="w-full">Masalar ve Sandalyeler</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/kopek-kovucu" className="w-full">Köpek Kovucu</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/balta-kurek" className="w-full">Balta , Kürek</Link></DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/kamp-mutfagi" className="w-full">Kamp Mutfağı</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/kamp-malzemeleri/kamp-ekipmanlari" className="w-full">Kamp Ekipmanları</Link></DropdownMenuItem>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
+                <div className="mb-2">
+                  <Link to="/kamp-malzemeleri" className="font-semibold">Tümünü Gör</Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Pişirme</DropdownMenuLabel>
+                    <Link to="/kamp-malzemeleri/kamp-ocagi" className="text-sm block py-1">Kamp Ocağı</Link>
+                    <Link to="/kamp-malzemeleri/kartuslar" className="text-sm block py-1">Kartuşlar</Link>
+                    <Link to="/kamp-malzemeleri/purmuz" className="text-sm block py-1">Pürmüz</Link>
+                    <Link to="/kamp-malzemeleri/kamp-mutfagi" className="text-sm block py-1">Kamp Mutfağı</Link>
+                  </div>
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Barınma & Uyku</DropdownMenuLabel>
+                    <Link to="/kamp-malzemeleri/cadirlar" className="text-sm block py-1">Çadırlar</Link>
+                    <Link to="/kamp-malzemeleri/uyku-tulumlari" className="text-sm block py-1">Uyku Tulumları</Link>
+                    <Link to="/kamp-malzemeleri/sisme-urunler-ve-matlar" className="text-sm block py-1">Şişme Ürünler ve Matlar</Link>
+                  </div>
+                  <div className="col-span-2 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Aksesuar</DropdownMenuLabel>
+                    <Link to="/kamp-malzemeleri/kamp-cantasi" className="text-sm block py-1">Kamp Çantası</Link>
+                    <Link to="/kamp-malzemeleri/aydinlatma" className="text-sm block py-1">Aydınlatma</Link>
+                    <Link to="/kamp-malzemeleri/fenerler/kafa-lambasi" className="text-sm block py-1">Kafa Lambası</Link>
+                    <Link to="/kamp-malzemeleri/fenerler/el-feneri" className="text-sm block py-1">El Feneri</Link>
+                    <Link to="/kamp-malzemeleri/masalar-ve-sandalyeler" className="text-sm block py-1">Masalar ve Sandalyeler</Link>
+                    <Link to="/kamp-malzemeleri/cizmeler" className="text-sm block py-1">Çizmeler</Link>
+                    <Link to="/kamp-malzemeleri/balta-kurek" className="text-sm block py-1">Balta , Kürek</Link>
+                    <Link to="/kamp-malzemeleri/kopek-kovucu" className="text-sm block py-1">Köpek Kovucu</Link>
+                    <Link to="/kamp-malzemeleri/kamp-ekipmanlari" className="text-sm block py-1">Kamp Ekipmanları</Link>
+                  </div>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -432,28 +415,36 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-72 bg-card z-50">
-                <DropdownMenuItem asChild>
-                  <Link to="/dalis-urunleri" className="font-semibold w-full">Tümünü Gör</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/denge-yelegi-bcd" className="w-full">Denge Yeleği (BCD)</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-bilgisayari" className="w-full">Dalış Bilgisayarı</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-bicak-ve-makaslar" className="w-full">Dalış Bıçak ve Makaslar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-tup-ve-vanalar" className="w-full">Dalış Tüp ve Vanalar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/regulatorler" className="w-full">Regülatörler</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-kemeri-ve-agirliklari" className="w-full">Dalış Kemeri ve Ağırlıkları</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-elbise-yelek-shorty" className="w-full">Dalış Elbise & Yelek & Shorty</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/konsol-pusula-manometre" className="w-full">Konsol & Pusula & Manometre</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/zepkin-modelleri" className="w-full">Zıpkın Modelleri</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/patik-eldiven-baslik" className="w-full">Patik & Eldiven & Başlık</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-samandiralari" className="w-full">Dalış Şamandıraları</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/zipkin-yedek-parcalari" className="w-full">Zıpkın Yedek Parçaları</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-yuzucu-paletleri" className="w-full">Dalış & Yüzücü Paletleri</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/dalis-cantalari" className="w-full">Dalış Çantaları</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/yedek-parca-ve-aksesuar" className="w-full">Yedek Parça ve Aksesuar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/dalis-urunleri/maske-snorkel-gozluk" className="w-full">Maske & Şnorkel & Gözlük</Link></DropdownMenuItem>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
+                <div className="mb-2">
+                  <Link to="/dalis-urunleri" className="font-semibold">Tümünü Gör</Link>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Ekipman</DropdownMenuLabel>
+                    <Link to="/dalis-urunleri/denge-yelegi-bcd" className="text-sm block py-1">Denge Yeleği (BCD)</Link>
+                    <Link to="/dalis-urunleri/dalis-bilgisayari" className="text-sm block py-1">Dalış Bilgisayarı</Link>
+                    <Link to="/dalis-urunleri/regulatorler" className="text-sm block py-1">Regülatörler</Link>
+                    <Link to="/dalis-urunleri/konsol-pusula-manometre" className="text-sm block py-1">Konsol & Pusula & Manometre</Link>
+                    <Link to="/dalis-urunleri/dalis-tup-ve-vanalar" className="text-sm block py-1">Dalış Tüp ve Vanalar</Link>
+                  </div>
+                  <div className="col-span-1 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Giyim & Parça</DropdownMenuLabel>
+                    <Link to="/dalis-urunleri/dalis-elbise-yelek-shorty" className="text-sm block py-1">Elbise & Yelek & Shorty</Link>
+                    <Link to="/dalis-urunleri/patik-eldiven-baslik" className="text-sm block py-1">Patik & Eldiven & Başlık</Link>
+                    <Link to="/dalis-urunleri/dalis-cantalari" className="text-sm block py-1">Dalış Çantaları</Link>
+                    <Link to="/dalis-urunleri/yedek-parca-ve-aksesuar" className="text-sm block py-1">Yedek Parça ve Aksesuar</Link>
+                  </div>
+                  <div className="col-span-2 xl:col-span-2 space-y-1">
+                    <DropdownMenuLabel className="px-0">Av & Aksesuar</DropdownMenuLabel>
+                    <Link to="/dalis-urunleri/zepkin-modelleri" className="text-sm block py-1">Zıpkın Modelleri</Link>
+                    <Link to="/dalis-urunleri/zipkin-yedek-parcalari" className="text-sm block py-1">Zıpkın Yedek Parçaları</Link>
+                    <Link to="/dalis-urunleri/dalis-yuzucu-paletleri" className="text-sm block py-1">Dalış & Yüzücü Paletleri</Link>
+                    <Link to="/dalis-urunleri/maske-snorkel-gozluk" className="text-sm block py-1">Maske & Şnorkel & Gözlük</Link>
+                    <Link to="/dalis-urunleri/dalis-bicak-ve-makaslar" className="text-sm block py-1">Dalış Bıçak ve Makaslar</Link>
+                    <Link to="/dalis-urunleri/dalis-samandiralari" className="text-sm block py-1">Dalış Şamandıraları</Link>
+                  </div>
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
 
