@@ -118,10 +118,10 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="embla overflow-hidden" ref={emblaRef}>
-          <div className="embla__container flex gap-6">
+          <div className="embla__container flex gap-5">
             {products.map((product) => (
-              <div key={product.id} className="embla__slide flex-[0_0_300px] min-w-0">
-                <Card className="gradient-card border-border hover-lift group relative overflow-hidden shadow-card">
+              <div key={product.id} className="embla__slide flex-[0_0_240px] min-w-0">
+                <Card className="gradient-card border-border group relative overflow-hidden shadow-card">
                   {/* Badge */}
                   <div className="absolute top-3 left-3 z-10">
                     <span
@@ -138,13 +138,13 @@ const FeaturedProducts = () => {
                   </div>
 
                   {/* Heart icon */}
-                  <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
+                  <Button variant="ghost" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
                     <Heart className="h-4 w-4" />
                   </Button>
 
-                  <CardContent className="p-6">
+                  <CardContent className="p-4">
                     {/* Product image */}
-                    <div className="aspect-square bg-muted rounded-lg mb-4 overflow-hidden">
+                    <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -155,21 +155,21 @@ const FeaturedProducts = () => {
                     </div>
 
                     {/* Brand */}
-                    <div className="text-xs text-primary font-medium mb-2">{product.brand}</div>
+                    <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
 
                     {/* Product name */}
-                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[48px] group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
                       {product.name}
                     </h3>
 
                     {/* Product description */}
-                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2 min-h-[32px]">{product.description}</p>
+                    <p className="text-[11px] text-muted-foreground mb-2 line-clamp-2 min-h-[28px]">{product.description}</p>
 
                     {/* Price */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl font-bold text-foreground">₺{product.price.toLocaleString()}</span>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-lg font-bold text-foreground">₺{product.price.toLocaleString()}</span>
                       {product.originalPrice && (
-                        <span className="text-sm text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
+                        <span className="text-xs text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
                       )}
                     </div>
 

@@ -74,16 +74,16 @@ const BrandShowcase = () => {
         </div>
 
         <div className="embla overflow-hidden mb-12" ref={emblaRef}>
-          <div className="embla__container flex gap-6">
+          <div className="embla__container flex gap-0">
             {brands.map((brand, index) => (
-              <div key={index} className="embla__slide flex-[0_0_240px] min-w-0 px-1">
+              <div key={index} className="embla__slide flex-[0_0_220px] min-w-0 px-3">
                 <Card className="gradient-card border-border shadow-card h-full w-full">
-                  <CardContent className="p-6 text-center">
-                    <div className="h-20 md:h-24 mb-3 flex items-center justify-center">
+                  <CardContent className="p-5 text-center">
+                    <div className="h-16 md:h-20 mb-3 flex items-center justify-center">
                       <img
                         src={brand.logo}
                         alt={`${brand.name} logo`}
-                        className="max-h-16 md:max-h-20 w-auto object-contain"
+                        className="max-h-full w-auto max-w-[140px] object-contain mx-auto"
                       />
                     </div>
                     <h3 className="font-semibold text-foreground mb-1">{brand.name}</h3>
