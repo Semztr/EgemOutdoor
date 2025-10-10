@@ -126,8 +126,17 @@ const Contact = () => {
                   <CardTitle>Harita</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                    <p className="text-muted-foreground">Harita yükleniyor...</p>
+                  <div className="rounded-lg overflow-hidden border">
+                    <iframe
+                      title="EgemOutdoor Konum"
+                      src="https://www.google.com/maps?q=D%C3%BCz%20Mah.%20S%C4%B1rr%C4%B1pa%C5%9Fa%20Cad.%20No%3A18%2C%20Alt%C4%B1nordu%20%2F%20ORDU&output=embed"
+                      width="100%"
+                      height="360"
+                      style={{ border: 0 }}
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
                   </div>
                 </CardContent>
               </Card>

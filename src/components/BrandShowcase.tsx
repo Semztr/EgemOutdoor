@@ -1,31 +1,43 @@
-import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import useEmblaCarousel from 'embla-carousel-react';
+import React, { useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 
 const BrandShowcase = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'start',
+    align: "start",
     slidesToScroll: 1,
-    containScroll: 'trimSnaps',
+    containScroll: "trimSnaps",
     loop: true,
   });
+
+  // Autoplay
+  
 
   const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   const brands = [
-    { name: 'Salomon', logo: '/salomon.png', description: 'Outdoor sporlarında Fransız kalitesi' },
-    { name: 'Helly Hansen', logo: '/Hellyhansen.png', description: 'Norveç\'ten denizcilik ve outdoor uzmanı' },
-    { name: 'Jack Wolfskin', logo: '/jackwolfskin.png', description: 'Alman mühendisliği ile outdoor giyim' },
-    { name: 'Asolo', logo: '/asolo.png', description: 'İtalyan trekking botu ustası' },
-    { name: 'Stanley', logo: '/stanley.png', description: 'Efsanevi termos ve kamp ekipmanları' },
-    { name: 'Savage Gear', logo: '/sevagegear.png', description: 'Yırtıcı balık avında uzman' },
-    { name: 'Daiwa', logo: '/daiwa.png', description: 'Japonya\'nın prestijli balık malzemeleri' },
-    { name: 'Okuma', logo: '/okuma.png', description: 'Profesyonel balıkçılık ekipmanları' },
-    { name: 'Apnea', logo: '/apnea.png', description: 'Sualtı avı ve dalış ekipmanları' }
+    { name: "Okuma", logo: "/okuma.png", description: "Profesyonel balıkçılık ekipmanları" },
+    { name: "Apnea", logo: "/apnea.png", description: "Sualtı avı ve dalış ekipmanları" },
+    { name: "Salomon", logo: "/salomon.png", description: "Outdoor sporlarında Fransız kalitesi" },
+    { name: "Helly Hansen", logo: "/Hellyhansen.png", description: "Norveç'ten denizcilik ve outdoor uzmanı" },
+    { name: "Jack Wolfskin", logo: "/jackwolfskin.png", description: "Alman mühendisliği ile outdoor giyim" },
+    { name: "Asolo", logo: "/asolo.png", description: "İtalyan trekking botu ustası" },
+    { name: "Peak Performance", logo: "/peakperformance.png", description: "İsveç outdoor giyim markası" },
+    { name: "Stanley", logo: "/stanley.png", description: "Efsanevi termos ve kamp ekipmanları" },
+    { name: "Savage Gear", logo: "/sevagegear.png", description: "Yırtıcı balık avında uzman" },
+    { name: "Daiwa", logo: "/daiwa.png", description: "Japonya'nın prestijli balık malzemeleri" },
   ];
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const id = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 3500);
+    return () => clearInterval(id);
+  }, [emblaApi]);
 
   return (
     <section className="py-20">
@@ -64,14 +76,14 @@ const BrandShowcase = () => {
         <div className="embla overflow-hidden mb-12" ref={emblaRef}>
           <div className="embla__container flex gap-6">
             {brands.map((brand, index) => (
-              <div key={index} className="embla__slide flex-[0_0_220px] min-w-0">
-                <Card className="gradient-card border-border shadow-card">
+              <div key={index} className="embla__slide flex-[0_0_240px] min-w-0">
+                <Card className="gradient-card border-border shadow-card h-full">
                   <CardContent className="p-6 text-center">
-                    <div className="h-16 md:h-20 mb-3 flex items-center justify-center">
+                    <div className="h-20 md:h-24 mb-3 flex items-center justify-center">
                       <img
                         src={brand.logo}
                         alt={`${brand.name} logo`}
-                        className="h-12 md:h-14 w-auto object-contain"
+                        className="max-h-16 md:max-h-20 w-auto object-contain"
                       />
                     </div>
                     <h3 className="font-semibold text-foreground mb-1">{brand.name}</h3>
