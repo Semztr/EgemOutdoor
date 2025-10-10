@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, User, Search, Menu, Phone, LogOut, ChevronDown } from 'lucide-react';
+import { ShoppingCart, User, Search, Menu, Phone, LogOut, ChevronDown, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
@@ -39,9 +39,10 @@ const Header = () => {
       <div className="bg-primary text-primary-foreground py-2 px-4 text-center text-sm">
         <div className="container mx-auto flex items-center justify-between">
           <span className="text-xs md:text-sm">Tüm Siparişlerinizde 24 Saat İçinde Kargoda!</span>
-          <div className="hidden sm:flex items-center gap-2">
+          <div className="hidden sm:flex items-center gap-3">
             <Phone className="h-4 w-4" />
             <span className="text-xs md:text-sm">0452 214 17 43</span>
+            <span className="text-xs md:text-sm">0533 640 77 58</span>
           </div>
         </div>
       </div>
@@ -65,6 +66,21 @@ const Header = () => {
 
           {/* Right side buttons */}
           <div className="flex items-center space-x-2 md:space-x-4">
+            {/* Social icons first */}
+            <div className="hidden md:flex items-center space-x-1">
+              <a href="https://www.facebook.com/egemordu" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <Facebook className="h-5 w-5" />
+                </Button>
+              </a>
+              <a href="https://www.instagram.com/egemoutdoor/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <Button variant="ghost" size="icon" className="hover:text-primary">
+                  <Instagram className="h-5 w-5" />
+                </Button>
+              </a>
+            </div>
+
+            {/* Login / Account after icons */}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -96,7 +112,7 @@ const Header = () => {
                 </Button>
               </Link>
             )}
-            
+
             <Link to="/sepet">
               <Button variant="ghost" size="sm" className="relative min-h-10 min-w-10">
                 <ShoppingCart className="h-5 w-5" />

@@ -84,21 +84,21 @@ const Contact = () => {
                     <div>
                       <p className="font-semibold">Adres</p>
                       <p className="text-sm text-muted-foreground">
-                        Atatürk Mah. Örnek Sok. No:123<br />
-                        Karşıyaka, İzmir<br />
-                        35000 Türkiye
+                        Düz Mah. Sırrıpaşa Cad. No:18<br />
+                        Altınordu / ORDU
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <Phone className="h-5 w-5 text-primary mt-1" />
                     <div>
                       <p className="font-semibold">Telefon</p>
-                      <p className="text-sm text-muted-foreground">+90 232 123 45 67</p>
+                      <p className="text-sm text-muted-foreground">0452 214 17 43</p>
+                      <p className="text-sm text-muted-foreground">0533 640 77 58</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <Mail className="h-5 w-5 text-primary mt-1" />
                     <div>
@@ -106,7 +106,7 @@ const Contact = () => {
                       <p className="text-sm text-muted-foreground">info@egemoutdoor.com</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <Clock className="h-5 w-5 text-primary mt-1" />
                     <div>

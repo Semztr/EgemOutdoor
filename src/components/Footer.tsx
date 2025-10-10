@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, Mail, MapPin, Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
 const Footer = () => {
   return <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-16">
@@ -12,9 +13,7 @@ const Footer = () => {
             top: 0,
             behavior: 'smooth'
           })} className="flex items-center space-x-2 mb-6 hover:opacity-80 transition-opacity cursor-pointer">
-              <div className="gradient-primary p-2 rounded-lg">
-                <div className="text-primary-foreground font-bold text-xl">🎣</div>
-              </div>
+              <img src="/favicon.png" alt="EgemOutdoor Logo" className="h-8 w-8 md:h-10 md:w-10 rounded" />
               <div>
                 <h3 className="text-xl font-bold text-foreground">EgemOutdoor</h3>
                 <p className="text-xs text-muted-foreground">Kişiye Özel Outdoor Ürünleri</p>
@@ -25,24 +24,14 @@ const Footer = () => {
               ve kişiye özel ürünleri sunuyoruz.
             </p>
             <div className="flex space-x-3">
-              <a href="https://facebook.com/balikpro" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.facebook.com/egemordu" target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="icon" className="hover:text-primary">
                   <Facebook className="h-5 w-5" />
                 </Button>
               </a>
-              <a href="https://instagram.com/balikpro" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/egemoutdoor/" target="_blank" rel="noopener noreferrer">
                 <Button variant="ghost" size="icon" className="hover:text-primary">
                   <Instagram className="h-5 w-5" />
-                </Button>
-              </a>
-              <a href="https://twitter.com/balikpro" target="_blank" rel="noopener noreferrer">
-                <Button variant="ghost" size="icon" className="hover:text-primary">
-                  <Twitter className="h-5 w-5" />
-                </Button>
-              </a>
-              <a href="https://youtube.com/@balikpro" target="_blank" rel="noopener noreferrer">
-                <Button variant="ghost" size="icon" className="hover:text-primary">
-                  <Youtube className="h-5 w-5" />
                 </Button>
               </a>
             </div>
@@ -77,11 +66,27 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/kisiye-ozel" onClick={() => window.scrollTo({
+                <Link to="/dalis-urunleri" onClick={() => window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
               })} className="text-muted-foreground hover:text-primary transition-colors">
-                  Kişiye Özel Ürünler
+                  Dalış Ürünleri
+                </Link>
+              </li>
+              <li>
+                <Link to="/termoslar-ve-mataralar" onClick={() => window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              })} className="text-muted-foreground hover:text-primary transition-colors">
+                  Termoslar ve Mataralar
+                </Link>
+              </li>
+              <li>
+                <Link to="/spor-malzemeleri" onClick={() => window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              })} className="text-muted-foreground hover:text-primary transition-colors">
+                  Spor Malzemeleri
                 </Link>
               </li>
               
@@ -125,7 +130,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                
+                <Link to="/iletisim" onClick={() => window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              })} className="text-muted-foreground hover:text-primary transition-colors">
+                  İletişim
+                </Link>
               </li>
             </ul>
           </div>
@@ -134,9 +144,12 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold text-foreground mb-6">İletişim</h4>
             <div className="space-y-4">
-              <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">0452 214 17 43</span>
+              <div className="flex items-start space-x-3">
+                <Phone className="h-5 w-5 text-primary mt-1" />
+                <div className="flex flex-col">
+                  <span className="text-muted-foreground">0452 214 17 43</span>
+                  <span className="text-muted-foreground">0533 640 77 58</span>
+                </div>
               </div>
               <div className="flex items-center space-x-3">
               <Mail className="h-5 w-5 text-primary" />
