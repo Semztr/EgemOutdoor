@@ -4,263 +4,183 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Package } from 'lucide-react';
+import { ArrowRight, Fish, Shirt, Tent, Waves, CupSoda, Dumbbell } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 
+type Subcat = { name: string; slug: string };
+type SiteCategory = {
+  title: string;
+  slug: string;
+  icon: React.ReactNode;
+  count: number;
+  subcategories: Subcat[];
+};
+
+const siteCategories: SiteCategory[] = [
+  {
+    title: 'Balık Av Malzemeleri',
+    slug: 'balik-av-malzemeleri',
+    icon: <Fish className="h-5 w-5 text-primary" />,
+    count: 456,
+    subcategories: [
+      { name: 'Olta Makineleri', slug: 'olta-makineleri' },
+      { name: 'Olta Kamışları', slug: 'olta-kamislari' },
+      { name: 'Suni Yemler', slug: 'suni-yemler' },
+      { name: 'Misineler', slug: 'misineler' },
+      { name: 'İğne ve Jighead', slug: 'igne-jighead' },
+      { name: 'Aksesuarlar', slug: 'aksesuarlar' },
+      { name: 'Diğer', slug: 'diger' },
+    ],
+  },
+  {
+    title: 'Outdoor Giyim',
+    slug: 'outdoor-giyim',
+    icon: <Shirt className="h-5 w-5 text-primary" />,
+    count: 312,
+    subcategories: [
+      { name: 'Erkek: Pantolon', slug: 'erkek/pantolon' },
+      { name: 'Erkek: Mont & Ceket', slug: 'erkek/mont-ve-ceket' },
+      { name: 'Erkek: Ayakkabı & Bot', slug: 'erkek/ayakkabi' },
+      { name: 'Kadın: Tişört', slug: 'kadin/tisort' },
+      { name: 'Kadın: Ayakkabı & Bot', slug: 'kadin/ayakkabi' },
+      { name: 'Aksesuar: Çanta, Şapka, Bere', slug: 'aksesuar' },
+    ],
+  },
+  {
+    title: 'Kamp Malzemeleri',
+    slug: 'kamp-malzemeleri',
+    icon: <Tent className="h-5 w-5 text-primary" />,
+    count: 289,
+    subcategories: [
+      { name: 'Pişirme: Kamp Ocağı, Kartuş, Pürmüz', slug: 'pisirme' },
+      { name: 'Barınma & Uyku: Çadır, Uyku Tulumu', slug: 'barinma-uyku' },
+      { name: 'Aksesuar: Çanta, Aydınlatma, Kafa Lambası', slug: 'aksesuar' },
+    ],
+  },
+  {
+    title: 'Dalış Ürünleri',
+    slug: 'dalis-urunleri',
+    icon: <Waves className="h-5 w-5 text-primary" />,
+    count: 167,
+    subcategories: [
+      { name: 'Denge Yeleği (BCD), Regülatör', slug: 'ekipman' },
+      { name: 'Elbise, Patik & Eldiven & Başlık', slug: 'giyim-parca' },
+      { name: 'Zıpkın, Palet, Maske & Şnorkel', slug: 'av-aksesuar' },
+    ],
+  },
+  {
+    title: 'Termoslar ve Mataralar',
+    slug: 'termoslar-ve-mataralar',
+    icon: <CupSoda className="h-5 w-5 text-primary" />,
+    count: 98,
+    subcategories: [
+      { name: 'Termoslar', slug: 'termoslar' },
+      { name: 'Mataralar', slug: 'mataralar' },
+      { name: 'Yedek Parça & Aksesuar', slug: 'aksesuar' },
+    ],
+  },
+  {
+    title: 'Spor Malzemeleri',
+    slug: 'spor-malzemeleri',
+    icon: <Dumbbell className="h-5 w-5 text-primary" />,
+    count: 120,
+    subcategories: [
+      { name: 'Toplar', slug: 'toplar' },
+      { name: 'Fitness Bantları', slug: 'fitness-bantlari' },
+      { name: 'Saha Ekipmanları', slug: 'saha-ekipmanlari' },
+    ],
+  },
+];
+
+const specialCategories = [
+  { title: 'Yeni Gelenler', slug: 'yeni-gelenler', icon: '🆕', count: 64 },
+  { title: 'Çok Satanlar', slug: 'cok-satanlar', icon: '🔥', count: 120 },
+  { title: 'İndirimdekiler', slug: 'indirim', icon: '🏷️', count: 210 },
+];
+
 const UrunKategorileri = () => {
-  const categories = [
-    {
-      title: "GİYİM",
-      slug: "giyim",
-      icon: "👕",
-      count: 145,
-      subcategories: [
-        { name: "Balık Av Giyim", slug: "balik-av-giyim" },
-        { name: "Outdoor Ceketler", slug: "outdoor-ceketler" },
-        { name: "Yağmurluk", slug: "yagmurluk" },
-        { name: "Pantolon", slug: "pantolon" }
-      ]
-    },
-    {
-      title: "AYAKKABI",
-      slug: "ayakkabi",
-      icon: "👟",
-      count: 89,
-      subcategories: [
-        { name: "Balık Av Botları", slug: "balik-av-botlari" },
-        { name: "Wader", slug: "wader" },
-        { name: "Outdoor Ayakkabı", slug: "outdoor-ayakkabi" }
-      ]
-    },
-    {
-      title: "SAAT · GÖZLÜK",
-      slug: "saat-gozluk",
-      icon: "⌚",
-      count: 76,
-      subcategories: [
-        { name: "Outdoor Saatler", slug: "outdoor-saatler" },
-        { name: "Güneş Gözlüğü", slug: "gunes-gozlugu" },
-        { name: "Polarize Gözlük", slug: "polarize-gozluk" }
-      ]
-    },
-    {
-      title: "OUTDOOR YAŞAM",
-      slug: "outdoor-yasam",
-      icon: "🏔️",
-      count: 234,
-      subcategories: [
-        { name: "Çanta & Sırt Çantası", slug: "canta-sirt-cantasi" },
-        { name: "Thermos & Matara", slug: "thermos-matara" },
-        { name: "Survival Ekipmanları", slug: "survival-ekipmanlari" }
-      ]
-    },
-    {
-      title: "FENER & AYDINLATMA",
-      slug: "fener-aydinlatma",
-      icon: "🔦",
-      count: 112,
-      subcategories: [
-        { name: "El Fenerleri", slug: "el-fenerleri" },
-        { name: "Kafa Lambaları", slug: "kafa-lambalari" },
-        { name: "Şarjlı Fenerler", slug: "sarjli-fenerler" }
-      ]
-    },
-    {
-      title: "DÜRBÜN & TELESKOP",
-      slug: "durbun-teleskop",
-      icon: "🔭",
-      count: 45,
-      subcategories: [
-        { name: "Avcılık Dürbünü", slug: "avcilik-durbunu" },
-        { name: "Teleskop", slug: "teleskop" },
-        { name: "Gece Görüş", slug: "gece-gorus" }
-      ]
-    },
-    {
-      title: "DAĞCILIK & TIRMANIŞ",
-      slug: "dagcilik-tirmanis",
-      icon: "⛰️",
-      count: 178,
-      subcategories: [
-        { name: "Tırmanış Ekipmanları", slug: "tirmanis-ekipmanlari" },
-        { name: "Dağcılık Gereçleri", slug: "dagcilik-gerecleri" },
-        { name: "İp & Halat", slug: "ip-halat" }
-      ]
-    },
-    {
-      title: "KAYAK & SNOWBOARD",
-      slug: "kayak-snowboard",
-      icon: "🎿",
-      count: 95,
-      subcategories: [
-        { name: "Kayak Takımları", slug: "kayak-takimlari" },
-        { name: "Snowboard", slug: "snowboard" },
-        { name: "Kış Sporları", slug: "kis-sporlari" }
-      ]
-    },
-    {
-      title: "BALIK AV",
-      slug: "balik-av",
-      icon: "🎣",
-      count: 456,
-      subcategories: [
-        { name: "Olta Kamışı", slug: "olta-kamisi" },
-        { name: "Makara", slug: "makara" },
-        { name: "Yem & Oltalar", slug: "yem-oltalar" },
-        { name: "Balık Çantaları", slug: "balik-cantalari" }
-      ]
-    },
-    {
-      title: "SCUBA & DALIŞ ÜRÜNLERİ",
-      slug: "scuba-dalis",
-      icon: "🤿",
-      count: 67,
-      subcategories: [
-        { name: "Dalış Maskesi", slug: "dalis-maskesi" },
-        { name: "Şnorkel", slug: "snorkel" },
-        { name: "Dalış Kıyafeti", slug: "dalis-kiyafeti" }
-      ]
-    },
-    {
-      title: "DENİZ & HAVUZ ÜRÜNLERİ",
-      slug: "deniz-havuz",
-      icon: "🏊",
-      count: 123,
-      subcategories: [
-        { name: "Deniz Sporları", slug: "deniz-sporlari" },
-        { name: "Havuz Aksesuarları", slug: "havuz-aksesuarlari" },
-        { name: "Plaj Gereçleri", slug: "plaj-gerecleri" }
-      ]
-    },
-    {
-      title: "TEKNE & YAT",
-      slug: "tekne-yat",
-      icon: "⛵",
-      count: 89,
-      subcategories: [
-        { name: "Tekne Aksesuarları", slug: "tekne-aksesuarlari" },
-        { name: "Yelken Ekipmanları", slug: "yelken-ekipmanlari" },
-        { name: "Motor Yedek Parça", slug: "motor-yedek-parca" }
-      ]
-    },
-    {
-      title: "ATICILIK & AIRSOFT",
-      slug: "aticilik-airsoft",
-      icon: "🎯",
-      count: 134,
-      subcategories: [
-        { name: "Airsoft Silahlar", slug: "airsoft-silahlar" },
-        { name: "Atış Aksesuarları", slug: "atis-aksesuarlari" },
-        { name: "Hedef Sistemleri", slug: "hedef-sistemleri" }
-      ]
-    },
-    {
-      title: "KARAVAN",
-      slug: "karavan",
-      icon: "🚐",
-      count: 78,
-      subcategories: [
-        { name: "Karavan Ekipmanları", slug: "karavan-ekipmanlari" },
-        { name: "Mobilya & Aksesuar", slug: "mobilya-aksesuar" },
-        { name: "Elektrik & Aydınlatma", slug: "elektrik-aydinlatma" }
-      ]
-    }
-  ];
-
-  const specialCategories = [
-    { title: "OUTLET ÜRÜNLER", slug: "outlet", icon: "🏷️", count: 234 },
-    { title: "STOCKOUT", slug: "stockout", icon: "📦", count: 156 },
-    { title: "BIG&BOLD", slug: "big-bold", icon: "💪", count: 89 },
-    { title: "LIFESTYLE", slug: "lifestyle", icon: "✨", count: 123 },
-    { title: "KOMBİNLER", slug: "kombinler", icon: "👔", count: 67 },
-    { title: "EN YENİ ÜRÜNLER", slug: "en-yeni", icon: "🆕", count: 178 }
-  ];
-
   return (
     <>
       <Helmet>
-        <title>Ürün Kategorileri | BalıkPro - Balıkçılık & Outdoor Ürün Kategorileri</title>
-        <meta name="description" content="BalıkPro'da balık av malzemeleri, outdoor giyim, kamp ekipmanları ve daha fazlası. Tüm kategorileri keşfedin ve ihtiyacınız olan ürünleri bulun." />
-        <meta name="keywords" content="ürün kategorileri, balık av malzemeleri, outdoor giyim, kamp malzemeleri, dağcılık, dalış, tekne" />
-        <link rel="canonical" href="https://balikpro.com/urun-kategorileri" />
+        <title>Ürün Kategorileri | EgemOutdoor</title>
+        <meta name="description" content="EgemOutdoor'da balık av malzemeleri, outdoor giyim, kamp ve dalış ekipmanları, termos-mataralar ve spor malzemeleri. Tüm kategorileri keşfedin." />
+        <meta name="keywords" content="egem outdoor, ürün kategorileri, balık av malzemeleri, outdoor giyim, kamp malzemeleri, dalış ürünleri, termos, matara, spor malzemeleri" />
         <meta name="robots" content="index, follow" />
       </Helmet>
-      
+
       <div className="min-h-screen">
         <Header />
         <main className="container mx-auto px-4 py-8">
           <div className="text-center mb-12 animate-fade-in">
             <h1 className="text-4xl font-bold text-foreground mb-4">Ürün Kategorileri</h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Outdoor yaşam ve balıkçılıkla ilgili ihtiyacınız olan tüm ürünleri kategoriler halinde keşfedin.
+              Sitemizde yer alan güncel kategorileri keşfedin ve ihtiyacınız olan ürüne hızlıca ulaşın.
             </p>
           </div>
 
-        {/* Ana Kategoriler */}
-        <div className="mb-16">
-          <h2 className="text-2xl font-bold text-foreground mb-8">Ana Kategoriler</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category, index) => (
-              <Link key={category.slug} to={`/kategori/${category.slug}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                <Card className="hover-scale transition-smooth border-border bg-card animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="text-2xl">{category.icon}</div>
-                        <CardTitle className="text-lg">{category.title}</CardTitle>
+          {/* Ana Kategoriler */}
+          <div className="mb-16">
+            <h2 className="text-2xl font-bold text-foreground mb-8">Ana Kategoriler</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {siteCategories.map((category, index) => (
+                <Link key={category.slug} to={`/${category.slug}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                  <Card className="transition-smooth border-border bg-card hover:shadow-lg hover:ring-1 hover:ring-primary/30 animate-fade-in rounded-2xl" style={{ animationDelay: `${index * 80}ms` }}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div>{category.icon}</div>
+                          <CardTitle className="text-lg">{category.title}</CardTitle>
+                        </div>
+                        <Badge variant="secondary">{category.count}</Badge>
                       </div>
-                      <Badge variant="secondary">{category.count}</Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      {category.subcategories.slice(0, 3).map((sub, index) => (
-                        <div key={index} className="flex items-center justify-between text-sm">
-                          <span className="text-muted-foreground">{sub.name}</span>
-                          <ArrowRight className="h-3 w-3 text-muted-foreground" />
-                        </div>
-                      ))}
-                      {category.subcategories.length > 3 && (
-                        <div className="text-xs text-primary font-medium">
-                          +{category.subcategories.length - 3} daha fazla
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        {category.subcategories.slice(0, 3).map((sub, i) => (
+                          <div key={i} className="flex items-center justify-between text-sm">
+                            <span className="text-muted-foreground">{sub.name}</span>
+                            <ArrowRight className="h-3 w-3 text-muted-foreground" />
+                          </div>
+                        ))}
+                        {category.subcategories.length > 3 && (
+                          <div className="text-xs text-primary font-medium">+{category.subcategories.length - 3} daha fazla</div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Özel Kategoriler */}
-        <div>
-          <h2 className="text-2xl font-bold text-foreground mb-8">Özel Kategoriler</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {specialCategories.map((category, index) => (
-              <Link key={category.slug} to={`/kategori/${category.slug}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                <Card className="hover-scale transition-smooth border-border bg-card animate-fade-in" style={{ animationDelay: `${(index + categories.length) * 100}ms` }}>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="text-2xl">{category.icon}</div>
-                        <div>
-                          <h3 className="font-semibold text-foreground">{category.title}</h3>
-                          <p className="text-sm text-muted-foreground">{category.count} ürün</p>
+          {/* Özel Kategoriler */}
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-8">Özel Kategoriler</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {specialCategories.map((category, index) => (
+                <Link key={category.slug} to={`/kategori/${category.slug}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                  <Card className="transition-smooth border-border bg-card hover:shadow-lg hover:ring-1 hover:ring-primary/30 animate-fade-in rounded-2xl" style={{ animationDelay: `${(index + siteCategories.length) * 80}ms` }}>
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="text-2xl">{category.icon}</div>
+                          <div>
+                            <h3 className="font-semibold text-foreground">{category.title}</h3>
+                            <p className="text-sm text-muted-foreground">{category.count} ürün</p>
+                          </div>
                         </div>
+                        <ArrowRight className="h-5 w-5 text-muted-foreground" />
                       </div>
-                      <ArrowRight className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
-  </>
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 

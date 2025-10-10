@@ -19,17 +19,16 @@ const BrandShowcase = () => {
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   const brands = [
-    { name: "Stanley", logo: "/stanley.png", description: "Efsanevi termos ve kamp ekipmanları" },
-    { name: "Savage Gear", logo: "/sevagegear.png", description: "Yırtıcı balık avında uzman" },
+    { name: "Okuma", logo: "/okuma.png", description: "Profesyonel balıkçılık ekipmanları" },
+    { name: "Apnea", logo: "/apnea.png", description: "Sualtı avı ve dalış ekipmanları" },
     { name: "Salomon", logo: "/salomon.png", description: "Outdoor sporlarında Fransız kalitesi" },
     { name: "Helly Hansen", logo: "/Hellyhansen.png", description: "Norveç'ten denizcilik ve outdoor uzmanı" },
     { name: "Jack Wolfskin", logo: "/jackwolfskin.png", description: "Alman mühendisliği ile outdoor giyim" },
     { name: "Asolo", logo: "/asolo.png", description: "İtalyan trekking botu ustası" },
-    { name: "Apnea", logo: "/apnea.png", description: "Sualtı avı ve dalış ekipmanları" },
     { name: "Peak Performance", logo: "/peakperformance.png", description: "İsveç outdoor giyim markası" },
-    // Re-added fresh entries to ensure consistent sizing/spacing
+    { name: "Stanley", logo: "/stanley.png", description: "Efsanevi termos ve kamp ekipmanları" },
+    { name: "Savage Gear", logo: "/sevagegear.png", description: "Yırtıcı balık avında uzman" },
     { name: "Daiwa", logo: "/daiwa.png", description: "Japonya'nın prestijli balık malzemeleri" },
-    { name: "Okuma", logo: "/okuma.png", description: "Profesyonel balıkçılık ekipmanları" },
   ];
 
   useEffect(() => {
@@ -75,9 +74,9 @@ const BrandShowcase = () => {
         </div>
 
         <div className="embla overflow-hidden mb-12" ref={emblaRef}>
-          <div className="embla__container flex gap-0 -mx-3 md:-mx-4">
+          <div className="embla__container flex gap-6">
             {brands.map((brand, index) => (
-              <div key={index} className="embla__slide flex-[0_0_240px] min-w-0 px-3 md:px-4">
+              <div key={index} className="embla__slide flex-[0_0_240px] min-w-0 px-1">
                 <Card className="gradient-card border-border shadow-card h-full w-full">
                   <CardContent className="p-6 text-center">
                     <div className="h-20 md:h-24 mb-3 flex items-center justify-center">

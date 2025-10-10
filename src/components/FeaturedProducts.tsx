@@ -1,15 +1,23 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Heart, ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import useEmblaCarousel from 'embla-carousel-react';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 
 const FeaturedProducts = () => {
   const { addItem } = useCart();
   const { toast } = useToast();
-  // Grid layout: no slider
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'start',
+    slidesToScroll: 1,
+    containScroll: 'trimSnaps',
+  });
+
+  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
+  const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
   const handleAddToCart = (product: any) => {
     addItem({
@@ -91,19 +99,29 @@ const FeaturedProducts = () => {
   return (
     <section className="py-20 bg-muted/50">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-12">
           <div>
             <h2 className="text-4xl font-bold text-foreground mb-4">Öne Çıkan Ürünler</h2>
             <p className="text-lg text-muted-foreground max-w-2xl">
               En popüler ve yüksek kaliteli balık malzemelerimizi keşfedin. Her ürün özenle seçilmiş ve test edilmiştir.
             </p>
           </div>
+
+          <div className="flex gap-2">
+            <Button variant="outline" size="icon" onClick={scrollPrev} className="hover:bg-primary hover:text-primary-foreground">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="icon" onClick={scrollNext} className="hover:bg-primary hover:text-primary-foreground">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
-            <div key={product.id}>
-              <Card className="gradient-card border-border hover-lift group relative overflow-hidden shadow-card">
+        <div className="embla overflow-hidden" ref={emblaRef}>
+          <div className="embla__container flex gap-6">
+            {products.map((product) => (
+              <div key={product.id} className="embla__slide flex-[0_0_300px] min-w-0">
+                <Card className="gradient-card border-border hover-lift group relative overflow-hidden shadow-card">
                   {/* Badge */}
                   <div className="absolute top-3 left-3 z-10">
                     <span
@@ -124,9 +142,9 @@ const FeaturedProducts = () => {
                     <Heart className="h-4 w-4" />
                   </Button>
 
-                  <CardContent className="p-5">
+                  <CardContent className="p-6">
                     {/* Product image */}
-                    <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
+                    <div className="aspect-square bg-muted rounded-lg mb-4 overflow-hidden">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -137,15 +155,18 @@ const FeaturedProducts = () => {
                     </div>
 
                     {/* Brand */}
-                    <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
+                    <div className="text-xs text-primary font-medium mb-2">{product.brand}</div>
 
                     {/* Product name */}
-                    <h3 className="font-semibold text-foreground mb-2 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[48px] group-hover:text-primary transition-colors">
                       {product.name}
                     </h3>
 
+                    {/* Product description */}
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2 min-h-[32px]">{product.description}</p>
+
                     {/* Price */}
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-4">
                       <span className="text-xl font-bold text-foreground">₺{product.price.toLocaleString()}</span>
                       {product.originalPrice && (
                         <span className="text-sm text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
@@ -164,8 +185,9 @@ const FeaturedProducts = () => {
                     </div>
                   </CardContent>
                 </Card>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="text-center mt-12">
