@@ -1,40 +1,51 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import heroImage from '@/assets/hero-fishing.jpg';
+
+const sliderImages = [
+  '/banner.png',
+  // Deniz/fishing sahnesi
+  'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600&h=800&fit=crop&q=85&auto=format&cs=tinysrgb',
+  // Daha canlı outdoor/kamp görseli
+  'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1600&h=800&fit=crop&q=85&auto=format&cs=tinysrgb',
+];
+
 const Hero = () => {
+  const [active, setActive] = React.useState(0);
+
+  React.useEffect(() => {
+    const id = setInterval(() => {
+      setActive((prev) => (prev + 1) % sliderImages.length);
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section className="relative min-h-[40vh] md:min-h-[60vh] xl:min-h-[70vh] flex items-center justify-center overflow-hidden">
-      {/* Background image with overlay */}
+      {/* Slider background with fade */}
       <div className="absolute inset-0">
-        <img 
-          src={heroImage} 
-          alt="Professional fish equipment" 
-          className="w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-transparent"></div>
+        {sliderImages.map((src, idx) => (
+          <img
+            key={src}
+            src={src}
+            alt="Hero banner"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 filter contrast-115 saturate-125 md:contrast-130 md:saturate-130 ${idx === active ? 'opacity-100' : 'opacity-0'}`}
+            loading="eager"
+            decoding="async"
+          />
+        ))}
+        {/* Dark overlay for better text contrast */}
+        <div className="absolute inset-0 bg-black/45 md:bg-black/60"></div>
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-2xl">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="flex text-accent">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-4 w-4 fill-current" />
-              ))}
-            </div>
-            <span className="text-sm text-muted-foreground">4.9/5 Müşteri Memnuniyeti</span>
-          </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Kişiye Özel
-            <span className="gradient-primary bg-clip-text text-transparent block">
-              Outdoor Ürünleri
-            </span>
+            <span className="gradient-primary bg-clip-text text-transparent">Kişiye Özel</span>
+            <span className="gradient-primary bg-clip-text text-transparent block">Outdoor Ürünleri</span>
           </h1>
           
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
@@ -42,41 +53,18 @@ const Hero = () => {
             ürünlerle doğada kendinizi güvende hissedin.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row gap-4 mb-2">
             <Link to="/urunler">
               <Button variant="hero" size="xl" className="group">
                 Ürünleri Keşfet
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link to="/kisiye-ozel-teklif">
-              <Button variant="outline" size="xl">
-                Kişiye Özel Teklif Al
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center">
-            <div>
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">1000+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Mutlu Müşteri</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">500+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Özel Ürün</div>
-            </div>
-            <div>
-              <div className="text-2xl sm:text-3xl font-bold text-primary mb-1">15+</div>
-              <div className="text-xs sm:text-sm text-muted-foreground">Yıl Deneyim</div>
-            </div>
           </div>
         </div>
       </div>
 
-      {/* Decorative elements */}
-      <div className="absolute bottom-10 right-10 opacity-20">
-        <div className="text-6xl">🎣</div>
-      </div>
+      
     </section>
   );
 };
