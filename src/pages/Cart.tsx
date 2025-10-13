@@ -53,15 +53,20 @@ const Cart = () => {
 
           {state.items.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Cart Items */}
               <div className="lg:col-span-2 space-y-4">
                 {state.items.map((item) => (
                   <Card key={item.id} className="group hover:shadow-lg transition-all duration-200 animate-fade-in">
                     <CardContent className="p-6">
                       <div className="flex gap-4">
                         {/* Product Image */}
-                        <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center text-2xl">
-                          {item.image}
+                        <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex items-center justify-center">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         
                         {/* Product Info */}

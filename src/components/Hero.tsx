@@ -41,6 +41,12 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-12 md:py-16">
+        {/* Top-right brand pill */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20">
+          <div className="text-[10px] sm:text-xs uppercase tracking-wider inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/90 text-primary-foreground shadow ring-1 ring-primary/70">
+            EgemOutdoor
+          </div>
+        </div>
         <div className="max-w-2xl">
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">

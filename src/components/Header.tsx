@@ -465,12 +465,7 @@ const Header = () => {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Termoslar ve Mataralar - re-added as neutral link */}
-            <Link to="/termoslar-ve-mataralar" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
-              Termoslar ve Mataralar
-            </Link>
-
-            {/* Spor Malzemeleri - new menu */}
+            {/* Spor Malzemeleri - moved before Termoslar */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="text-foreground hover:text-primary font-medium">
@@ -484,6 +479,11 @@ const Header = () => {
                 <DropdownMenuItem asChild><Link to="/spor-malzemeleri/saha-ekipmanlari" className="w-full">Saha Ekipmanları</Link></DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Termoslar ve Mataralar - moved after Spor */}
+            <Link to="/termoslar-ve-mataralar" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
+              Termoslar ve Mataralar
+            </Link>
 
             <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
               Ürün Kategorileri
