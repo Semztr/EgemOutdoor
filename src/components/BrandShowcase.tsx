@@ -110,6 +110,13 @@ const BrandShowcase = () => {
                         loading="lazy"
                         decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (target.dataset.fallback !== '1') {
+                            target.dataset.fallback = '1';
+                            target.src = `https://via.placeholder.com/500x500.png?text=${encodeURIComponent('EgemOutdoor')}`;
+                          }
+                        }}
                       />
                     </div>
                   </Link>
