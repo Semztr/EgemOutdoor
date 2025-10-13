@@ -79,7 +79,7 @@ const BrandShowcase = () => {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <h2 className="text-4xl font-bold text-foreground mb-2">Alışverişe Başla</h2>
+              <h2 className="text-4xl font-bold text-foreground mb-4">Alışverişe Başla</h2>
               <p className="text-lg text-muted-foreground max-w-2xl">En popüler ve yüksek kaliteli ürünlerimizi keşfedin. Her ürün özenle seçilmiştir.</p>
             </div>
           </div>
