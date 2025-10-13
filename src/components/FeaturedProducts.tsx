@@ -14,10 +14,20 @@ const FeaturedProducts = () => {
     align: 'start',
     slidesToScroll: 1,
     containScroll: 'trimSnaps',
+    loop: true,
   });
 
   const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
+
+  // Autoplay
+  React.useEffect(() => {
+    if (!emblaApi) return;
+    const id = setInterval(() => {
+      emblaApi.scrollNext();
+    }, 3500);
+    return () => clearInterval(id);
+  }, [emblaApi]);
 
   const handleAddToCart = (product: any) => {
     addItem({
@@ -120,7 +130,7 @@ const FeaturedProducts = () => {
         <div className="embla overflow-hidden" ref={emblaRef}>
           <div className="embla__container flex gap-5">
             {products.map((product) => (
-              <div key={product.id} className="embla__slide flex-[0_0_240px] min-w-0">
+              <div key={product.id} className="embla__slide min-w-0 flex-[0_0_240px] lg:flex-[0_0_calc((100%-5rem)/5)]">
                 <Card className="gradient-card border-border group relative overflow-hidden shadow-card">
                   {/* Badge */}
                   <div className="absolute top-3 left-3 z-10">
@@ -144,29 +154,30 @@ const FeaturedProducts = () => {
 
                   <CardContent className="p-4">
                     {/* Product image */}
-                    <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
+                    <Link to={`/urun/${product.id}`}>
+                      <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          loading="lazy"
+                          decoding="async"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    </Link>
 
                     {/* Brand */}
                     <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
 
                     {/* Product name */}
-                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
-                      {product.name}
-                    </h3>
-
-                    {/* Product description */}
-                    <p className="text-[11px] text-muted-foreground mb-2 line-clamp-2 min-h-[28px]">{product.description}</p>
+                    <Link to={`/urun/${product.id}`}>
+                      <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
+                        {product.name}
+                      </h3>
+                    </Link>
 
                     {/* Price */}
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-3 mt-1">
                       <span className="text-lg font-bold text-foreground">₺{product.price.toLocaleString()}</span>
                       {product.originalPrice && (
                         <span className="text-xs text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
