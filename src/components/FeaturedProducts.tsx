@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const FeaturedProducts = () => {
   const { addItem } = useCart();
@@ -43,68 +44,32 @@ const FeaturedProducts = () => {
     });
   };
 
-  const products = [
-    {
-      id: 1,
-      name: 'Daiwa Saltiga Dogfight Olta Makinesi',
-      brand: 'Daiwa',
-      price: 12850,
-      originalPrice: 14500,
-      image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop',
-      badge: '11% İndirim',
-      description: 'Profesyonel balıkçılar için üstün performans ve dayanıklılık',
-    },
-    {
-      id: 2,
-      name: 'Savage Gear 3D Suicide Duck Yem',
-      brand: 'Savage Gear',
-      price: 485,
-      originalPrice: null,
-      image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=500&fit=crop',
-      badge: 'Çok Satan',
-      description: 'Gerçekçi hareket ve ses ile yırtıcı balıkları cezbeder',
-    },
-    {
-      id: 3,
-      name: 'Jack Wolfskin Texapore Outdoor Mont',
-      brand: 'Jack Wolfskin',
-      price: 3240,
-      originalPrice: 3850,
-      image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=500&fit=crop',
-      badge: '16% İndirim',
-      description: 'Su geçirmez, nefes alır, tüm hava koşullarına uygun',
-    },
-    {
-      id: 4,
-      name: 'Stanley Adventure Soğuk Tutucu Termos 1L',
-      brand: 'Stanley',
-      price: 890,
-      originalPrice: 1050,
-      image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop',
-      badge: '15% İndirim',
-      description: '24 saat sıcak, 32 saat soğuk tutar, çelik gövde',
-    },
-    {
-      id: 5,
-      name: 'Asolo Falcon GV Trekking Botu',
-      brand: 'Asolo',
-      price: 4580,
-      originalPrice: null,
-      image: 'https://images.unsplash.com/photo-1542840410-3092f99611a3?w=500&h=500&fit=crop',
-      badge: 'Premium',
-      description: 'Gore-Tex membran, Vibram taban, maksimum destek ve konfor',
-    },
-    {
-      id: 6,
-      name: 'Helly Hansen Workwear Outdoor Pantolon',
-      brand: 'Helly Hansen',
-      price: 1850,
-      originalPrice: 2100,
-      image: 'https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=500&h=500&fit=crop',
-      badge: '12% İndirim',
-      description: 'Dayanıklı kumaş, su itici kaplama, çok amaçlı cep sistemi',
-    },
-  ];
+  const [products, setProducts] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const load = async () => {
+      // Use from<any> so we can select 'featured' even if local types are not updated yet
+      const { data, error } = await supabase
+        .from<any>('products')
+        .select('id, name, price, brand, image_url, featured, is_active, created_at')
+        .eq('is_active', true)
+        .eq('featured', true)
+        .order('created_at', { ascending: false });
+      if (!error && data) {
+        const mapped = data.map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          brand: p.brand ?? '',
+          price: p.price,
+          originalPrice: null,
+          image: p.image_url ?? '',
+          badge: 'Öne Çıkan',
+        }));
+        setProducts(mapped);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <section className="py-20 bg-muted/50">

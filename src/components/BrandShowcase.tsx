@@ -6,6 +6,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
+import { supabase } from '@/integrations/supabase/client';
 
 const BrandShowcase = () => {
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -21,21 +22,32 @@ const BrandShowcase = () => {
   const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
   const scrollNext = () => emblaApi && emblaApi.scrollNext();
 
-  // Lightweight dummy products for a quick-start shopping strip
-  const quickProducts = [
-    { id: 101, name: 'Daiwa Ninja Spin Olta Makinesi', brand: 'Daiwa', price: 1285, originalPrice: 1450, badge: '11% İndirim', image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop' },
-    { id: 102, name: 'Jack Wolfskin Texapore Outdoor Mont', brand: 'Jack Wolfskin', price: 1890, originalPrice: 0, badge: 'Yeni Ürün', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=500&fit=crop' },
-    { id: 103, name: 'Asolo Falcon GV Trekking Bot', brand: 'Asolo', price: 2290, originalPrice: 0, badge: 'Premium', image: 'https://images.unsplash.com/photo-1542840410-3092f99611a3?w=500&h=500&fit=crop' },
-    { id: 104, name: 'Stanley Adventure Termos 1L', brand: 'Stanley', price: 890, originalPrice: 1050, badge: '15% İndirim', image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop' },
-    { id: 105, name: 'Savage Gear 3D Suicide Duck', brand: 'Savage Gear', price: 485, originalPrice: 0, badge: 'Çok Satan', image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=500&fit=crop' },
-    { id: 106, name: 'Helly Hansen Outdoor Pantolon', brand: 'Helly Hansen', price: 1850, originalPrice: 2100, badge: '12% İndirim', image: 'https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=500&h=500&fit=crop' },
-    { id: 107, name: 'Çadır 2 Kişilik', brand: 'EgemOutdoor', price: 2790, originalPrice: 0, badge: 'Popüler', image: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=500&h=500&fit=crop' },
-    { id: 108, name: 'Kafa Lambası', brand: 'EgemOutdoor', price: 390, originalPrice: 0, badge: 'Yeni Ürün', image: 'https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=500&h=500&fit=crop' },
-    { id: 109, name: 'LRF Olta Takımı', brand: 'EgemOutdoor', price: 1590, originalPrice: 0, badge: 'Popüler', image: 'https://images.unsplash.com/photo-1521017432531-fbd92d1cf4fb?w=500&h=500&fit=crop' },
-    { id: 110, name: 'Termal İçlik Seti', brand: 'EgemOutdoor', price: 690, originalPrice: 0, badge: 'Yeni Ürün', image: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=500&h=500&fit=crop' },
-    { id: 111, name: 'Kamp Ocağı', brand: 'EgemOutdoor', price: 520, originalPrice: 0, badge: 'Çok Satan', image: 'https://images.unsplash.com/photo-1523419412321-4f2354f2c5f8?w=500&h=500&fit=crop' },
-    { id: 112, name: 'Polar Şapka', brand: 'EgemOutdoor', price: 180, originalPrice: 0, badge: 'Popüler', image: 'https://images.unsplash.com/photo-1517512006864-7edc3b933137?w=500&h=500&fit=crop' },
-  ];
+  // Load products for quick shopping from Supabase
+  const [quickProducts, setQuickProducts] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const load = async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('id, name, price, brand, image_url, is_active, created_at, category')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (!error && data) {
+        const mapped = data.map((p) => ({
+          id: p.id,
+          name: p.name,
+          brand: p.brand ?? '',
+          price: p.price,
+          originalPrice: null,
+          image: p.image_url ?? '',
+          badge: 'Popüler',
+        }));
+        setQuickProducts(mapped);
+      }
+    };
+    load();
+  }, []);
 
   const { addItem } = useCart();
   const { toast } = useToast();

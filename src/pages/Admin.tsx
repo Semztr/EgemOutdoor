@@ -24,10 +24,13 @@ interface Product {
   stock_quantity: number;
   colors: string[] | null;
   is_active: boolean;
+  featured?: boolean;
+  color_options?: string[] | null;
+  extra_images?: string[] | null;
 }
 
 const Admin = () => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -43,11 +46,14 @@ const Admin = () => {
     image_url: '',
     stock_quantity: '',
     colors: '',
+    featured: false as boolean,
+    color_options: '',
+    extra_images: '',
   });
 
   useEffect(() => {
     checkAdminStatus();
-  }, [user]);
+  }, [user, authLoading]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -56,12 +62,27 @@ const Admin = () => {
   }, [isAdmin]);
 
   const checkAdminStatus = async () => {
+    // Auth state hazır değilse bekle
+    if (authLoading) return;
     if (!user) {
       navigate('/giris');
       return;
     }
 
+    // Hardcoded super admin allowlist
+    const SUPER_ADMIN_IDS = [
+      'f29e5169-7369-4148-a383-f23a0a4c0014',
+    ];
+
+    if (SUPER_ADMIN_IDS.includes(user.id)) {
+      console.log('Admin user (allowlist):', user.id);
+      setIsAdmin(true);
+      setLoading(false);
+      return;
+    }
+
     try {
+      console.log('Checking user_roles for user:', user.id);
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
@@ -92,13 +113,13 @@ const Admin = () => {
 
   const loadProducts = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('products')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts((data as any[]) as Product[]);
     } catch (error) {
       console.error('Ürünler yüklenemedi:', error);
       toast({
@@ -112,7 +133,7 @@ const Admin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const productData = {
+    const productData: any = {
       name: formData.name,
       description: formData.description || null,
       price: parseFloat(formData.price),
@@ -122,11 +143,14 @@ const Admin = () => {
       stock_quantity: parseInt(formData.stock_quantity) || 0,
       colors: formData.colors ? formData.colors.split(',').map(c => c.trim()) : null,
       is_active: true,
+      featured: !!formData.featured,
+      color_options: formData.color_options ? formData.color_options.split(',').map(s => s.trim()).filter(Boolean) : null,
+      extra_images: formData.extra_images ? formData.extra_images.split(',').map(s => s.trim()).filter(Boolean) : null,
     };
 
     try {
       if (editingProduct) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('products')
           .update(productData)
           .eq('id', editingProduct.id);
@@ -138,7 +162,7 @@ const Admin = () => {
           description: 'Ürün güncellendi.',
         });
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('products')
           .insert([productData]);
 
@@ -173,6 +197,9 @@ const Admin = () => {
       image_url: product.image_url || '',
       stock_quantity: product.stock_quantity.toString(),
       colors: product.colors?.join(', ') || '',
+      featured: !!product.featured,
+      color_options: product.color_options?.join(', ') || '',
+      extra_images: product.extra_images?.join(', ') || '',
     });
   };
 
@@ -180,7 +207,7 @@ const Admin = () => {
     if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('products')
         .delete()
         .eq('id', id);
@@ -214,6 +241,9 @@ const Admin = () => {
       image_url: '',
       stock_quantity: '',
       colors: '',
+      featured: false,
+      color_options: '',
+      extra_images: '',
     });
   };
 
@@ -320,6 +350,16 @@ const Admin = () => {
                     />
                   </div>
 
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="featured"
+                      type="checkbox"
+                      checked={formData.featured}
+                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                    />
+                    <Label htmlFor="featured">Öne Çıkan Ürün</Label>
+                  </div>
+
                   <div>
                     <Label htmlFor="colors">Renkler (virgülle ayırın)</Label>
                     <Input
@@ -327,6 +367,26 @@ const Admin = () => {
                       value={formData.colors}
                       onChange={(e) => setFormData({ ...formData, colors: e.target.value })}
                       placeholder="Kırmızı, Mavi, Yeşil"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="color_options">Renk Seçenekleri (virgülle ayırın)</Label>
+                    <Input
+                      id="color_options"
+                      value={formData.color_options}
+                      onChange={(e) => setFormData({ ...formData, color_options: e.target.value })}
+                      placeholder="Siyah, Yeşil, Kamuflaj"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="extra_images">Ek Görseller (virgülle ayırın)</Label>
+                    <Input
+                      id="extra_images"
+                      value={formData.extra_images}
+                      onChange={(e) => setFormData({ ...formData, extra_images: e.target.value })}
+                      placeholder="https://..., https://..."
                     />
                   </div>
 
