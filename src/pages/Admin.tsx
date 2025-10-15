@@ -12,6 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { siteCategories } from '@/data/categories';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Product {
   id: string;
@@ -37,6 +39,8 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [mainCategory, setMainCategory] = useState<string>('');
+  const [subCategory, setSubCategory] = useState<string>('');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -201,6 +205,27 @@ const Admin = () => {
       color_options: product.color_options?.join(', ') || '',
       extra_images: product.extra_images?.join(', ') || '',
     });
+
+    // Kategori seçimlerini doldur
+    const catValue = product.category || '';
+    if (catValue.includes('/')) {
+      const [main, sub] = catValue.split('/', 2);
+      setMainCategory(main);
+      setSubCategory(sub);
+    } else if (catValue) {
+      // Sadece alt slug kaydedilmişse, hangi ana kategoriye ait olduğunu bul
+      const match = siteCategories.find(c => c.subcategories.some(s => s.slug === catValue));
+      if (match) {
+        setMainCategory(match.slug);
+        setSubCategory(catValue);
+      } else {
+        setMainCategory('');
+        setSubCategory('');
+      }
+    } else {
+      setMainCategory('');
+      setSubCategory('');
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -245,6 +270,8 @@ const Admin = () => {
       color_options: '',
       extra_images: '',
     });
+    setMainCategory('');
+    setSubCategory('');
   };
 
   if (loading) {
@@ -332,13 +359,50 @@ const Admin = () => {
                     />
                   </div>
 
-                  <div>
-                    <Label htmlFor="category">Kategori</Label>
-                    <Input
-                      id="category"
-                      value={formData.category}
-                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Ana Kategori</Label>
+                      <Select
+                        value={mainCategory}
+                        onValueChange={(val) => {
+                          setMainCategory(val);
+                          // Ana kategori değişince alt kategoriyi sıfırla
+                          setSubCategory('');
+                          setFormData({ ...formData, category: '' });
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seçiniz" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {siteCategories.map((cat) => (
+                            <SelectItem key={cat.slug} value={cat.slug}>{cat.title}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Alt Kategori</Label>
+                      <Select
+                        value={subCategory}
+                        onValueChange={(val) => {
+                          setSubCategory(val);
+                          const composed = mainCategory ? `${mainCategory}/${val}` : val;
+                          setFormData({ ...formData, category: composed });
+                        }}
+                        disabled={!mainCategory}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={mainCategory ? 'Seçiniz' : 'Önce ana kategori'} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {siteCategories
+                            .find((c) => c.slug === mainCategory)?.subcategories.map((sub) => (
+                              <SelectItem key={sub.slug} value={sub.slug}>{sub.name}</SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div>

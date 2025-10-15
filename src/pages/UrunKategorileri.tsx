@@ -4,93 +4,9 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Fish, Shirt, Tent, Waves, CupSoda, Dumbbell } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-
-type Subcat = { name: string; slug: string };
-type SiteCategory = {
-  title: string;
-  slug: string;
-  icon: React.ReactNode;
-  count: number;
-  subcategories: Subcat[];
-};
-
-const siteCategories: SiteCategory[] = [
-  {
-    title: 'Balık Av Malzemeleri',
-    slug: 'balik-av-malzemeleri',
-    icon: <Fish className="h-5 w-5 text-primary" />,
-    count: 456,
-    subcategories: [
-      { name: 'Olta Makineleri', slug: 'olta-makineleri' },
-      { name: 'Olta Kamışları', slug: 'olta-kamislari' },
-      { name: 'Suni Yemler', slug: 'suni-yemler' },
-      { name: 'Misineler', slug: 'misineler' },
-      { name: 'İğne ve Jighead', slug: 'igne-jighead' },
-      { name: 'Aksesuarlar', slug: 'aksesuarlar' },
-      { name: 'Diğer', slug: 'diger' },
-    ],
-  },
-  {
-    title: 'Outdoor Giyim',
-    slug: 'outdoor-giyim',
-    icon: <Shirt className="h-5 w-5 text-primary" />,
-    count: 312,
-    subcategories: [
-      { name: 'Erkek: Pantolon', slug: 'erkek/pantolon' },
-      { name: 'Erkek: Mont & Ceket', slug: 'erkek/mont-ve-ceket' },
-      { name: 'Erkek: Ayakkabı & Bot', slug: 'erkek/ayakkabi' },
-      { name: 'Kadın: Tişört', slug: 'kadin/tisort' },
-      { name: 'Kadın: Ayakkabı & Bot', slug: 'kadin/ayakkabi' },
-      { name: 'Aksesuar: Çanta, Şapka, Bere', slug: 'aksesuar' },
-    ],
-  },
-  {
-    title: 'Kamp Malzemeleri',
-    slug: 'kamp-malzemeleri',
-    icon: <Tent className="h-5 w-5 text-primary" />,
-    count: 289,
-    subcategories: [
-      { name: 'Pişirme: Kamp Ocağı, Kartuş, Pürmüz', slug: 'pisirme' },
-      { name: 'Barınma & Uyku: Çadır, Uyku Tulumu', slug: 'barinma-uyku' },
-      { name: 'Aksesuar: Çanta, Aydınlatma, Kafa Lambası', slug: 'aksesuar' },
-    ],
-  },
-  {
-    title: 'Dalış Ürünleri',
-    slug: 'dalis-urunleri',
-    icon: <Waves className="h-5 w-5 text-primary" />,
-    count: 167,
-    subcategories: [
-      { name: 'Denge Yeleği (BCD), Regülatör', slug: 'ekipman' },
-      { name: 'Elbise, Patik & Eldiven & Başlık', slug: 'giyim-parca' },
-      { name: 'Zıpkın, Palet, Maske & Şnorkel', slug: 'av-aksesuar' },
-    ],
-  },
-  {
-    title: 'Termoslar ve Mataralar',
-    slug: 'termoslar-ve-mataralar',
-    icon: <CupSoda className="h-5 w-5 text-primary" />,
-    count: 98,
-    subcategories: [
-      { name: 'Termoslar', slug: 'termoslar' },
-      { name: 'Mataralar', slug: 'mataralar' },
-      { name: 'Yedek Parça & Aksesuar', slug: 'aksesuar' },
-    ],
-  },
-  {
-    title: 'Spor Malzemeleri',
-    slug: 'spor-malzemeleri',
-    icon: <Dumbbell className="h-5 w-5 text-primary" />,
-    count: 120,
-    subcategories: [
-      { name: 'Toplar', slug: 'toplar' },
-      { name: 'Fitness Bantları', slug: 'fitness-bantlari' },
-      { name: 'Saha Ekipmanları', slug: 'saha-ekipmanlari' },
-    ],
-  },
-];
+import { siteCategories } from '@/data/categories';
 
 const specialCategories = [
   { title: 'Yeni Gelenler', slug: 'yeni-gelenler', icon: '🆕', count: 64 },
