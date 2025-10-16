@@ -11,6 +11,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import FeaturedProducts from '@/components/FeaturedProducts';
 import { Helmet } from 'react-helmet-async';
+import { supabase } from '@/integrations/supabase/client';
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -18,6 +19,8 @@ const Products = () => {
   const { addItem } = useCart();
   const { toast } = useToast();
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
+  const [supaProducts, setSupaProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // Mock products data with search functionality
   const allProducts = [
@@ -127,6 +130,38 @@ const Products = () => {
       description: `${product.name} sepetinize eklendi.`,
     });
   };
+
+  // Load recent active products from Supabase when not searching
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      if (searchQuery) return; // keep search behavior intact
+      setLoading(true);
+      try {
+        const { data, error } = await (supabase as any)
+          .from('products')
+          .select('id, name, brand, price, image_url, is_active, created_at')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(20);
+        if (!ignore && !error && data) {
+          const mapped = data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            brand: p.brand ?? '',
+            price: p.price,
+            image: p.image_url ?? '',
+            badge: null,
+          }));
+          setSupaProducts(mapped);
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => { ignore = true; };
+  }, [searchQuery]);
 
   return (
     <>
@@ -264,6 +299,72 @@ const Products = () => {
           <>
             {/* Featured Products */}
             <FeaturedProducts />
+            
+            {/* Supabase Product Grid */}
+            <section className="py-12">
+              <div className="container mx-auto px-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">Yeni Ürünler</h2>
+                  <div className="text-sm text-muted-foreground">{loading ? 'Yükleniyor...' : `${supaProducts.length} ürün`}</div>
+                </div>
+                {supaProducts.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                    {supaProducts.map((product) => (
+                      <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
+                        <div className="relative">
+                          <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
+                            <Heart className="h-4 w-4" />
+                          </Button>
+                          <CardContent className="p-4 sm:p-5">
+                            <Link to={`/urun/${product.id}`}>
+                              <div className="aspect-[4/5] bg-muted rounded-md mb-3 overflow-hidden flex items-center justify-center">
+                                {product.image ? (
+                                  <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const t = e.currentTarget as HTMLImageElement;
+                                      if (t.dataset.fallback !== '1') { t.dataset.fallback = '1'; t.src = `https://via.placeholder.com/600x750.png?text=${encodeURIComponent('EgemOutdoor')}`; }
+                                    }}
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-6xl">🛒</div>
+                                )}
+                              </div>
+                              <div className="text-xs text-primary font-medium mb-1">{product.brand}</div>
+                              <h3 className="font-semibold text-foreground mb-1 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer text-sm sm:text-base">
+                                {product.name}
+                              </h3>
+                            </Link>
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="text-base sm:text-lg font-semibold text-primary">{product.price}₺</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button 
+                                onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
+                                size="sm" 
+                                className="flex-1 hover-scale transition-smooth min-h-10"
+                              >
+                                <ShoppingCart className="h-4 w-4 mr-2" />
+                                Sepete Ekle
+                              </Button>
+                              <Link to={`/urun/${product.id}`}>
+                                <Button variant="outline" size="sm" className="min-h-10">İncele</Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">Gösterilecek ürün bulunamadı.</div>
+                )}
+              </div>
+            </section>
             
             {/* Categories Section */}
             <section className="py-20">

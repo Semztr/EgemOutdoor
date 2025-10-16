@@ -38,7 +38,7 @@ const Account = () => {
 
   useEffect(() => {
     if (!authLoading && !user) {
-      navigate('/auth');
+      navigate('/giris');
     }
   }, [user, authLoading, navigate]);
 
@@ -55,14 +55,16 @@ const Account = () => {
         .from('profiles')
         .select('*')
         .eq('id', user?.id)
-        .single();
+        .maybeSingle();
 
-      if (profileError) throw profileError;
+      if (profileError) {
+        console.error('Profil verisi alınamadı:', profileError);
+      }
 
       setProfile({
-        full_name: profileData.full_name || '',
-        phone: profileData.phone || '',
-        email: profileData.email || user?.email || ''
+        full_name: (profileData && profileData.full_name) || '',
+        phone: (profileData && profileData.phone) || '',
+        email: (profileData && profileData.email) || user?.email || ''
       });
 
       // Siparişleri çek
@@ -72,15 +74,13 @@ const Account = () => {
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
 
-      if (ordersError) throw ordersError;
+      if (ordersError) {
+        console.error('Siparişler alınamadı:', ordersError);
+      }
       setOrders(ordersData || []);
     } catch (error) {
-      console.error('Veri yüklenirken hata:', error);
-      toast({
-        title: "Hata",
-        description: "Veriler yüklenirken bir hata oluştu.",
-        variant: "destructive"
-      });
+      console.error('Veri yüklenirken beklenmeyen hata:', error);
+      // Kullanıcı deneyimini bölmemek için toast göstermeden devam et
     } finally {
       setLoading(false);
     }
@@ -197,7 +197,8 @@ const Account = () => {
                     {orders.length > 0 ? (
                       <div className="space-y-4">
                         {orders.map((order) => {
-                          const itemCount = order.order_items.reduce((sum, item) => sum + item.quantity, 0);
+                          const safeItems = (order as any).order_items || [];
+                          const itemCount = safeItems.reduce((sum: number, item: any) => sum + (item?.quantity || 0), 0);
                           return (
                             <div key={order.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

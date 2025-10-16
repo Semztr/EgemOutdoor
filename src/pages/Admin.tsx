@@ -73,11 +73,12 @@ const Admin = () => {
       return;
     }
 
-    // Hardcoded super admin allowlist
-    const SUPER_ADMIN_IDS = [
-      'f29e5169-7369-4148-a383-f23a0a4c0014',
-    ];
+    // Super admin allowlist (env-driven)
+    const envAdmins = (import.meta.env.VITE_SUPER_ADMIN_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+    const DEFAULT_ADMINS = ['f29e5169-7369-4148-a383-f23a0a4c0014'];
+    const SUPER_ADMIN_IDS = envAdmins.length ? envAdmins : DEFAULT_ADMINS;
 
+    console.log('Checking admin status for user:', user.id);
     if (SUPER_ADMIN_IDS.includes(user.id)) {
       console.log('Admin user (allowlist):', user.id);
       setIsAdmin(true);
@@ -94,9 +95,21 @@ const Admin = () => {
         .eq('role', 'admin')
         .maybeSingle();
 
-      if (error) throw error;
-      
+      if (error) {
+        // If table missing, allow SUPER_ADMIN users to proceed
+        const code = (error as any).code;
+        if (code === '42P01') {
+          if (SUPER_ADMIN_IDS.includes(user.id)) {
+            setIsAdmin(true);
+            setLoading(false);
+            return;
+          }
+        }
+        throw error;
+      }
+
       if (!data) {
+        console.log('User is not an admin:', user.id);
         toast({
           title: 'Yetkisiz Erişim',
           description: 'Bu sayfaya erişim yetkiniz yok.',
@@ -283,7 +296,24 @@ const Admin = () => {
   }
 
   if (!isAdmin) {
-    return null;
+    return (
+      <>
+        <Helmet>
+          <title>Yetkisiz Erişim - EgemOutdoor</title>
+        </Helmet>
+        <div className="min-h-screen">
+          <Header />
+          <main className="container mx-auto px-4 py-16">
+            <div className="max-w-md mx-auto text-center">
+              <h1 className="text-2xl font-bold mb-4">Yetkisiz Erişim</h1>
+              <p className="text-muted-foreground mb-6">Bu sayfaya erişim yetkiniz yok. Ana sayfaya dönebilirsiniz.</p>
+              <Button onClick={() => navigate('/')}>Ana Sayfaya Dön</Button>
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </>
+    );
   }
 
   return (
@@ -296,7 +326,9 @@ const Admin = () => {
         <Header />
         
         <main className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8">Ürün Yönetimi</h1>
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-3xl font-bold">Ürün Yönetimi</h1>
+          </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Form */}

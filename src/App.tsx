@@ -32,6 +32,9 @@ const Admin = lazy(() => import("./pages/Admin"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+
 // Category landing pages
 const Misineler = lazy(() => import("./pages/categories/Misineler"));
 const IgneJighead = lazy(() => import("./pages/categories/IgneJighead"));
@@ -231,10 +234,14 @@ const App = () => (
           } />
           <Route path="/sifremi-unuttum" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-              <NotFound />
+              <ForgotPassword />
             </Suspense>
           } />
-          
+          <Route path="/sifre-yenile" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <ResetPassword />
+            </Suspense>
+          } />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>

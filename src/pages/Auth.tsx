@@ -73,6 +73,7 @@ const Auth = () => {
         password: registerForm.password,
         options: {
           data: { full_name: `${registerForm.firstName} ${registerForm.lastName}`, phone: registerForm.phone },
+          emailRedirectTo: `${window.location.origin}/giris`,
         },
       });
       if (error) throw error;
