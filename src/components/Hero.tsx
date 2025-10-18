@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const sliderImages = [
@@ -13,6 +13,8 @@ const sliderImages = [
 
 const Hero = () => {
   const [active, setActive] = React.useState(0);
+  const goPrev = () => setActive((prev) => (prev - 1 + sliderImages.length) % sliderImages.length);
+  const goNext = () => setActive((prev) => (prev + 1) % sliderImages.length);
 
   React.useEffect(() => {
     const id = setInterval(() => {
@@ -37,6 +39,30 @@ const Hero = () => {
         ))}
         {/* Dark overlay for better text contrast */}
         <div className="absolute inset-0 bg-black/45 md:bg-black/60"></div>
+      </div>
+
+      {/* Controls */}
+      <div className="absolute inset-y-0 left-2 sm:left-4 z-20 flex items-center">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={goPrev}
+          className="bg-background/70 backdrop-blur hover:bg-primary hover:text-primary-foreground"
+          aria-label="Önceki görsel"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+      </div>
+      <div className="absolute inset-y-0 right-2 sm:right-4 z-20 flex items-center">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={goNext}
+          className="bg-background/70 backdrop-blur hover:bg-primary hover:text-primary-foreground"
+          aria-label="Sonraki görsel"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Content */}

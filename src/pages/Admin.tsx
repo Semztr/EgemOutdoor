@@ -53,6 +53,7 @@ const Admin = () => {
     featured: false as boolean,
     color_options: '',
     extra_images: '',
+    agirlik: '',
   });
 
   useEffect(() => {
@@ -165,6 +166,16 @@ const Admin = () => {
       extra_images: formData.extra_images ? formData.extra_images.split(',').map(s => s.trim()).filter(Boolean) : null,
     };
 
+    // JSONB features POC
+    const features: Record<string, any> = {};
+    if (formData.agirlik.trim()) features.agirlik = formData.agirlik.trim();
+    if (Object.keys(features).length > 0) {
+      productData.features = features;
+    } else {
+      // send null to avoid overwriting to empty object unintentionally
+      productData.features = null;
+    }
+
     try {
       if (editingProduct) {
         const { error } = await (supabase as any)
@@ -224,6 +235,7 @@ const Admin = () => {
       featured: !!product.featured,
       color_options: product.color_options?.join(', ') || '',
       extra_images: product.extra_images?.join(', ') || '',
+      agirlik: (product as any).features?.agirlik || '',
     });
 
     // Kategori seçimlerini doldur
@@ -402,6 +414,7 @@ const Admin = () => {
       featured: false,
       color_options: '',
       extra_images: '',
+      agirlik: '',
     });
     setMainCategory('');
     setSubCategory('');
@@ -495,12 +508,12 @@ const Admin = () => {
                     </div>
 
                     <div>
-                      <Label htmlFor="stock">Stok</Label>
+                      <Label htmlFor="agirlik">Ağırlık (features JSONB)</Label>
                       <Input
-                        id="stock"
-                        type="number"
-                        value={formData.stock_quantity}
-                        onChange={(e) => setFormData({ ...formData, stock_quantity: e.target.value })}
+                        id="agirlik"
+                        value={formData.agirlik}
+                        onChange={(e) => setFormData({ ...formData, agirlik: e.target.value })}
+                        placeholder="Örn: 1 gr"
                       />
                     </div>
                   </div>

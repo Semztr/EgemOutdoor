@@ -7,6 +7,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { CartProvider } from "@/contexts/CartContext";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
+import ScrollToTop from "@/components/ScrollToTop";
 
 // Eagerly loaded components
 import Index from "./pages/Index";
@@ -50,6 +51,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/urun-kategorileri" element={
@@ -136,6 +138,16 @@ const App = () => (
             </Suspense>
           } />
           <Route path="/kamp-malzemeleri/*" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/termoslar-ve-mataralar" element={
+            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
+              <CategoryPage />
+            </Suspense>
+          } />
+          <Route path="/termoslar-ve-mataralar/*" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <CategoryPage />
             </Suspense>

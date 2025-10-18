@@ -30,6 +30,13 @@ export const siteCategories: SiteCategory[] = [
       // Suni Yemler
       { name: 'Suni Yemler: Su Üstü Maketler', slug: 'su-ustu-maketler' },
       { name: 'Suni Yemler: Kaşık Yemler', slug: 'kasik-yemler' },
+      { name: 'Suni Yemler: Maket Balıklar', slug: 'suni-yemler/maket-baliklar' },
+      { name: 'Suni Yemler: Silikon Yemler', slug: 'suni-yemler/silikon-yemler' },
+      { name: 'Suni Yemler: Jig Yemler', slug: 'suni-yemler/jig-yemler' },
+      { name: 'Suni Yemler: Kaşıklar ve Vibrasyonlar', slug: 'suni-yemler/kasiklar-ve-vibrasyonlar' },
+      { name: 'Suni Yemler: Zokalar', slug: 'suni-yemler/zokalar' },
+      { name: 'Suni Yemler: Meppsler', slug: 'suni-yemler/meppsler' },
+      { name: 'Suni Yemler: Sazan Yemleri', slug: 'suni-yemler/sazan-yemleri' },
       // Misineler
       { name: 'Misineler: Monofilament', slug: 'misineler/monofilament' },
       { name: 'Misineler: Fluorocarbon', slug: 'misineler/fluorocarbon' },
@@ -161,3 +168,53 @@ export const allSubcategoryOptions = siteCategories.flatMap((cat) =>
     subName: sub.name,
   }))
 );
+
+// Centralized filters for each root category
+export const categoryFilters: Record<string, { name: string; options: string[] }[]> = {
+  'balik-av-malzemeleri': [
+    { name: 'Marka', options: ['Daiwa', 'Shimano', 'Penn', 'Abu Garcia'] },
+    { name: 'Uzunluk', options: ['2.1m', '2.4m', '2.7m', '3.0m', '3.6m'] },
+    { name: 'Test', options: ['5-25g', '10-40g', '20-60g', '40-100g'] },
+    { name: 'Ağırlık', options: ['1 gr', '2 gr', '5 gr', '10 gr'] },
+    { name: 'Fiyat', options: ['0-500₺', '500-1000₺', '1000-2000₺', '2000₺+'] },
+  ],
+  'outdoor-giyim': [
+    { name: 'Marka', options: ['Columbia', 'The North Face', 'Merrell', 'Patagonia'] },
+    { name: 'Kategori', options: ['Mont', 'Pantolon', 'Ayakkabı', 'Aksesuar'] },
+    { name: 'Beden', options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+    { name: 'Fiyat', options: ['0-300₺', '300-600₺', '600-1000₺', '1000₺+'] },
+  ],
+  'kamp-malzemeleri': [
+    { name: 'Marka', options: ['Coleman', 'Campingaz', 'Thermos', 'MSR'] },
+    { name: 'Kategori', options: ['Çadır', 'Ocak', 'Uyku', 'Mutfak'] },
+    { name: 'Kapasite', options: ['1-2 Kişi', '3-4 Kişi', '5+ Kişi'] },
+    { name: 'Fiyat', options: ['0-500₺', '500-1000₺', '1000-2000₺', '2000₺+'] },
+  ],
+  'dalis-urunleri': [
+    { name: 'Marka', options: ['Cressi', 'Mares', 'Seac', 'Aqualung'] },
+    { name: 'Kategori', options: ['Regülatör', 'Elbise', 'Palet', 'Maske'] },
+    { name: 'Fiyat', options: ['0-1000₺', '1000-3000₺', '3000-6000₺', '6000₺+'] },
+  ],
+  'termoslar-ve-mataralar': [
+    { name: 'Marka', options: ['Stanley', 'Thermos', 'Contigo', 'CamelBak'] },
+    { name: 'Hacim', options: ['350 ml', '500 ml', '750 ml', '1 L', '1.5 L+'] },
+    { name: 'Tip', options: ['Termos', 'Matara', 'Termal Kupa'] },
+    { name: 'Malzeme', options: ['Paslanmaz Çelik', 'Tritan', 'Alüminyum'] },
+    { name: 'Fiyat', options: ['0-500₺', '500-1000₺', '1000-2000₺', '2000₺+'] },
+  ],
+  'spor-malzemeleri': [
+    { name: 'Marka', options: ['Nike', 'Adidas', 'Under Armour', 'Decathlon'] },
+    { name: 'Kategori', options: ['Aksesuar', 'Giyim', 'Ekipman'] },
+    { name: 'Fiyat', options: ['0-500₺', '500-1000₺', '1000-2000₺', '2000₺+'] },
+  ],
+  'caki-bicak': [
+    { name: 'Marka', options: ['Victorinox', 'Mora', 'Opinel', 'Benchmade'] },
+    { name: 'Tip', options: ['Çakı', 'Sabit Bıçak', 'Katlanır Bıçak'] },
+    { name: 'Boyut', options: ['Küçük', 'Orta', 'Büyük'] },
+    { name: 'Fiyat', options: ['0-200₺', '200-500₺', '500-1000₺', '1000₺+'] },
+  ],
+  'kisiye-ozel': [
+    { name: 'Kişiselleştirme', options: ['İsim', 'Logo', 'Renk'] },
+    { name: 'Fiyat', options: ['0-500₺', '500-1000₺', '1000-2000₺', '2000₺+'] },
+  ],
+};

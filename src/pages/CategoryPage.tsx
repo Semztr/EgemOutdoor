@@ -10,6 +10,8 @@ import { Heart, ShoppingCart, Star, Filter, Grid, List } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
+import { categoryFilters } from '@/data/categories';
+import { supabase } from '@/integrations/supabase/client';
 
 const CategoryPage = () => {
   const { categorySlug } = useParams<{ categorySlug: string }>();
@@ -18,37 +20,101 @@ const CategoryPage = () => {
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState('grid');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Determine category from URL
+  // Determine category from URL (normalize to root category for subpaths)
   const currentPath = location.pathname;
+  const roots = [
+    'balik-av-malzemeleri',
+    'outdoor-giyim',
+    'kamp-malzemeleri',
+    'dalis-urunleri',
+    'spor-malzemeleri',
+    'caki-bicak',
+    'kisiye-ozel',
+    'termoslar-ve-mataralar',
+  ];
+  const rootPath = roots.find(slug => currentPath === `/${slug}` || currentPath.startsWith(`/${slug}/`));
+  const normalizedPath = rootPath ? `/${rootPath}` : currentPath;
   
   const getCategoryData = () => {
-    switch (currentPath) {
+    switch (normalizedPath) {
       case '/balik-av-malzemeleri':
         return {
           title: "Balık Av Malzemeleri",
           description: "Profesyonel balıkçılık için özel tasarlanmış, kaliteli balık av malzemeleri.",
           totalProducts: 0,
-          filters: [
-            { name: "Marka", options: ["Daiwa", "Shimano", "Penn", "Abu Garcia"] },
-            { name: "Uzunluk", options: ["2.1m", "2.4m", "2.7m", "3.0m", "3.6m"] },
-            { name: "Test", options: ["5-25g", "10-40g", "20-60g", "40-100g"] },
-            { name: "Fiyat", options: ["0-500₺", "500-1000₺", "1000-2000₺", "2000₺+"] }
-          ],
+          filters: categoryFilters['balik-av-malzemeleri'] || [],
           products: []
         };
+
+  // Supabase POC: load products by category and filters (brand + features.agirlik)
+  React.useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      setLoading(true);
+      try {
+        let query = (supabase as any)
+          .from('products')
+          .select('id, name, brand, price, image_url, is_active, category, features')
+          .eq('is_active', true);
+
+        // Category scoping by prefix if category field exists
+        if (rootPath) {
+          query = query.like('category', `${rootPath}%`);
+        }
+
+        // Brand filter (Marka)
+        const markaVals = activeFilters['Marka'] || [];
+        if (markaVals.length > 0) {
+          query = query.in('brand', markaVals);
+        }
+
+        // Ağırlık filter via JSONB features->>agirlik (POC)
+        const agirlikVals = activeFilters['Ağırlık'] || activeFilters['Agirlik'] || activeFilters['A��rlık'] || [];
+        if (agirlikVals.length > 0) {
+          // Build OR expression: features->>agirlik.eq.X,features->>agirlik.eq.Y
+          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
+          if (ors) {
+            query = query.or(ors);
+          }
+        }
+
+        const { data, error } = await query.limit(60);
+        if (!error && data && !ignore) {
+          const mapped = data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            brand: p.brand ?? '',
+            price: p.price,
+            image: p.image_url ?? '',
+            badge: null,
+            specs: [],
+            rating: 4.8,
+            reviews: 0,
+            inStock: true,
+            originalPrice: null,
+          }));
+          setProducts(mapped);
+        }
+      } catch (e: any) {
+        // Graceful fallback if column missing or JSONB not set; keep empty list
+        console.warn('Supabase filter POC error:', e?.message || e);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => { ignore = true; };
+  }, [normalizedPath, rootPath, JSON.stringify(activeFilters)]);
       
       case '/outdoor-giyim':
         return {
           title: "Outdoor Giyim",
           description: "Doğa sporları ve outdoor aktiviteler için profesyonel kıyafetler.",
           totalProducts: 0,
-          filters: [
-            { name: "Marka", options: ["Columbia", "The North Face", "Merrell", "Patagonia"] },
-            { name: "Kategori", options: ["Mont", "Pantolon", "Ayakkabı", "Aksesuar"] },
-            { name: "Beden", options: ["XS", "S", "M", "L", "XL", "XXL"] },
-            { name: "Fiyat", options: ["0-300₺", "300-600₺", "600-1000₺", "1000₺+"] }
-          ],
+          filters: categoryFilters['outdoor-giyim'] || [],
           products: []
         };
       
@@ -57,12 +123,16 @@ const CategoryPage = () => {
           title: "Kamp Malzemeleri",
           description: "Doğada konforlu kamp deneyimi için gerekli tüm malzemeler.",
           totalProducts: 0,
-          filters: [
-            { name: "Marka", options: ["Coleman", "Campingaz", "Thermos", "MSR"] },
-            { name: "Kategori", options: ["Çadır", "Ocak", "Uyku", "Mutfak"] },
-            { name: "Kapasite", options: ["1-2 Kişi", "3-4 Kişi", "5+ Kişi"] },
-            { name: "Fiyat", options: ["0-500₺", "500-1000₺", "1000-2000₺", "2000₺+"] }
-          ],
+          filters: categoryFilters['kamp-malzemeleri'] || [],
+          products: []
+        };
+      
+      case '/termoslar-ve-mataralar':
+        return {
+          title: "Termoslar ve Mataralar",
+          description: "Doğada, sporda ve günlük kullanımda içeceklerinizi ideal ısıda tutan termos ve mataralar.",
+          totalProducts: 0,
+          filters: categoryFilters['termoslar-ve-mataralar'] || [],
           products: []
         };
       
@@ -71,21 +141,47 @@ const CategoryPage = () => {
           title: "Çakı & Bıçak",
           description: "Outdoor aktiviteler ve günlük kullanım için kaliteli çakı ve bıçaklar.",
           totalProducts: 0,
-          filters: [
-            { name: "Marka", options: ["Victorinox", "Mora", "Opinel", "Benchmade"] },
-            { name: "Tip", options: ["Çakı", "Sabit Bıçak", "Katlanır Bıçak"] },
-            { name: "Boyut", options: ["Küçük", "Orta", "Büyük"] },
-            { name: "Fiyat", options: ["0-200₺", "200-500₺", "500-1000₺", "1000₺+"] }
-          ],
+          filters: categoryFilters['caki-bicak'] || [],
+          products: []
+        };
+      
+      case '/dalis-urunleri':
+        return {
+          title: "Dalış Ürünleri",
+          description: "Dalış ve sualtı sporları için profesyonel ekipmanlar.",
+          totalProducts: 0,
+          filters: categoryFilters['dalis-urunleri'] || [],
+          products: []
+        };
+
+      case '/spor-malzemeleri':
+        return {
+          title: "Spor Malzemeleri",
+          description: "Antrenman ve outdoor sporları için seçili ürünler.",
+          totalProducts: 0,
+          filters: categoryFilters['spor-malzemeleri'] || [],
+          products: []
+        };
+
+      case '/kisiye-ozel':
+        return {
+          title: "Kişiye Özel",
+          description: "İsme özel tasarlanabilen ürünler.",
+          totalProducts: 0,
+          filters: categoryFilters['kisiye-ozel'] || [],
           products: []
         };
       
       default:
+        // Fallback: Show a generic filter set so filters are always visible
         return {
           title: "Ürünler",
           description: "Tüm ürünlerimizi inceleyin.",
           totalProducts: 0,
-          filters: [],
+          filters: categoryFilters[normalizedPath.replace('/', '')] || [
+            { name: "Marka", options: ["Daiwa", "Shimano", "Columbia", "Stanley"] },
+            { name: "Fiyat", options: ["0-500₺", "500-1000₺", "1000-2000₺", "2000₺+"] }
+          ],
           products: []
         };
     }
@@ -93,8 +189,8 @@ const CategoryPage = () => {
 
   const categoryData = getCategoryData();
 
-  // Filter products based on active filters
-  const filteredProducts = categoryData.products.filter(product => {
+  // Filter products based on active filters (applied on fetched products)
+  const filteredProducts = products.filter(product => {
     return Object.entries(activeFilters).every(([filterName, values]) => {
       if (values.length === 0) return true;
       

@@ -48,9 +48,9 @@ const FeaturedProducts = () => {
 
   React.useEffect(() => {
     const load = async () => {
-      // Use from<any> so we can select 'featured' even if local types are not updated yet
-      const { data, error } = await supabase
-        .from<any>('products')
+      // Loose typing to avoid build-time type errors if DB types differ locally
+      const { data, error } = await (supabase as any)
+        .from('products')
         .select('id, name, price, brand, image_url, featured, is_active, created_at')
         .eq('is_active', true)
         .eq('featured', true)
@@ -119,7 +119,7 @@ const FeaturedProducts = () => {
 
                   <CardContent className="p-4">
                     {/* Product image */}
-                    <Link to={`/urun/${product.id}`}>
+                    <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
                         <img
                           src={product.image}
@@ -142,7 +142,7 @@ const FeaturedProducts = () => {
                     <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
 
                     {/* Product name */}
-                    <Link to={`/urun/${product.id}`}>
+                    <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
                         {product.name}
                       </h3>
@@ -162,7 +162,7 @@ const FeaturedProducts = () => {
                         <ShoppingCart className="h-4 w-4" />
                         Sepete Ekle
                       </Button>
-                      <Link to={`/urun/${product.id}`}>
+                      <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                         <Button variant="outline" size="sm">İncele</Button>
                       </Link>
                     </div>

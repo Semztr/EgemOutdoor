@@ -154,6 +154,13 @@ const Header = () => {
                               <Link to="/balik-av-malzemeleri/aksesuarlar" className="px-3 py-3 rounded-lg bg-card border">Aksesuarlar</Link>
                               <Link to="/balik-av-malzemeleri/su-ustu-maketler" className="px-3 py-3 rounded-lg bg-card border">Su Üstü Maketler</Link>
                               <Link to="/balik-av-malzemeleri/kasik-yemler" className="px-3 py-3 rounded-lg bg-card border">Kaşık Yemler</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/maket-baliklar" className="px-3 py-3 rounded-lg bg-card border">Maket Balıklar</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/silikon-yemler" className="px-3 py-3 rounded-lg bg-card border">Silikon Yemler</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/jig-yemler" className="px-3 py-3 rounded-lg bg-card border">Jig Yemler</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/kasiklar-ve-vibrasyonlar" className="px-3 py-3 rounded-lg bg-card border">Kaşıklar ve Vibrasyonlar</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/zokalar" className="px-3 py-3 rounded-lg bg-card border">Zokalar</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/meppsler" className="px-3 py-3 rounded-lg bg-card border">Meppsler</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/sazan-yemleri" className="px-3 py-3 rounded-lg bg-card border">Sazan Yemleri</Link>
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -293,6 +300,13 @@ const Header = () => {
                     <DropdownMenuLabel className="px-0">Suni Yemler</DropdownMenuLabel>
                     <Link to="/balik-av-malzemeleri/su-ustu-maketler" className="text-sm block py-1">Su Üstü Maketler</Link>
                     <Link to="/balik-av-malzemeleri/kasik-yemler" className="text-sm block py-1">Kaşık Yemler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/maket-baliklar" className="text-sm block py-1">Maket Balıklar</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/silikon-yemler" className="text-sm block py-1">Silikon Yemler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/jig-yemler" className="text-sm block py-1">Jig Yemler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/kasiklar-ve-vibrasyonlar" className="text-sm block py-1">Kaşıklar ve Vibrasyonlar</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/zokalar" className="text-sm block py-1">Zokalar</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/meppsler" className="text-sm block py-1">Meppsler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/sazan-yemleri" className="text-sm block py-1">Sazan Yemleri</Link>
                   </div>
                   <div className="col-span-1 xl:col-span-1 space-y-1">
                     <DropdownMenuLabel className="px-0">Misineler</DropdownMenuLabel>

@@ -238,6 +238,13 @@ const ProductDetail = () => {
   const [dbProduct, setDbProduct] = React.useState<any | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
 
+  // Hard scroll-to-top when productId changes (extra guard in addition to global ScrollToTop)
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+  }, [productId]);
+
   React.useEffect(() => {
     let ignore = false;
     const load = async () => {
