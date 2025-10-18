@@ -10,6 +10,7 @@ import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, ArrowLeft } from '
 import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
+import { supabase } from '@/integrations/supabase/client';
 
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -234,7 +235,48 @@ const ProductDetail = () => {
     }
   };
 
-  const product = productData[parseInt(productId || '1')] || productData[1];
+  const [dbProduct, setDbProduct] = React.useState<any | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
+
+  React.useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      if (!productId) { setLoading(false); return; }
+      try {
+        const { data, error } = await (supabase as any)
+          .from('products')
+          .select('id, name, brand, price, description, image_url, is_active')
+          .eq('id', productId)
+          .maybeSingle();
+        if (!ignore && !error && data) {
+          const mapped = {
+            id: data.id,
+            name: data.name,
+            brand: data.brand ?? '',
+            price: data.price,
+            originalPrice: null,
+            rating: 4.8,
+            reviews: 0,
+            images: [data.image_url].filter(Boolean),
+            badge: null,
+            inStock: true,
+            colors: [{ name: 'Varsayılan', value: '#000000', available: true }],
+            specs: [],
+            description: data.description ?? '',
+            features: [],
+            technicalSpecs: {},
+          };
+          setDbProduct(mapped);
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => { ignore = true; };
+  }, [productId]);
+
+  const product = dbProduct || productData[parseInt(productId || '1')] || productData[1];
 
   // Set default color
   React.useEffect(() => {
@@ -270,7 +312,7 @@ const ProductDetail = () => {
         <meta property="og:description" content={product.description.substring(0, 160)} />
         <meta property="og:type" content="product" />
         <meta property="og:url" content={`https://balikpro.com/urun/${product.id}`} />
-        <meta property="og:image" content={product.images[0]} />
+        <meta property="og:image" content={(product.images && product.images[0]) || ''} />
         <link rel="canonical" href={`https://balikpro.com/urun/${product.id}`} />
         <meta name="robots" content="index, follow" />
       </Helmet>
@@ -279,6 +321,9 @@ const ProductDetail = () => {
         <Header />
         
         <main className="container mx-auto px-4 py-8 animate-fade-in">
+          {loading && (
+            <div className="text-center text-muted-foreground mb-6">Yükleniyor...</div>
+          )}
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
             <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-primary transition-smooth">Anasayfa</Link>

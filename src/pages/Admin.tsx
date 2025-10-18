@@ -178,10 +178,14 @@ const Admin = () => {
           title: 'Başarılı',
           description: 'Ürün güncellendi.',
         });
+        // Güncelleme sonrası ürün detayına git
+        navigate(`/urun/${editingProduct.id}`);
       } else {
-        const { error } = await (supabase as any)
+        const { data, error } = await (supabase as any)
           .from('products')
-          .insert([productData]);
+          .insert([productData])
+          .select('id')
+          .single();
 
         if (error) throw error;
         
@@ -189,6 +193,9 @@ const Admin = () => {
           title: 'Başarılı',
           description: 'Ürün eklendi.',
         });
+        if (data?.id) {
+          navigate(`/urun/${data.id}`);
+        }
       }
 
       resetForm();
@@ -222,7 +229,9 @@ const Admin = () => {
     // Kategori seçimlerini doldur
     const catValue = product.category || '';
     if (catValue.includes('/')) {
-      const [main, sub] = catValue.split('/', 2);
+      const firstSlash = catValue.indexOf('/');
+      const main = catValue.slice(0, firstSlash);
+      const sub = catValue.slice(firstSlash + 1); // geri kalan kısmı koru (ör: olta-makineleri/spin)
       setMainCategory(main);
       setSubCategory(sub);
     } else if (catValue) {
@@ -263,6 +272,117 @@ const Admin = () => {
       toast({
         title: 'Hata',
         description: 'Ürün silinirken bir hata oluştu.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const seedDummyProducts = async () => {
+    try {
+      const dummyProducts = [
+        // Balık Av Malzemeleri
+        {
+          name: 'Daiwa Ninja X Spin 2.40m 10-40g',
+          description: 'Hafif ve dengeli spin kamışı.',
+          price: 1799.9,
+          brand: 'Daiwa',
+          category: 'balik-av-malzemeleri/olta-kamislari/spin',
+          image_url: 'https://via.placeholder.com/800x800.png?text=Daiwa+Ninja+X',
+          stock_quantity: 20,
+          colors: null,
+          is_active: true,
+          featured: true,
+          color_options: null,
+          extra_images: null,
+        },
+        {
+          name: 'Shimano Catana 2500 Spin Makine',
+          description: 'Sorunsuz sarım ve pürüzsüz drag performansı.',
+          price: 2499.0,
+          brand: 'Shimano',
+          category: 'balik-av-malzemeleri/olta-makineleri/spin',
+          image_url: 'https://via.placeholder.com/800x800.png?text=Shimano+Catana+2500',
+          stock_quantity: 15,
+          colors: null,
+          is_active: true,
+          featured: false,
+          color_options: null,
+          extra_images: null,
+        },
+        {
+          name: 'Savage Gear Su Üstü Maket',
+          description: 'Yırtıcı balıklar için su üstü aksiyon.',
+          price: 349.9,
+          brand: 'Savage Gear',
+          category: 'balik-av-malzemeleri/su-ustu-maketler',
+          image_url: 'https://via.placeholder.com/800x800.png?text=Su+Ustu+Maket',
+          stock_quantity: 100,
+          colors: null,
+          is_active: true,
+          featured: false,
+          color_options: null,
+          extra_images: null,
+        },
+        {
+          name: 'Sufix Monofilament Misina 0.30mm',
+          description: 'Yüksek düğüm dayanımı ve düşük hafıza.',
+          price: 199.9,
+          brand: 'Sufix',
+          category: 'balik-av-malzemeleri/misineler/monofilament',
+          image_url: 'https://via.placeholder.com/800x800.png?text=Monofilament+0.30',
+          stock_quantity: 60,
+          colors: null,
+          is_active: true,
+          featured: false,
+          color_options: null,
+          extra_images: null,
+        },
+        {
+          name: 'Owner Üçlü İğne #4',
+          description: 'Keskin ve dayanıklı üçlü iğneler.',
+          price: 129.9,
+          brand: 'Owner',
+          category: 'balik-av-malzemeleri/igne-jighead/uclu-igneler',
+          image_url: 'https://via.placeholder.com/800x800.png?text=Uclu+Igne+%234',
+          stock_quantity: 80,
+          colors: null,
+          is_active: true,
+          featured: false,
+          color_options: null,
+          extra_images: null,
+        },
+        {
+          name: 'Behr Kepçe - Livar - Tripod Set',
+          description: 'Sahada pratik yardımcı ekipman seti.',
+          price: 799.9,
+          brand: 'Behr',
+          category: 'balik-av-malzemeleri/aksesuarlar/kepce-livar-kakic-tripod',
+          image_url: 'https://via.placeholder.com/800x800.png?text=Kepce+Livar+Tripod',
+          stock_quantity: 25,
+          colors: null,
+          is_active: true,
+          featured: false,
+          color_options: null,
+          extra_images: null,
+        },
+      ];
+
+      const { error } = await (supabase as any)
+        .from('products')
+        .insert(dummyProducts);
+
+      if (error) throw error;
+
+      toast({
+        title: 'Başarılı',
+        description: 'Örnek ürünler eklendi.',
+      });
+      loadProducts();
+    } catch (error) {
+      console.error('Dummy ürünler eklenemedi:', error);
+      toast({
+        title: 'Hata',
+        description: 'Örnek ürünler eklenirken bir hata oluştu.',
         variant: 'destructive',
       });
     }
@@ -328,6 +448,9 @@ const Admin = () => {
         <main className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-bold">Ürün Yönetimi</h1>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={seedDummyProducts}>Dummy Ürünleri Yükle</Button>
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">

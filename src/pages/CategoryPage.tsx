@@ -28,216 +28,56 @@ const CategoryPage = () => {
         return {
           title: "Balık Av Malzemeleri",
           description: "Profesyonel balıkçılık için özel tasarlanmış, kaliteli balık av malzemeleri.",
-          totalProducts: 156,
+          totalProducts: 0,
           filters: [
             { name: "Marka", options: ["Daiwa", "Shimano", "Penn", "Abu Garcia"] },
             { name: "Uzunluk", options: ["2.1m", "2.4m", "2.7m", "3.0m", "3.6m"] },
             { name: "Test", options: ["5-25g", "10-40g", "20-60g", "40-100g"] },
             { name: "Fiyat", options: ["0-500₺", "500-1000₺", "1000-2000₺", "2000₺+"] }
           ],
-          products: [
-            {
-              id: 1,
-              name: "Daiwa Saltiga Dogfight Olta Makinesi",
-              brand: "Daiwa",
-              price: 12850,
-              originalPrice: 14500,
-              rating: 4.9,
-              reviews: 156,
-              image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop",
-              badge: "İndirimde",
-              inStock: true,
-              specs: ["Ultra Dayanıklı", "Profesyonel", "10kg"]
-            },
-            {
-              id: 2,
-              name: "Savage Gear 3D Suicide Duck Yem",
-              brand: "Savage Gear",
-              price: 485,
-              originalPrice: null,
-              rating: 4.8,
-              reviews: 234,
-              image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500&h=500&fit=crop",
-              badge: "Çok Satan",
-              inStock: true,
-              specs: ["3D Gerçekçi", "Yüzer", "15cm"]
-            },
-            {
-              id: 7,
-              name: "Okuma Safina Pro Spinning Makara",
-              brand: "Okuma",
-              price: 2240,
-              originalPrice: null,
-              rating: 4.7,
-              reviews: 98,
-              image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&h=500&fit=crop&brightness=0.8",
-              badge: "Yeni",
-              inStock: true,
-              specs: ["8 Rulman", "Hafif", "Güçlü"]
-            }
-          ]
+          products: []
         };
       
       case '/outdoor-giyim':
         return {
           title: "Outdoor Giyim",
           description: "Doğa sporları ve outdoor aktiviteler için profesyonel kıyafetler.",
-          totalProducts: 89,
+          totalProducts: 0,
           filters: [
             { name: "Marka", options: ["Columbia", "The North Face", "Merrell", "Patagonia"] },
             { name: "Kategori", options: ["Mont", "Pantolon", "Ayakkabı", "Aksesuar"] },
             { name: "Beden", options: ["XS", "S", "M", "L", "XL", "XXL"] },
             { name: "Fiyat", options: ["0-300₺", "300-600₺", "600-1000₺", "1000₺+"] }
           ],
-          products: [
-            {
-              id: 3,
-              name: "Jack Wolfskin Texapore Outdoor Mont",
-              brand: "Jack Wolfskin",
-              price: 3240,
-              originalPrice: 3850,
-              rating: 4.9,
-              reviews: 189,
-              image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&h=500&fit=crop",
-              badge: "İndirimde",
-              inStock: true,
-              specs: ["Su Geçirmez", "Nefes Alır", "S-XXL"]
-            },
-            {
-              id: 6,
-              name: "Helly Hansen Workwear Outdoor Pantolon",
-              brand: "Helly Hansen",
-              price: 1850,
-              originalPrice: 2100,
-              rating: 4.6,
-              reviews: 267,
-              image: "https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=500&h=500&fit=crop",
-              badge: "İndirimde",
-              inStock: true,
-              specs: ["Stretch", "Su İtici", "46-62"]
-            },
-            {
-              id: 5,
-              name: "Asolo Falcon GV Trekking Botu",
-              brand: "Asolo",
-              price: 4580,
-              originalPrice: null,
-              rating: 5.0,
-              reviews: 178,
-              image: "https://images.unsplash.com/photo-1542840410-3092f99611a3?w=500&h=500&fit=crop",
-              badge: "Premium",
-              inStock: true,
-              specs: ["Gore-Tex", "Vibram", "40-46"]
-            }
-          ]
+          products: []
         };
       
       case '/kamp-malzemeleri':
         return {
           title: "Kamp Malzemeleri",
           description: "Doğada konforlu kamp deneyimi için gerekli tüm malzemeler.",
-          totalProducts: 124,
+          totalProducts: 0,
           filters: [
             { name: "Marka", options: ["Coleman", "Campingaz", "Thermos", "MSR"] },
             { name: "Kategori", options: ["Çadır", "Ocak", "Uyku", "Mutfak"] },
             { name: "Kapasite", options: ["1-2 Kişi", "3-4 Kişi", "5+ Kişi"] },
             { name: "Fiyat", options: ["0-500₺", "500-1000₺", "1000-2000₺", "2000₺+"] }
           ],
-          products: [
-            {
-              id: 4,
-              name: "Stanley Adventure Soğuk Tutucu Termos 1L",
-              brand: "Stanley",
-              price: 890,
-              originalPrice: 1050,
-              rating: 4.7,
-              reviews: 421,
-              image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=500&h=500&fit=crop",
-              badge: "İndirimde",
-              inStock: true,
-              specs: ["1 Litre", "24h Sıcak", "32h Soğuk"]
-            },
-            {
-              id: 8,
-              name: "Coleman Sundome 4 Kişilik Çadır",
-              brand: "Coleman",
-              price: 1850,
-              originalPrice: 2100,
-              rating: 4.6,
-              reviews: 278,
-              image: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=500&h=500&fit=crop",
-              badge: "İndirimde",
-              inStock: true,
-              specs: ["4 Kişilik", "Su Geçirmez", "Kolay Kurulum"]
-            },
-            {
-              id: 9,
-              name: "MSR PocketRocket 2 Mini Ocak",
-              brand: "MSR",
-              price: 750,
-              originalPrice: null,
-              rating: 4.8,
-              reviews: 345,
-              image: "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=500&h=500&fit=crop",
-              badge: "Çok Satan",
-              inStock: true,
-              specs: ["Gazlı", "Hafif", "Taşınabilir"]
-            }
-          ]
+          products: []
         };
       
       case '/caki-bicak':
         return {
           title: "Çakı & Bıçak",
           description: "Outdoor aktiviteler ve günlük kullanım için kaliteli çakı ve bıçaklar.",
-          totalProducts: 67,
+          totalProducts: 0,
           filters: [
             { name: "Marka", options: ["Victorinox", "Mora", "Opinel", "Benchmade"] },
             { name: "Tip", options: ["Çakı", "Sabit Bıçak", "Katlanır Bıçak"] },
             { name: "Boyut", options: ["Küçük", "Orta", "Büyük"] },
             { name: "Fiyat", options: ["0-200₺", "200-500₺", "500-1000₺", "1000₺+"] }
           ],
-          products: [
-            {
-              id: 10,
-              name: "Victorinox Swiss Army Huntsman",
-              brand: "Victorinox",
-              price: 680,
-              originalPrice: null,
-              rating: 4.9,
-              reviews: 1203,
-              image: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500&h=500&fit=crop",
-              badge: "Klasik",
-              inStock: true,
-              specs: ["15 Fonksiyon", "Paslanmaz", "İsviçre"]
-            },
-            {
-              id: 11,
-              name: "Mora Companion Heavy Duty Bıçak",
-              brand: "Mora",
-              price: 450,
-              originalPrice: null,
-              rating: 4.8,
-              reviews: 456,
-              image: "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=500&h=500&fit=crop",
-              badge: "Popüler",
-              inStock: true,
-              specs: ["Carbon Çelik", "Ergonomik", "Kılıflı"]
-            },
-            {
-              id: 12,
-              name: "Opinel No.8 Katlanır Bıçak",
-              brand: "Opinel",
-              price: 180,
-              originalPrice: 220,
-              rating: 4.7,
-              reviews: 890,
-              image: "https://images.unsplash.com/photo-1593207728683-3c2d3fc39ef1?w=500&h=500&fit=crop",
-              badge: "İndirimde",
-              inStock: true,
-              specs: ["Ahşap Saplı", "Fransız", "Güvenlik Kilidi"]
-            }
-          ]
+          products: []
         };
       
       default:

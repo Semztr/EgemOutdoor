@@ -466,19 +466,9 @@ const Header = () => {
             </DropdownMenu>
 
             {/* Spor Malzemeleri - moved before Termoslar */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="text-foreground hover:text-primary font-medium">
-                  Spor Malzemeleri
-                  <ChevronDown className="ml-1 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-card z-50 p-3">
-                <DropdownMenuItem asChild><Link to="/spor-malzemeleri/toplar" className="w-full">Toplar</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/spor-malzemeleri/fitness-bantlari" className="w-full">Fitness Bantları</Link></DropdownMenuItem>
-                <DropdownMenuItem asChild><Link to="/spor-malzemeleri/saha-ekipmanlari" className="w-full">Saha Ekipmanları</Link></DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Link to="/spor-malzemeleri" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
+              Spor Malzemeleri
+            </Link>
 
             {/* Termoslar ve Mataralar - moved after Spor */}
             <Link to="/termoslar-ve-mataralar" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
