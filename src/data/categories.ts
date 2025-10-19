@@ -30,7 +30,6 @@ export const siteCategories: SiteCategory[] = [
       // Suni Yemler
       { name: 'Suni Yemler: Su Üstü Maketler', slug: 'su-ustu-maketler' },
       { name: 'Suni Yemler: Kaşık Yemler', slug: 'kasik-yemler' },
-      { name: 'Suni Yemler: Maket Balıklar', slug: 'suni-yemler/maket-baliklar' },
       { name: 'Suni Yemler: Silikon Yemler', slug: 'suni-yemler/silikon-yemler' },
       { name: 'Suni Yemler: Jig Yemler', slug: 'suni-yemler/jig-yemler' },
       { name: 'Suni Yemler: Kaşıklar ve Vibrasyonlar', slug: 'suni-yemler/kasiklar-ve-vibrasyonlar' },

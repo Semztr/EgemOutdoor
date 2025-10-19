@@ -31,6 +31,9 @@ const CategoryPage = () => {
   const [brandSearch, setBrandSearch] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
   const [localSearchQuery, setLocalSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const PAGE_SIZE = 30;
 
   // Determine category from URL (normalize to root category for subpaths)
   const currentPath = location.pathname;
@@ -58,26 +61,26 @@ const CategoryPage = () => {
           products: []
         };
 
-  // Supabase POC: load products by category and filters (brand + features.agirlik)
+  // Supabase: sayfalı ürün yükleme ve toplam sayım
   React.useEffect(() => {
     let ignore = false;
     const load = async () => {
       setLoading(true);
       try {
-        let query = (supabase as any)
+        let base = (supabase as any)
           .from('products')
-          .select('id, name, brand, price, image_url, is_active, category, features')
+          .select('id, name, brand, price, image_url, is_active, category, features', { count: 'exact' })
           .eq('is_active', true);
 
         // Category scoping by prefix if category field exists
         if (rootPath) {
-          query = query.like('category', `${rootPath}%`);
+          base = base.like('category', `${rootPath}%`);
         }
 
         // Brand filter (Marka)
         const markaVals = activeFilters['Marka'] || [];
         if (markaVals.length > 0) {
-          query = query.in('brand', markaVals);
+          base = base.in('brand', markaVals);
         }
 
         // Ağırlık filter via JSONB features->>agirlik (POC)
@@ -86,11 +89,34 @@ const CategoryPage = () => {
           // Build OR expression: features->>agirlik.eq.X,features->>agirlik.eq.Y
           const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
           if (ors) {
-            query = query.or(ors);
+            base = base.or(ors);
           }
         }
 
-        const { data, error } = await query.limit(60);
+        // Count (toplam ürün) - filtreleri yeniden uygula
+        let countQ = (supabase as any)
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_active', true);
+        if (rootPath) {
+          countQ = countQ.like('category', `${rootPath}%`);
+        }
+        if (markaVals.length > 0) {
+          countQ = countQ.in('brand', markaVals);
+        }
+        if (agirlikVals.length > 0) {
+          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
+          if (ors) countQ = countQ.or(ors);
+        }
+        const countResp = await countQ;
+        if (!ignore && !countResp.error) {
+          setTotalCount(countResp.count || 0);
+        }
+
+        // Pagination
+        const from = (currentPage - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE - 1;
+        const { data, error } = await base.range(from, to);
         if (!error && data && !ignore) {
           const mapped = data.map((p: any) => ({
             id: p.id,
@@ -116,7 +142,7 @@ const CategoryPage = () => {
     };
     load();
     return () => { ignore = true; };
-  }, [normalizedPath, rootPath, JSON.stringify(activeFilters)]);
+  }, [normalizedPath, rootPath, JSON.stringify(activeFilters), currentPage]);
       
       case '/outdoor-giyim':
         return {
@@ -476,13 +502,63 @@ const CategoryPage = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-center space-x-2">
-              <Button variant="outline" size="sm">Önceki</Button>
-              <Button variant="default" size="sm">1</Button>
-              <Button variant="outline" size="sm">2</Button>
-              <Button variant="outline" size="sm">3</Button>
-              <Button variant="outline" size="sm">Sonraki</Button>
-            </div>
+            {(() => {
+              const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+              const pages: number[] = [];
+              const pageWindow = 5;
+              let start = 1;
+              if (totalPages <= pageWindow) {
+                start = 1;
+              } else if (currentPage <= 3) {
+                start = 1;
+              } else if (currentPage >= totalPages - 2) {
+                start = totalPages - (pageWindow - 1);
+              } else {
+                start = currentPage - Math.floor(pageWindow / 2);
+              }
+              for (let i = 0; i < Math.min(pageWindow, totalPages); i++) pages.push(start + i);
+              const go = (p: number) => {
+                if (p < 1 || p > totalPages || p === currentPage) return;
+                setCurrentPage(p);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              };
+              return (
+                <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full px-4"
+                    onClick={() => go(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    aria-label="Önceki"
+                  >
+                    Önceki
+                  </Button>
+                  {pages.map((p) => (
+                    <Button
+                      key={p}
+                      size="sm"
+                      className="rounded-full px-4"
+                      variant={p === currentPage ? 'default' : 'outline'}
+                      onClick={() => go(p)}
+                      aria-current={p === currentPage ? 'page' : undefined}
+                    >
+                      {p}
+                    </Button>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full px-4"
+                    onClick={() => go(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    aria-label="Sonraki"
+                  >
+                    Sonraki
+                  </Button>
+                </div>
+              );
+            })()}
             <section className="py-20">
               <div className="container mx-auto px-0">
                 <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Popüler Kategoriler</h2>
