@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -49,7 +49,12 @@ const CategoryPage = () => {
   ];
   const rootPath = roots.find(slug => currentPath === `/${slug}` || currentPath.startsWith(`/${slug}/`));
   const normalizedPath = rootPath ? `/${rootPath}` : currentPath;
-  
+  // If browsing a subcategory like /balik-av-malzemeleri/olta-kamislari/spin,
+  // capture the subpath after the root to precisely filter.
+  const subPath = rootPath && currentPath.length > rootPath.length + 1
+    ? currentPath.slice(rootPath.length + 2) // remove leading '/{root}/'
+    : '';
+
   const getCategoryData = () => {
     switch (normalizedPath) {
       case '/balik-av-malzemeleri':
@@ -61,89 +66,6 @@ const CategoryPage = () => {
           products: []
         };
 
-  // Supabase: sayfalı ürün yükleme ve toplam sayım
-  React.useEffect(() => {
-    let ignore = false;
-    const load = async () => {
-      setLoading(true);
-      try {
-        let base = (supabase as any)
-          .from('products')
-          .select('id, name, brand, price, image_url, is_active, category, features', { count: 'exact' })
-          .eq('is_active', true);
-
-        // Category scoping by prefix if category field exists
-        if (rootPath) {
-          base = base.like('category', `${rootPath}%`);
-        }
-
-        // Brand filter (Marka)
-        const markaVals = activeFilters['Marka'] || [];
-        if (markaVals.length > 0) {
-          base = base.in('brand', markaVals);
-        }
-
-        // Ağırlık filter via JSONB features->>agirlik (POC)
-        const agirlikVals = activeFilters['Ağırlık'] || activeFilters['Agirlik'] || activeFilters['A��rlık'] || [];
-        if (agirlikVals.length > 0) {
-          // Build OR expression: features->>agirlik.eq.X,features->>agirlik.eq.Y
-          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
-          if (ors) {
-            base = base.or(ors);
-          }
-        }
-
-        // Count (toplam ürün) - filtreleri yeniden uygula
-        let countQ = (supabase as any)
-          .from('products')
-          .select('id', { count: 'exact', head: true })
-          .eq('is_active', true);
-        if (rootPath) {
-          countQ = countQ.like('category', `${rootPath}%`);
-        }
-        if (markaVals.length > 0) {
-          countQ = countQ.in('brand', markaVals);
-        }
-        if (agirlikVals.length > 0) {
-          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
-          if (ors) countQ = countQ.or(ors);
-        }
-        const countResp = await countQ;
-        if (!ignore && !countResp.error) {
-          setTotalCount(countResp.count || 0);
-        }
-
-        // Pagination
-        const from = (currentPage - 1) * PAGE_SIZE;
-        const to = from + PAGE_SIZE - 1;
-        const { data, error } = await base.range(from, to);
-        if (!error && data && !ignore) {
-          const mapped = data.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            brand: p.brand ?? '',
-            price: p.price,
-            image: p.image_url ?? '',
-            badge: null,
-            specs: [],
-            rating: 4.8,
-            reviews: 0,
-            inStock: true,
-            originalPrice: null,
-          }));
-          setProducts(mapped);
-        }
-      } catch (e: any) {
-        // Graceful fallback if column missing or JSONB not set; keep empty list
-        console.warn('Supabase filter POC error:', e?.message || e);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    };
-    load();
-    return () => { ignore = true; };
-  }, [normalizedPath, rootPath, JSON.stringify(activeFilters), currentPage]);
-      
       case '/outdoor-giyim':
         return {
           title: "Outdoor Giyim",
@@ -221,6 +143,99 @@ const CategoryPage = () => {
         };
     }
   };
+
+  // Supabase: sayfalı ürün yükleme ve toplam sayım
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      setLoading(true);
+      try {
+        let base = supabase
+          .from('products')
+          .select('id, name, brand, price, image_url, is_active, category, features', { count: 'exact' })
+          .eq('is_active', true);
+
+        // Category scoping by prefix if category field exists
+        if (rootPath) {
+          if (subPath) {
+            base = base.like('category', `${rootPath}/${subPath}%`);
+          } else {
+            // Include exact root category and any child subcategories
+            // Support legacy values saved with a leading '/'
+            base = base.or(`category.eq.${rootPath},category.like.${rootPath}/%,category.eq./${rootPath},category.like./${rootPath}/%`);
+          }
+        }
+
+        // Brand filter (Marka)
+        const markaVals = activeFilters['Marka'] || [];
+        if (markaVals.length > 0) {
+          base = base.in('brand', markaVals);
+        }
+
+        // Ağırlık filter via JSONB features->>agirlik (POC)
+        const agirlikVals = activeFilters['Ağırlık'] || activeFilters['Agirlik'] || activeFilters['A��rlık'] || [];
+        if (agirlikVals.length > 0) {
+          // Build OR expression: features->>agirlik.eq.X,features->>agirlik.eq.Y
+          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
+          if (ors) {
+            base = base.or(ors);
+          }
+        }
+
+        // Count (toplam ürün) - filtreleri yeniden uygula
+        let countQ = supabase
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_active', true);
+        if (rootPath) {
+          if (subPath) {
+            countQ = countQ.like('category', `${rootPath}/${subPath}%`);
+          } else {
+            countQ = countQ.or(`category.eq.${rootPath},category.like.${rootPath}/%,category.eq./${rootPath},category.like./${rootPath}/%`);
+          }
+        }
+        if (markaVals.length > 0) {
+          countQ = countQ.in('brand', markaVals);
+        }
+        if (agirlikVals.length > 0) {
+          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
+          if (ors) countQ = countQ.or(ors);
+        }
+        const countResp = await countQ;
+        if (!ignore && !countResp.error) {
+          setTotalCount(countResp.count || 0);
+        }
+
+        // Pagination
+        const from = (currentPage - 1) * PAGE_SIZE;
+        const to = from + PAGE_SIZE - 1;
+        const { data, error } = await base.range(from, to);
+        if (!error && data && !ignore) {
+          const mapped = data.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            brand: p.brand ?? '',
+            price: p.price,
+            image: p.image_url ?? '',
+            badge: null,
+            specs: [],
+            rating: 4.8,
+            reviews: 0,
+            inStock: true,
+            originalPrice: null,
+          }));
+          setProducts(mapped);
+        }
+      } catch (e: any) {
+        // Graceful fallback if column missing or JSONB not set; keep empty list
+        console.warn('Supabase filter POC error:', e?.message || e);
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    };
+    load();
+    return () => { ignore = true; };
+  }, [normalizedPath, rootPath, subPath, JSON.stringify(activeFilters), currentPage]);
 
   const categoryData = getCategoryData();
 

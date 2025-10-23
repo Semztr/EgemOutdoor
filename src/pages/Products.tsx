@@ -22,6 +22,7 @@ const Products = () => {
   const { toast } = useToast();
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const [supaProducts, setSupaProducts] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -33,93 +34,11 @@ const Products = () => {
   const [brandSearch, setBrandSearch] = useState('');
   const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc' | 'rating_desc'>('newest');
 
-  // Mock products data with search functionality
-  const allProducts = [
-    // Balık Av Malzemeleri
-    {
-      id: 1,
-      name: "Daiwa Ninja X Spinning Rod 2.40m 10-40g",
-      brand: "Daiwa",
-      price: 850,
-      originalPrice: 950,
-      rating: 4.8,
-      reviews: 124,
-      image: "🎣",
-      badge: "İndirimde",
-      category: "Balık Av Malzemeleri",
-      inStock: true
-    },
-    {
-      id: 2,
-      name: "Shimano Catana EX Spinning 2.70m 5-25g", 
-      brand: "Shimano",
-      price: 680,
-      originalPrice: null,
-      rating: 4.6,
-      reviews: 87,
-      image: "🎯",
-      badge: null,
-      category: "Balık Av Malzemeleri",
-      inStock: true
-    },
-    // Outdoor Giyim
-    {
-      id: 4,
-      name: "Columbia Watertight II Yağmurluk",
-      brand: "Columbia",
-      price: 420,
-      originalPrice: 480,
-      rating: 4.7,
-      reviews: 203,
-      image: "🧥",
-      badge: "İndirimde",
-      category: "Outdoor Giyim",
-      inStock: true
-    },
-    {
-      id: 5,
-      name: "The North Face Trekking Pantolon",
-      brand: "The North Face", 
-      price: 650,
-      originalPrice: null,
-      rating: 4.8,
-      reviews: 156,
-      image: "👖",
-      badge: "Popüler",
-      category: "Outdoor Giyim",
-      inStock: true
-    },
-    // Kamp Malzemeleri
-    {
-      id: 7,
-      name: "Coleman Sundome 4 Kişilik Çadır",
-      brand: "Coleman",
-      price: 1850,
-      originalPrice: 2100,
-      rating: 4.6,
-      reviews: 278,
-      image: "⛺",
-      badge: "İndirimde",
-      category: "Kamp Malzemeleri",
-      inStock: true
-    },
-    {
-      id: 8,
-      name: "Campingaz Party Grill 600 Ocak",
-      brand: "Campingaz",
-      price: 750,
-      originalPrice: null,
-      rating: 4.8,
-      reviews: 145,
-      image: "🔥",
-      badge: "Yeni",
-      category: "Kamp Malzemeleri",
-      inStock: true
-    }
-  ];
+  // Use Supabase products as the source
+  const allProducts = supaProducts;
 
-  const uniqueBrands = Array.from(new Set(allProducts.map(p => p.brand)));
-  const uniqueCategories = Array.from(new Set(allProducts.map(p => p.category)));
+  const uniqueBrands = Array.from(new Set(allProducts.map(p => p.brand).filter(Boolean)));
+  const uniqueCategories = Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)));
 
   // Filter products based on search query + filters
   const filteredProducts = (searchQuery ? allProducts : allProducts)
@@ -168,35 +87,55 @@ const Products = () => {
     });
   };
 
-  // Load recent active products from Supabase when not searching
+  // Load products from Supabase
   useEffect(() => {
     let ignore = false;
-    const load = async () => {
-      if (searchQuery) return; // keep search behavior intact
+    const loadProducts = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const { data, error } = await (supabase as any)
+        let query = supabase
           .from('products')
-          .select('id, name, brand, price, image_url, is_active, created_at')
-          .eq('is_active', true)
+          .select('id, name, brand, price, image_url, category, stock_quantity, is_active, created_at, featured')
+          .eq('is_active', true);
+
+        // Apply search filter if query exists
+        if (searchQuery) {
+          query = query.or(`name.ilike.%${searchQuery}%,brand.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+        }
+
+        const { data, error } = await query
           .order('created_at', { ascending: false })
-          .limit(20);
-        if (!ignore && !error && data) {
+          .limit(100);
+
+        if (error) throw error;
+
+        if (!ignore && data) {
           const mapped = data.map((p: any) => ({
             id: p.id,
             name: p.name,
             brand: p.brand ?? '',
             price: p.price,
-            image: p.image_url ?? '',
-            badge: null,
+            originalPrice: null,
+            rating: 4.5,
+            reviews: 0,
+            image: p.image_url ?? '/placeholder.svg',
+            badge: p.featured ? 'Öne Çıkan' : null,
+            category: p.category ?? '',
+            inStock: (p.stock_quantity ?? 0) > 0,
           }));
           setSupaProducts(mapped);
+        }
+      } catch (err) {
+        if (!ignore) {
+          console.error('Failed to load products:', err);
+          setError('Ürünler yüklenirken bir hata oluştu.');
         }
       } finally {
         if (!ignore) setLoading(false);
       }
     };
-    load();
+    loadProducts();
     return () => { ignore = true; };
   }, [searchQuery]);
 
@@ -213,8 +152,30 @@ const Products = () => {
       <div className="min-h-screen">
         <Header />
       <main>
+        {/* Loading State */}
+        {loading && (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Ürünler yükleniyor...</p>
+            </div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="container mx-auto px-4 py-12">
+            <div className="text-center">
+              <div className="text-6xl mb-4">⚠️</div>
+              <h3 className="text-2xl font-bold text-foreground mb-2">Bir Hata Oluştu</h3>
+              <p className="text-muted-foreground mb-6">{error}</p>
+              <Button onClick={() => window.location.reload()}>Tekrar Dene</Button>
+            </div>
+          </div>
+        )}
+
         {/* Search Results */}
-        {searchQuery ? (
+        {!loading && !error && searchQuery ? (
           <section className="py-12">
             <div className="container mx-auto px-4">
               {filteredProducts.length > 0 ? (
@@ -293,7 +254,7 @@ const Products = () => {
               )}
             </div>
           </section>
-        ) : (
+        ) : !loading && !error ? (
           <>
             <section className="py-12">
               <div className="container mx-auto px-4">
@@ -503,7 +464,7 @@ const Products = () => {
               </div>
             </section>
           </>
-        )}
+        ) : null}
       </main>
       <Footer />
     </div>

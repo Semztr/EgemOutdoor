@@ -14,22 +14,10 @@ import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { siteCategories } from '@/data/categories';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tables, TablesInsert } from '@/integrations/supabase/types';
 
-interface Product {
-  id: string;
-  name: string;
-  description: string | null;
-  price: number;
-  brand: string | null;
-  category: string | null;
-  image_url: string | null;
-  stock_quantity: number;
-  colors: string[] | null;
-  is_active: boolean;
-  featured?: boolean;
-  color_options?: string[] | null;
-  extra_images?: string[] | null;
-}
+type Product = Tables<'products'>;
+type ProductInsert = TablesInsert<'products'>;
 
 const Admin = () => {
   const { user, loading: authLoading } = useAuth();
@@ -131,18 +119,18 @@ const Admin = () => {
 
   const loadProducts = async () => {
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('products')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setProducts((data as any[]) as Product[]);
+      setProducts((data || []) as unknown as Product[]);
     } catch (error) {
       console.error('Ürünler yüklenemedi:', error);
       toast({
         title: 'Hata',
-        description: 'Ürünler yüklenirken bir hata oluştu.',
+        description: `Ürünler yüklenirken bir hata oluştu${(error as any)?.message ? `: ${(error as any).message}` : ''}`,
         variant: 'destructive',
       });
     }
@@ -151,34 +139,46 @@ const Admin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const productData: any = {
+    // Basic validation and normalization
+    const parsedPrice = parseFloat(formData.price);
+    if (Number.isNaN(parsedPrice)) {
+      toast({ title: 'Geçersiz Fiyat', description: 'Lütfen geçerli bir fiyat girin.', variant: 'destructive' });
+      return;
+    }
+    const parsedStock = parseInt(formData.stock_quantity) || 0;
+
+    // Ensure category fallback: if no explicit subcategory composed, but a main category is selected,
+    // persist the main category slug so root pages can list it.
+    const effectiveCategory = (formData.category && formData.category.trim())
+      ? formData.category.trim()
+      : (mainCategory || '');
+
+    const productData: Partial<ProductInsert> = {
       name: formData.name,
       description: formData.description || null,
-      price: parseFloat(formData.price),
+      price: parsedPrice,
       brand: formData.brand || null,
-      category: formData.category || null,
+      category: effectiveCategory || null,
       image_url: formData.image_url || null,
-      stock_quantity: parseInt(formData.stock_quantity) || 0,
-      colors: formData.colors ? formData.colors.split(',').map(c => c.trim()) : null,
+      stock_quantity: parsedStock,
+      colors: formData.colors ? formData.colors.split(',').map(c => c.trim()) : [],
       is_active: true,
       featured: !!formData.featured,
-      color_options: formData.color_options ? formData.color_options.split(',').map(s => s.trim()).filter(Boolean) : null,
-      extra_images: formData.extra_images ? formData.extra_images.split(',').map(s => s.trim()).filter(Boolean) : null,
+      color_options: formData.color_options ? formData.color_options.split(',').map(s => s.trim()).filter(Boolean) : [],
+      extra_images: formData.extra_images ? formData.extra_images.split(',').map(s => s.trim()).filter(Boolean) : [],
     };
 
     // JSONB features POC
     const features: Record<string, any> = {};
     if (formData.agirlik.trim()) features.agirlik = formData.agirlik.trim();
     if (Object.keys(features).length > 0) {
-      productData.features = features;
-    } else {
-      // send null to avoid overwriting to empty object unintentionally
-      productData.features = null;
+      (productData as any).features = features;
     }
 
     try {
+      console.debug('[Admin] Saving product payload:', productData);
       if (editingProduct) {
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from('products')
           .update(productData)
           .eq('id', editingProduct.id);
@@ -192,9 +192,9 @@ const Admin = () => {
         // Güncelleme sonrası ürün detayına git
         navigate(`/urun/${editingProduct.id}`);
       } else {
-        const { data, error } = await (supabase as any)
+        const { data, error } = await supabase
           .from('products')
-          .insert([productData])
+          .insert([productData as ProductInsert])
           .select('id')
           .single();
 
@@ -215,7 +215,7 @@ const Admin = () => {
       console.error('Ürün kaydedilemedi:', error);
       toast({
         title: 'Hata',
-        description: 'Ürün kaydedilirken bir hata oluştu.',
+        description: `Ürün kaydedilirken bir hata oluştu${(error as any)?.message ? `: ${(error as any).message}` : ''}`,
         variant: 'destructive',
       });
     }
@@ -266,7 +266,7 @@ const Admin = () => {
     if (!confirm('Bu ürünü silmek istediğinizden emin misiniz?')) return;
 
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('products')
         .delete()
         .eq('id', id);
@@ -379,7 +379,7 @@ const Admin = () => {
         },
       ];
 
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('products')
         .insert(dummyProducts);
 
@@ -647,6 +647,7 @@ const Admin = () => {
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg">{product.name}</h3>
                           <p className="text-sm text-muted-foreground">{product.brand}</p>
+                          <p className="text-xs text-muted-foreground mt-1">Kategori: {product.category || '—'}</p>
                           <p className="text-lg font-bold text-primary mt-2">
                             ₺{product.price.toLocaleString()}
                           </p>

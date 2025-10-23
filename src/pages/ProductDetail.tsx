@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -11,288 +11,144 @@ import { useCart } from '@/contexts/CartContext';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
+import { siteCategories } from '@/data/categories';
 
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const { addItem } = useCart();
   const { toast } = useToast();
+
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('');
+  const [product, setProduct] = useState<any | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock product data - updated with real images
-  const productData: Record<number, any> = {
-    1: {
-      id: 1,
-      name: "Daiwa Saltiga Dogfight Olta Makinesi",
-      brand: "Daiwa",
-      price: 12850,
-      originalPrice: 14500,
-      rating: 4.9,
-      reviews: 156,
-      images: [
-        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=800&fit=crop",
-        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=800&fit=crop",
-        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=800&fit=crop&brightness=0.9",
-        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=800&fit=crop&brightness=0.9"
-      ],
-      badge: "11% İndirim",
-      inStock: true,
-      colors: [
-        { name: "Siyah", value: "#000000", available: true },
-        { name: "Gri", value: "#6B7280", available: true },
-        { name: "Mavi", value: "#3B82F6", available: true }
-      ],
-      specs: ["Ultra Dayanıklı", "Profesyonel", "10kg Çekme Gücü"],
-      description: "Profesyonel balıkçılar için üstün performans ve dayanıklılık sunan Daiwa Saltiga serisi. Yırtıcı balık avı için ideal.",
-      features: [
-        "Yüksek kaliteli alüminyum gövde",
-        "Karbon fiber fren sistemi",
-        "Su geçirmez yapı",
-        "10 yıl garanti",
-        "Japon üretim kalitesi"
-      ],
-      technicalSpecs: {
-        "Makara Tipi": "Spinning",
-        "Çekme Gücü": "10kg",
-        "Rulman Sayısı": "8+1",
-        "Gear Oranı": "5.7:1",
-        "Ağırlık": "285g",
-        "Kaplinlik": "240m / 0.30mm"
-      }
-    },
-    2: {
-      id: 2,
-      name: "Savage Gear 3D Suicide Duck Yem",
-      brand: "Savage Gear",
-      price: 485,
-      originalPrice: null,
-      rating: 4.8,
-      reviews: 234,
-      images: [
-        "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&h=800&fit=crop",
-        "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&h=800&fit=crop"
-      ],
-      badge: "Çok Satan",
-      inStock: true,
-      colors: [
-        { name: "Natural", value: "#D4A574", available: true },
-        { name: "Black", value: "#000000", available: true }
-      ],
-      specs: ["3D Gerçekçi", "Yüzer", "15cm"],
-      description: "Gerçekçi hareket ve ses ile yırtıcı balıkları cezbeden efsanevi Savage Gear yemleri.",
-      features: [
-        "3D tarayıcı ile modellenmiş gerçekçi tasarım",
-        "Özel ses sistemi",
-        "Ultra keskin Japonya tığları",
-        "Dayanıklı gövde yapısı"
-      ],
-      technicalSpecs: {
-        "Uzunluk": "15cm",
-        "Ağırlık": "70g",
-        "Tip": "Yüzer",
-        "Tığ Sayısı": "2 adet treble hook",
-        "Renk": "Natural / Black"
-      }
-    },
-    3: {
-      id: 3,
-      name: "Jack Wolfskin Texapore Outdoor Mont",
-      brand: "Jack Wolfskin",
-      price: 3240,
-      originalPrice: 3850,
-      rating: 4.9,
-      reviews: 189,
-      images: [
-        "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&h=800&fit=crop",
-        "https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=800&h=800&fit=crop"
-      ],
-      badge: "16% İndirim",
-      inStock: true,
-      colors: [
-        { name: "Siyah", value: "#000000", available: true },
-        { name: "Lacivert", value: "#1e3a8a", available: true },
-        { name: "Yeşil", value: "#15803d", available: true }
-      ],
-      specs: ["Su Geçirmez", "Nefes Alır", "3 Katmanlı"],
-      description: "Su geçirmez, nefes alır, tüm hava koşullarına uygun profesyonel outdoor mont.",
-      features: [
-        "Texapore membran teknolojisi",
-        "Tamamen bantlı dikişler",
-        "Ayarlanabilir kapüşon",
-        "Çok sayıda kullanışlı cep",
-        "Rüzgar geçirmez"
-      ],
-      technicalSpecs: {
-        "Malzeme": "Texapore",
-        "Su Geçirmezlik": "20,000mm",
-        "Nefes Alabilirlik": "15,000g/m²/24h",
-        "Katman": "3 Katman",
-        "Beden": "S-XXL"
-      }
-    },
-    4: {
-      id: 4,
-      name: "Stanley Adventure Soğuk Tutucu Termos 1L",
-      brand: "Stanley",
-      price: 890,
-      originalPrice: 1050,
-      rating: 4.7,
-      reviews: 421,
-      images: [
-        "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&h=800&fit=crop"
-      ],
-      badge: "15% İndirim",
-      inStock: true,
-      colors: [
-        { name: "Yeşil", value: "#15803d", available: true },
-        { name: "Siyah", value: "#000000", available: true }
-      ],
-      specs: ["1 Litre", "24 Saat Sıcak", "32 Saat Soğuk"],
-      description: "24 saat sıcak, 32 saat soğuk tutar. Çelik gövde, paslanmaz ve dayanıklı.",
-      features: [
-        "Çift cidarlı vakumlu yalıtım",
-        "Paslanmaz çelik 18/8",
-        "Leak-proof kapak",
-        "Bulaşık makinesinde yıkanabilir",
-        "Ömür boyu garanti"
-      ],
-      technicalSpecs: {
-        "Kapasite": "1 Litre",
-        "Sıcak Tutma": "24 saat",
-        "Soğuk Tutma": "32 saat",
-        "Malzeme": "Paslanmaz Çelik 18/8",
-        "Ağırlık": "544g"
-      }
-    },
-    5: {
-      id: 5,
-      name: "Asolo Falcon GV Trekking Botu",
-      brand: "Asolo",
-      price: 4580,
-      originalPrice: null,
-      rating: 5.0,
-      reviews: 178,
-      images: [
-        "https://images.unsplash.com/photo-1542840410-3092f99611a3?w=800&h=800&fit=crop"
-      ],
-      badge: "Premium",
-      inStock: true,
-      colors: [
-        { name: "Kahverengi", value: "#92400e", available: true },
-        { name: "Gri", value: "#6B7280", available: true }
-      ],
-      specs: ["Gore-Tex", "Vibram Taban", "Bilek Desteği"],
-      description: "Gore-Tex membran, Vibram taban, maksimum destek ve konfor sunan profesyonel trekking botu.",
-      features: [
-        "Gore-Tex membran - su geçirmez ve nefes alır",
-        "Vibram Megagrip taban",
-        "Bilek desteği ve koruma",
-        "Deri ve sentetik üst yapı",
-        "2 yıl garanti"
-      ],
-      technicalSpecs: {
-        "Membran": "Gore-Tex",
-        "Taban": "Vibram Megagrip",
-        "Malzeme": "Deri + Sentetik",
-        "Numara": "40-46",
-        "Ağırlık": "680g (çift)"
-      }
-    },
-    6: {
-      id: 6,
-      name: "Helly Hansen Workwear Outdoor Pantolon",
-      brand: "Helly Hansen",
-      price: 1850,
-      originalPrice: 2100,
-      rating: 4.6,
-      reviews: 267,
-      images: [
-        "https://images.unsplash.com/photo-1473692623410-12fac8ef75c6?w=800&h=800&fit=crop"
-      ],
-      badge: "12% İndirim",
-      inStock: true,
-      colors: [
-        { name: "Siyah", value: "#000000", available: true },
-        { name: "Lacivert", value: "#1e3a8a", available: true }
-      ],
-      specs: ["Stretch", "Su İtici", "Çok Cepli"],
-      description: "Dayanıklı kumaş, su itici kaplama, çok amaçlı cep sistemi ile profesyonel outdoor pantolon.",
-      features: [
-        "4 yönlü stretch kumaş",
-        "DWR su itici kaplama",
-        "Takviyeli diz bölgesi",
-        "Çok sayıda fonksiyonel cep",
-        "Yırtılmaya dayanıklı"
-      ],
-      technicalSpecs: {
-        "Malzeme": "65% Polyester, 35% Pamuk",
-        "Ağırlık": "350g/m²",
-        "Su İticilik": "DWR",
-        "Beden": "46-62",
-        "Renk": "Siyah / Lacivert"
-      }
-    }
-  };
-
-  const [dbProduct, setDbProduct] = React.useState<any | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(true);
-
-  // Hard scroll-to-top when productId changes (extra guard in addition to global ScrollToTop)
-  React.useEffect(() => {
+  // Scroll to top on product change
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
   }, [productId]);
 
-  React.useEffect(() => {
+  // Fetch product from Supabase
+  useEffect(() => {
     let ignore = false;
-    const load = async () => {
-      if (!productId) { setLoading(false); return; }
+    const loadProduct = async () => {
+      if (!productId) { 
+        setError('Ürün ID bulunamadı');
+        setLoading(false); 
+        return; 
+      }
+
       try {
-        const { data, error } = await (supabase as any)
+        console.log('[ProductDetail] Loading product:', productId);
+        const { data, error } = await supabase
           .from('products')
-          .select('id, name, brand, price, description, image_url, is_active')
-          .eq('id', productId)
-          .maybeSingle();
-        if (!ignore && !error && data) {
-          const mapped = {
+          .select('*')
+          .eq('id', productId as string)
+          .single();
+
+        console.log('[ProductDetail] Supabase response:', { data, error });
+
+        if (!ignore) {
+          if (error || !data) {
+            console.error('[ProductDetail] Product not found:', error);
+            setError('Ürün bulunamadı');
+            setProduct(null);
+          } else {
+            console.log('[ProductDetail] Product loaded successfully:', data.name);
+            
+            // Safely parse colors
+            let normalizedColors = [{ name: 'Varsayılan', value: '#000000', available: true }];
+            try {
+              const colorsRaw = (data as any).colors;
+              if (Array.isArray(colorsRaw) && colorsRaw.length > 0) {
+                normalizedColors = colorsRaw.map((c: any) =>
+                  typeof c === 'string'
+                    ? { name: c, value: '#000000', available: true }
+                    : c
+                );
+              }
+            } catch (err) {
+              console.warn('[ProductDetail] Error parsing colors:', err);
+            }
+
+            // Safely parse features
+            let features = [];
+            try {
+              const featuresRaw = (data as any).features;
+              if (featuresRaw && typeof featuresRaw === 'object') {
+                features = Object.entries(featuresRaw).map(([key, value]) => ({
+                  label: key,
+                  value: String(value)
+                }));
+              } else if (Array.isArray(featuresRaw)) {
+                features = featuresRaw;
+              }
+            } catch (err) {
+              console.warn('[ProductDetail] Error parsing features:', err);
+            }
+
+            // Safely parse images
+            let images = ['/placeholder.svg'];
+            try {
+              if (data.image_url) {
+                images = [data.image_url];
+              }
+              const extraImages = (data as any).extra_images;
+              if (Array.isArray(extraImages) && extraImages.length > 0) {
+                images = [...images, ...extraImages];
+              }
+            } catch (err) {
+              console.warn('[ProductDetail] Error parsing images:', err);
+            }
+
+          setProduct({
             id: data.id,
-            name: data.name,
+            name: data.name || 'Ürün',
             brand: data.brand ?? '',
-            price: data.price,
-            originalPrice: null,
+            category: (data as any).category ?? '',
+            price: data.price || 0,
+            originalPrice: (data as any).original_price ?? null,
             rating: 4.8,
             reviews: 0,
-            images: [data.image_url].filter(Boolean),
-            badge: null,
-            inStock: true,
-            colors: [{ name: 'Varsayılan', value: '#000000', available: true }],
-            specs: [],
-            description: data.description ?? '',
-            features: [],
-            technicalSpecs: {},
-          };
-          setDbProduct(mapped);
+            images: images,
+            badge: (data as any).badge ?? null,
+            inStock: data.is_active ?? true,
+            colors: normalizedColors,
+            specs: (data as any).specs ?? [],
+            description: data.description ?? 'Ürün açıklaması bulunmamaktadır.',
+            features: features,
+            technicalSpecs: (data as any).technical_specs ?? {},
+          });
+          setError(null);
+          }
+          setLoading(false);
         }
-      } finally {
-        if (!ignore) setLoading(false);
+      } catch (err: any) {
+        if (!ignore) {
+          console.error('Product load error:', err);
+          setError(err.message || 'Ürün yüklenirken bir hata oluştu');
+          setLoading(false);
+        }
       }
     };
-    load();
+
+    loadProduct();
     return () => { ignore = true; };
   }, [productId]);
 
-  const product = dbProduct || productData[parseInt(productId || '1')] || productData[1];
-
   // Set default color
-  React.useEffect(() => {
-    if (product.colors && product.colors.length > 0 && !selectedColor) {
+  useEffect(() => {
+    if (product?.colors?.length && !selectedColor) {
       setSelectedColor(product.colors[0].name);
     }
-  }, [product.colors, selectedColor]);
+  }, [product, selectedColor]);
 
   const handleAddToCart = () => {
+    if (!product) return;
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
@@ -302,50 +158,105 @@ const ProductDetail = () => {
         brand: product.brand,
       });
     }
-    
+
     toast({
       title: "Ürün sepete eklendi!",
       description: `${product.name} (${quantity} adet) sepetinize eklendi.`,
     });
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Ürün yükleniyor...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  // Error state
+  if (error || !product) {
+    return (
+      <>
+        <Header />
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center max-w-md mx-auto">
+            <div className="text-6xl mb-4">😕</div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Ürün Bulunamadı</h2>
+            <p className="text-muted-foreground mb-6">
+              {error || 'Aradığınız ürün bulunamadı veya kaldırılmış olabilir.'}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => window.history.back()} variant="outline">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Geri Dön
+              </Button>
+              <Link to="/urunler">
+                <Button>Tüm Ürünleri Gör</Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  const renderCategoryBreadcrumb = () => {
+    const cat = (product as any)?.category as string | undefined;
+    if (!cat) {
+      return (
+        <Link to="/urun-kategorileri" className="hover:text-primary">Ürün Kategorileri</Link>
+      );
+    }
+    const normalized = cat.replace(/^\//, '');
+    const [root, ...rest] = normalized.split('/');
+    const sub = rest.join('/');
+    const rootInfo = siteCategories.find(c => c.slug === root);
+    const rootText = rootInfo?.title ?? root.replace(/-/g, ' ');
+    const subInfo = sub ? rootInfo?.subcategories.find(s => s.slug === sub) : null;
+    const subText = subInfo?.name ?? (sub ? sub.replace(/-/g, ' ') : '');
+    return (
+      <>
+        <Link to={`/${root}`} className="hover:text-primary">{rootText}</Link>
+        {sub ? (
+          <>
+            <span>/</span>
+            <Link to={`/${root}/${sub}`} className="hover:text-primary">{subText}</Link>
+          </>
+        ) : null}
+      </>
+    );
+  };
+
   return (
     <>
       <Helmet>
-        <title>{product.name} | BalıkPro - Balık Av Malzemeleri & Outdoor Ürünleri</title>
-        <meta name="description" content={`${product.name} - ${product.description} BalıkPro'da en uygun fiyatlarla.`} />
-        <meta name="keywords" content={`${product.name.toLowerCase()}, ${product.brand.toLowerCase()}, olta makinesi, balık av malzemeleri`} />
-        <meta property="og:title" content={`${product.name} - BalıkPro`} />
-        <meta property="og:description" content={product.description.substring(0, 160)} />
-        <meta property="og:type" content="product" />
-        <meta property="og:url" content={`https://balikpro.com/urun/${product.id}`} />
-        <meta property="og:image" content={(product.images && product.images[0]) || ''} />
-        <link rel="canonical" href={`https://balikpro.com/urun/${product.id}`} />
-        <meta name="robots" content="index, follow" />
+        <title>{product.name} | BalıkPro</title>
+        <meta name="description" content={`${product.name} - ${product.description}`} />
       </Helmet>
 
       <div className="min-h-screen bg-background">
         <Header />
-        
+
         <main className="container mx-auto px-4 py-8 animate-fade-in">
-          {loading && (
-            <div className="text-center text-muted-foreground mb-6">Yükleniyor...</div>
-          )}
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-6 text-sm text-muted-foreground">
-            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-primary transition-smooth">Anasayfa</Link>
+            <Link to="/" className="hover:text-primary">Anasayfa</Link>
             <span>/</span>
-            <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-primary transition-smooth">Balık Av Malzemeleri</Link>
+            {renderCategoryBreadcrumb()}
             <span>/</span>
             <span className="text-foreground">{product.name}</span>
           </div>
 
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="mb-6 hover-scale transition-smooth"
-            onClick={() => window.history.back()}
-          >
+          <Button variant="ghost" size="sm" className="mb-6" onClick={() => window.history.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Geri Dön
           </Button>
@@ -354,30 +265,12 @@ const ProductDetail = () => {
             {/* Product Images */}
             <div className="space-y-4">
               <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                <img 
-                  src={product.images[selectedImage]} 
-                  alt={product.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover"
-                />
+                <img src={product.images[selectedImage]} alt={product.name} className="w-full h-full object-cover" />
               </div>
               <div className="flex gap-2">
-                {product.images.map((image, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    className={`w-16 h-16 rounded-lg bg-muted overflow-hidden border-2 transition-all hover-scale ${
-                      selectedImage === index ? 'border-primary' : 'border-transparent hover:border-border'
-                    }`}
-                  >
-                    <img 
-                      src={image} 
-                      alt={`${product.name} ${index + 1}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
+                {product.images.map((img, index) => (
+                  <button key={index} onClick={() => setSelectedImage(index)} className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${selectedImage === index ? 'border-primary' : 'border-transparent'}`}>
+                    <img src={img} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -385,195 +278,106 @@ const ProductDetail = () => {
 
             {/* Product Info */}
             <div className="space-y-6">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="secondary">{product.brand}</Badge>
-                  {product.badge && <Badge variant="default">{product.badge}</Badge>}
-                </div>
-                <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
-                
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`h-5 w-5 ${
-                          star <= Math.floor(product.rating)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-muted-foreground'
-                        }`}
-                      />
-                    ))}
-                    <span className="text-foreground font-medium ml-2">{product.rating}</span>
-                  </div>
-                  <span className="text-muted-foreground">({product.reviews} değerlendirme)</span>
-                </div>
-
-                <div className="flex items-center gap-4 mb-6">
-                  <span className="text-3xl font-bold text-primary">{product.price}₺</span>
-                  {product.originalPrice && (
-                    <span className="text-xl text-muted-foreground line-through">
-                      {product.originalPrice}₺
-                    </span>
-                  )}
-                </div>
-
-                <p className="text-muted-foreground mb-6">{product.description}</p>
-
-                {/* Color Selection */}
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-4">Renk Seçin</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {product.colors.map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => color.available && setSelectedColor(color.name)}
-                        disabled={!color.available}
-                        className={`relative w-12 h-12 rounded-full border-2 transition-all hover-scale ${
-                          selectedColor === color.name 
-                            ? 'border-primary ring-2 ring-primary ring-offset-2' 
-                            : 'border-border hover:border-primary'
-                        } ${!color.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                        style={{ backgroundColor: color.value }}
-                        title={color.name}
-                      >
-                        {!color.available && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-white text-xs">×</span>
-                          </div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Seçilen renk: <span className="font-medium">{selectedColor}</span>
-                  </p>
-                </div>
-
-                {/* Quantity and Add to Cart */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex items-center border rounded-lg">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-3 py-2 hover:bg-muted transition-colors hover-scale"
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-2 font-medium">{quantity}</span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="px-3 py-2 hover:bg-muted transition-colors hover-scale"
-                    >
-                      +
-                    </button>
-                  </div>
-                  <Button 
-                    onClick={handleAddToCart}
-                    className="flex-1 hover-scale transition-smooth"
-                    disabled={!product.inStock || !selectedColor}
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
-                  </Button>
-                  <Button variant="outline" size="icon" className="hover-scale transition-smooth">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* Features */}
-                <div className="grid grid-cols-3 gap-4 p-4 bg-muted rounded-lg">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Truck className="h-4 w-4 text-primary" />
-                    <span>Ücretsiz Kargo</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Shield className="h-4 w-4 text-primary" />
-                    <span>10 Yıl Garanti</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <RotateCcw className="h-4 w-4 text-primary" />
-                    <span>30 Gün İade</span>
-                  </div>
-                </div>
+              <div className="flex items-center gap-2 mb-2">
+                <Badge variant="secondary">{product.brand}</Badge>
+                {product.badge && <Badge variant="default">{product.badge}</Badge>}
               </div>
+
+              <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="flex items-center gap-1">
+                  {[1,2,3,4,5].map((star) => (
+                    <Star key={star} className={`h-5 w-5 ${star <= Math.floor(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`} />
+                  ))}
+                  <span className="ml-2 font-medium">{product.rating}</span>
+                </div>
+                <span className="text-muted-foreground">({product.reviews} değerlendirme)</span>
+              </div>
+
+              <div className="flex items-center gap-4 mb-6">
+                <span className="text-3xl font-bold text-primary">{product.price}₺</span>
+                {product.originalPrice && <span className="text-xl text-muted-foreground line-through">{product.originalPrice}₺</span>}
+              </div>
+
+              <p className="text-muted-foreground mb-6">{product.description}</p>
+
+              {/* Color Selection */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4">Renk Seçin</h3>
+                <div className="flex flex-wrap gap-3">
+                  {product.colors.map((color) => (
+                    <button key={color.name} onClick={() => color.available && setSelectedColor(color.name)} disabled={!color.available}
+                      className={`w-12 h-12 rounded-full border-2 ${selectedColor === color.name ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-border'} ${!color.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                      style={{ backgroundColor: color.value }}
+                      title={color.name}
+                    />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">Seçilen renk: <span className="font-medium">{selectedColor}</span></p>
+              </div>
+
+              {/* Quantity & Add to Cart */}
+              <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center border rounded-lg">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 hover:bg-muted">-</button>
+                  <span className="px-4 py-2 font-medium">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-muted">+</button>
+                </div>
+                <Button onClick={handleAddToCart} className="flex-1" disabled={!product.inStock || !selectedColor}>
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
+                </Button>
+                <Button variant="outline" size="icon">
+                  <Heart className="h-4 w-4" />
+                </Button>
+              </div>
+
             </div>
           </div>
 
-          {/* Product Details Tabs */}
+          {/* Tabs */}
           <Tabs defaultValue="specs" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="specs">Teknik Özellikler</TabsTrigger>
               <TabsTrigger value="features">Özellikler</TabsTrigger>
               <TabsTrigger value="reviews">Değerlendirmeler</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="specs" className="mt-6">
-              <Card className="animate-fade-in">
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4">Teknik Özellikler</h3>
-                  <div className="grid gap-4">
-                    {Object.entries(product.technicalSpecs).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-border last:border-b-0">
-                        <span className="font-medium">{key}:</span>
-                        <span className="text-muted-foreground">{String(value)}</span>
-                      </div>
-                    ))}
-                  </div>
+              <Card>
+                <CardContent>
+                  {Object.entries(product.technicalSpecs).map(([key, value]) => (
+                    <div key={key} className="flex justify-between py-2 border-b border-border last:border-b-0">
+                      <span className="font-medium">{key}:</span>
+                      <span className="text-muted-foreground">{String(value)}</span>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="features" className="mt-6">
-              <Card className="animate-fade-in">
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4">Öne Çıkan Özellikler</h3>
+              <Card>
+                <CardContent>
                   <ul className="space-y-3">
-                    {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0"></div>
-                        <span>{feature}</span>
-                      </li>
+                    {product.features.map((feature, idx) => (
+                      <li key={idx}>{feature}</li>
                     ))}
                   </ul>
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="reviews" className="mt-6">
-              <Card className="animate-fade-in">
-                <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4">Müşteri Değerlendirmeleri</h3>
-                  <div className="space-y-6">
-                    {[1, 2, 3].map((review) => (
-                      <div key={review} className="border-b border-border pb-6 last:border-b-0">
-                        <div className="flex items-center gap-4 mb-3">
-                          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">
-                            U{review}
-                          </div>
-                          <div>
-                            <div className="font-medium">Kullanıcı {review}</div>
-                            <div className="flex items-center gap-1">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <Star
-                                  key={star}
-                                  className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                                />
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                        <p className="text-muted-foreground">
-                          Çok kaliteli bir ürün. Beklentilerimi fazlasıyla karşıladı. Özellikle hassasiyeti ve dayanıklılığı mükemmel.
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+              <Card>
+                <CardContent>
+                  <p>Henüz değerlendirme yok.</p>
                 </CardContent>
               </Card>
             </TabsContent>
           </Tabs>
         </main>
-        
+
         <Footer />
       </div>
     </>

@@ -154,7 +154,14 @@ export const siteCategories: SiteCategory[] = [
     iconKey: 'dumbbell',
     count: 120,
     subcategories: [
-      
+      { name: 'Su Sporları Ekipmanları', slug: 'su-sporlari-ekipmanlari' },
+      { name: 'Tenis Ekipmanları', slug: 'tenis-ekipmanlari' },
+      { name: 'Futbol Ekipmanları', slug: 'futbol-ekipmanlari' },
+      { name: 'Basketbol Ekipmanları', slug: 'basketbol-ekipmanlari' },
+      { name: 'Kaykay ve Patenler', slug: 'kaykay-ve-patenler' },
+      { name: 'Raketler', slug: 'raketler' },
+      { name: 'Jimnastik Ekipmanları', slug: 'jimnastik-ekipmanlari' },
+      { name: 'Toplar', slug: 'toplar' },
     ],
   },
 ];

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 export interface CartItem {
   id: number;
@@ -22,13 +22,9 @@ type CartAction =
   | { type: 'CLEAR_CART' };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
-  console.log('Cart Action:', action.type, 'payload' in action ? action.payload : 'no payload');
-  console.log('Current State:', state);
-  
   switch (action.type) {
     case 'ADD_ITEM': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
-      console.log('Existing Item:', existingItem);
       
       let newItems;
       if (existingItem) {
@@ -43,9 +39,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       
       const total = newItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
-      
-      console.log('New Items:', newItems);
-      console.log('New ItemCount:', itemCount);
       
       return { items: newItems, total, itemCount };
     }
@@ -87,12 +80,31 @@ const CartContext = createContext<{
   clearCart: () => void;
 } | undefined>(undefined);
 
+const CART_STORAGE_KEY = 'egemoutdoor_cart';
+
+const loadCartFromStorage = (): CartState => {
+  try {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (error) {
+    console.error('Failed to load cart from localStorage:', error);
+  }
+  return { items: [], total: 0, itemCount: 0 };
+};
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
-    items: [],
-    total: 0,
-    itemCount: 0,
-  });
+  const [state, dispatch] = useReducer(cartReducer, loadCartFromStorage());
+
+  // Persist cart to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error);
+    }
+  }, [state]);
 
   const addItem = (item: Omit<CartItem, 'quantity'>) => {
     dispatch({ type: 'ADD_ITEM', payload: item });
