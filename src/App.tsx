@@ -36,10 +36,7 @@ const CookiePolicy = lazy(() => import("./pages/CookiePolicy"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 
-// Category landing pages
-const Misineler = lazy(() => import("./pages/categories/Misineler"));
-const IgneJighead = lazy(() => import("./pages/categories/IgneJighead"));
-const Aksesuarlar = lazy(() => import("./pages/categories/Aksesuarlar"));
+// Category landing pages - removed, now using CategoryPage for all
 
 const queryClient = new QueryClient();
 
@@ -101,22 +98,7 @@ const App = () => (
               <CategoryPage />
             </Suspense>
           } />
-          {/* Fishing subcategory landing pages */}
-          <Route path="/balik-av-malzemeleri/misineler" element={
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-              <Misineler />
-            </Suspense>
-          } />
-          <Route path="/balik-av-malzemeleri/igne-jighead" element={
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-              <IgneJighead />
-            </Suspense>
-          } />
-          <Route path="/balik-av-malzemeleri/aksesuarlar" element={
-            <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-              <Aksesuarlar />
-            </Suspense>
-          } />
+          {/* All subcategories now use CategoryPage */}
           <Route path="/balik-av-malzemeleri/*" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <CategoryPage />

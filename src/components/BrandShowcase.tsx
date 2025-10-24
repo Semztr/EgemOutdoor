@@ -88,45 +88,37 @@ const BrandShowcase = () => {
     <section className="py-20">
       <div className="container mx-auto px-4">
         {/* Quick start shopping strip */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <h2 className="text-4xl font-bold text-foreground mb-4">Alışverişe Başla</h2>
-              <p className="text-lg text-muted-foreground max-w-2xl">En popüler ve yüksek kaliteli ürünlerimizi keşfedin. Her ürün özenle seçilmiştir.</p>
-            </div>
+        <div className="mb-16">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Hızlı Alışveriş</h2>
+            <p className="text-sm md:text-base text-muted-foreground">Popüler ürünlerimize hızlıca göz atın</p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
             {quickProducts.map((product) => (
-              <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card max-w-[240px] w-full mx-auto">
+              <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow">
                 {/* Badge */}
-                <div className="absolute top-3 left-3 z-10">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    product.badge?.includes('İndirim')
-                      ? 'bg-destructive text-destructive-foreground'
-                      : product.badge === 'Yeni Ürün'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-accent text-accent-foreground'
-                  }`}>
+                <div className="absolute top-2 left-2 z-10">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-500 text-white">
                     {product.badge}
                   </span>
                 </div>
 
                 {/* Content */}
-                <CardContent className="p-4">
+                <CardContent className="p-2 md:p-3">
                   {/* Product image */}
                   <Link to={`/urun/${product.id}`}>
-                    <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
+                    <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
                       <img
                         src={product.image}
                         alt={product.name}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {
                           const target = e.currentTarget as HTMLImageElement;
                           if (target.dataset.fallback !== '1') {
                             target.dataset.fallback = '1';
-                            target.src = `https://via.placeholder.com/500x500.png?text=${encodeURIComponent('EgemOutdoor')}`;
+                            target.src = '/placeholder.svg';
                           }
                         }}
                       />
@@ -134,30 +126,31 @@ const BrandShowcase = () => {
                   </Link>
 
                   {/* Brand */}
-                  <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
+                  {product.brand && (
+                    <div className="text-[9px] md:text-[10px] text-primary font-medium mb-0.5 uppercase tracking-wide">
+                      {product.brand}
+                    </div>
+                  )}
 
                   {/* Product name */}
                   <Link to={`/urun/${product.id}`}>
-                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
+                    <h3 className="font-semibold text-foreground mb-1.5 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
                       {product.name}
                     </h3>
                   </Link>
 
                   {/* Price */}
-                  <div className="flex items-center gap-2 mb-3 mt-1">
-                    <span className="text-lg font-bold text-foreground">₺{product.price.toLocaleString()}</span>
-                    {product.originalPrice ? (
-                      <span className="text-xs text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
-                    ) : null}
+                  <div className="flex items-center gap-1 mb-2">
+                    <span className="text-sm md:text-base font-bold text-foreground">₺{product.price.toLocaleString()}</span>
                   </div>
 
                   {/* Buttons */}
-                  <div className="flex gap-2">
-                    <Button variant="default" size="sm" className="flex-1" onClick={() => handleAddToCart(product)}>
-                      Sepete Ekle
+                  <div className="flex gap-1.5">
+                    <Button variant="default" size="sm" className="flex-1 text-[10px] md:text-xs h-7 md:h-8" onClick={() => handleAddToCart(product)}>
+                      Sepete
                     </Button>
                     <Link to={`/urun/${product.id}`}>
-                      <Button variant="outline" size="sm">İncele</Button>
+                      <Button variant="outline" size="sm" className="text-[10px] md:text-xs h-7 md:h-8 px-2">İncele</Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -172,23 +165,45 @@ const BrandShowcase = () => {
             </Link>
           </div>
         </div>
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Dünya Markalarıyla Çalışıyoruz
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              En güvenilir ve kaliteli markaların ürünlerini sizlere sunuyoruz. 
-              Her marka kendine özel uzmanlık alanında liderdir.
-            </p>
-          </div>
+        <div className="text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+            Güvenilir Markalar
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground">
+            Dünya çapında tanınan markaların ürünlerini sunuyoruz
+          </p>
+        </div>
 
-          <div className="flex gap-2">
+        <div className="embla overflow-hidden mb-12 relative" ref={emblaRef}>
+          <div className="embla__container flex gap-0">
+            {brands.map((brand, index) => (
+              <div key={index} className="embla__slide flex-[0_0_180px] min-w-0 px-2">
+                <Card className="gradient-card border-border shadow-card h-full w-full hover:shadow-xl transition-shadow">
+                  <CardContent className="p-4 text-center">
+                    <div className="h-12 md:h-14 mb-2 flex items-center justify-center">
+                      <img
+                        src={brand.logo}
+                        alt={`${brand.name} logo`}
+                        className="max-h-full w-auto max-w-[120px] object-contain mx-auto opacity-80 group-hover:opacity-100 transition-opacity"
+                      />
+                    </div>
+                    <h3 className="font-semibold text-foreground text-sm mb-1">{brand.name}</h3>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed line-clamp-2">
+                      {brand.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+            ))}
+          </div>
+          
+          {/* Navigation buttons */}
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between pointer-events-none px-2">
             <Button
               variant="outline"
               size="icon"
               onClick={scrollPrev}
-              className="hover:bg-primary hover:text-primary-foreground"
+              className="pointer-events-auto bg-background/80 backdrop-blur hover:bg-primary hover:text-primary-foreground shadow-lg"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -196,34 +211,10 @@ const BrandShowcase = () => {
               variant="outline"
               size="icon"
               onClick={scrollNext}
-              className="hover:bg-primary hover:text-primary-foreground"
+              className="pointer-events-auto bg-background/80 backdrop-blur hover:bg-primary hover:text-primary-foreground shadow-lg"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>
-        </div>
-
-        <div className="embla overflow-hidden mb-12" ref={emblaRef}>
-          <div className="embla__container flex gap-0">
-            {brands.map((brand, index) => (
-              <div key={index} className="embla__slide flex-[0_0_220px] min-w-0 px-3">
-                <Card className="gradient-card border-border shadow-card h-full w-full">
-                  <CardContent className="p-5 text-center">
-                    <div className="h-16 md:h-20 mb-3 flex items-center justify-center">
-                      <img
-                        src={brand.logo}
-                        alt={`${brand.name} logo`}
-                        className="max-h-full w-auto max-w-[140px] object-contain mx-auto"
-                      />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-1">{brand.name}</h3>
-                    <p className="text-xs text-muted-foreground leading-relaxed">
-                      {brand.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
           </div>
         </div>
 

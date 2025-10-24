@@ -458,15 +458,24 @@ const Admin = () => {
       <div className="min-h-screen">
         <Header />
         
-        <main className="container mx-auto px-4 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold">Ürün Yönetimi</h1>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={seedDummyProducts}>Dummy Ürünleri Yükle</Button>
+        <main className="container mx-auto px-4 py-6 md:py-8">
+          {/* Modern Dashboard Header */}
+          <div className="mb-6 md:mb-8">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Ürün Yönetimi</h1>
+                <p className="text-sm text-muted-foreground">{products.length} ürün kayıtlı</p>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={seedDummyProducts}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Dummy Yükle
+                </Button>
+              </div>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
             {/* Form */}
             <Card>
               <CardHeader>

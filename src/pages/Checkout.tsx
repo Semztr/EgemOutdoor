@@ -173,8 +173,8 @@ const Checkout = () => {
         </Helmet>
         <div className="min-h-screen flex flex-col">
           <Header />
-          <main className="flex-1 container mx-auto px-4 py-16 text-center">
-            <h1 className="text-3xl font-bold mb-4">Sepetiniz Boş</h1>
+          <main className="flex-1 container mx-auto px-4 py-12 md:py-16 text-center">
+            <h1 className="text-2xl md:text-3xl font-bold mb-4">Sepetiniz Boş</h1>
             <p className="text-muted-foreground mb-8">Ödeme yapabilmek için sepetinize ürün eklemelisiniz.</p>
             <Button onClick={() => navigate('/urunler')}>Alışverişe Başla</Button>
           </main>
@@ -194,8 +194,8 @@ const Checkout = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         
-        <main className="flex-1 container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold mb-8 animate-fade-in">Ödeme</h1>
+        <main className="flex-1 container mx-auto px-4 py-6 md:py-8">
+          <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 animate-fade-in">Ödeme</h1>
           
           <form onSubmit={handleSubmit}>
             <div className="grid lg:grid-cols-3 gap-8">

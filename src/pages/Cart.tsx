@@ -45,9 +45,9 @@ const Cart = () => {
       
       <div className="min-h-screen">
         <Header />
-        <main className="container mx-auto px-4 py-8">
-          <div className="mb-8 animate-fade-in">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Sepetim</h1>
+        <main className="container mx-auto px-4 py-6 md:py-8">
+          <div className="mb-6 md:mb-8 animate-fade-in">
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Sepetim</h1>
             <p className="text-muted-foreground">{state.items.length} ürün sepetinizde</p>
           </div>
 

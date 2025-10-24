@@ -1,7 +1,9 @@
 import React from 'react';
 import Header from '@/components/Header';
-import Hero from '@/components/Hero'; 
-import FeaturedProducts from '@/components/FeaturedProducts';
+import Hero from '@/components/Hero';
+import TrustBadges from '@/components/TrustBadges';
+import CategoryCards from '@/components/CategoryCards';
+import ProductShowcase from '@/components/ProductShowcase';
 import BrandShowcase from '@/components/BrandShowcase';
 import Footer from '@/components/Footer';
 import { Helmet } from 'react-helmet-async';
@@ -25,7 +27,9 @@ const Index = () => {
         <Header />
         <main>
           <Hero />
-          <FeaturedProducts />
+          <TrustBadges />
+          <CategoryCards />
+          <ProductShowcase />
           <BrandShowcase />
         </main>
         {/* Floating WhatsApp button */}

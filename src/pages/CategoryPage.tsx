@@ -429,7 +429,7 @@ const CategoryPage = () => {
             </div>
 
             {/* Products */}
-            <div className={viewMode === 'grid' ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8" : "space-y-4 mb-8"}>
+            <div className={viewMode === 'grid' ? "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 mb-8" : "space-y-4 mb-8"}>
               {filteredProducts.map((product, index) => (
                 <Card key={product.id} className="group hover:shadow-lg hover-scale transition-all duration-300 cursor-pointer overflow-hidden animate-fade-in" style={{ animationDelay: `${index * 150}ms` }}>
                   <Link to={`/urun/${product.id}`} className="block" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>

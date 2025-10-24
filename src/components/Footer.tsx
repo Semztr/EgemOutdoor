@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 
 const Footer = () => {
   return <footer className="bg-card border-t border-border">
-      <div className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="container mx-auto px-4 py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {/* Company info */}
           <div>
             <Link to="/" onClick={() => window.scrollTo({
@@ -168,12 +168,40 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-muted-foreground text-sm">
+        {/* Payment methods & Newsletter */}
+        <div className="border-t border-border mt-10 pt-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Payment methods */}
+            <div>
+              <h4 className="font-semibold text-foreground mb-3 text-sm">Güvenli Ödeme</h4>
+              <div className="flex flex-wrap gap-3">
+                <div className="px-3 py-2 bg-background border border-border rounded text-xs font-medium">💳 Kredi Kartı</div>
+                <div className="px-3 py-2 bg-background border border-border rounded text-xs font-medium">🏦 Banka Havalesi</div>
+                <div className="px-3 py-2 bg-background border border-border rounded text-xs font-medium">📱 Kapıda Ödeme</div>
+              </div>
+            </div>
+            
+            {/* Newsletter */}
+            <div>
+              <h4 className="font-semibold text-foreground mb-3 text-sm">Kampanyalardan Haberdar Olun</h4>
+              <form className="flex gap-2">
+                <input 
+                  type="email" 
+                  placeholder="E-posta adresiniz" 
+                  className="flex-1 px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+                <Button type="submit" size="sm" className="whitespace-nowrap">Abone Ol</Button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-border pt-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-muted-foreground text-xs md:text-sm">
               © 2024 EgemOutdoor. Tüm hakları saklıdır.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
+            <div className="flex flex-wrap justify-center gap-4 md:gap-6">
               <Link to="/gizlilik-politikasi" onClick={() => window.scrollTo({
               top: 0,
               behavior: 'smooth'

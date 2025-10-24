@@ -179,7 +179,7 @@ const Products = () => {
           <section className="py-12">
             <div className="container mx-auto px-4">
               {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                   {filteredProducts.map((product) => (
                     <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
                       <div className="relative">
@@ -256,7 +256,7 @@ const Products = () => {
           </section>
         ) : !loading && !error ? (
           <>
-            <section className="py-12">
+            <section className="py-8 md:py-12">
               <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                   <aside className="md:col-span-3 lg:col-span-3 xl:col-span-2 border border-border rounded-lg p-4 h-fit sticky top-4 bg-background">
@@ -354,14 +354,14 @@ const Products = () => {
                       <div className="text-sm text-muted-foreground">{loading ? 'Yükleniyor...' : `${supaProducts.length || filteredProducts.length} ürün`}</div>
                     </div>
                     {(supaProducts.length > 0 ? supaProducts : filteredProducts).length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                         {(supaProducts.length > 0 ? supaProducts : filteredProducts).map((product) => (
                           <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
                             <div className="relative">
                               <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
                                 <Heart className="h-4 w-4" />
                               </Button>
-                              <CardContent className="p-4 sm:p-5">
+                              <CardContent className="p-2 md:p-3">
                                 <Link to={`/urun/${product.id}`}>
                                   <div className="aspect-[4/5] bg-muted rounded-md mb-3 overflow-hidden flex items-center justify-center">
                                     {'image' in product && product.image ? (
@@ -414,7 +414,7 @@ const Products = () => {
               </div>
             </section>
 
-            <section className="py-20">
+            <section className="py-12 md:py-16">
               <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Popüler Kategoriler</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
