@@ -15,10 +15,16 @@ import { useToast } from '@/hooks/use-toast';
 
 interface Order {
   id: string;
+  order_number: string;
   created_at: string;
   status: string;
   total_amount: number;
-  order_items: { quantity: number }[];
+  items: any[];
+  payment_method: string;
+  customer_name: string;
+  address_line: string;
+  city: string;
+  district: string;
 }
 
 interface Profile {
@@ -68,9 +74,9 @@ const Account = () => {
       });
 
       // Siparişleri çek
-      const { data: ordersData, error: ordersError } = await supabase
+      const { data: ordersData, error: ordersError} = await (supabase as any)
         .from('orders')
-        .select('*, order_items(quantity)')
+        .select('*')
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false });
 
@@ -197,26 +203,50 @@ const Account = () => {
                     {orders.length > 0 ? (
                       <div className="space-y-4">
                         {orders.map((order) => {
-                          const safeItems = (order as any).order_items || [];
-                          const itemCount = safeItems.reduce((sum: number, item: any) => sum + (item?.quantity || 0), 0);
+                          const items = Array.isArray(order.items) ? order.items : [];
+                          const itemCount = items.reduce((sum: number, item: any) => sum + (item?.quantity || 0), 0);
                           return (
                             <div key={order.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
-                                  <p className="font-semibold">Sipariş #{order.id.slice(0, 8)}</p>
+                                  <p className="font-semibold">Sipariş #{order.order_number}</p>
                                   <p className="text-sm text-muted-foreground">{formatDate(order.created_at)}</p>
                                   <p className="text-sm">{itemCount} ürün</p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {order.payment_method === 'credit-card' ? '💳 Kredi Kartı' :
+                                     order.payment_method === 'bank-transfer' ? '🏦 Havale/EFT' :
+                                     order.payment_method === 'cash-on-delivery' ? '📱 Kapıda Ödeme' : order.payment_method}
+                                  </p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="font-bold text-lg">{Number(order.total_amount).toFixed(2)} ₺</p>
+                                  <p className="font-bold text-lg">₺{Number(order.total_amount).toFixed(2)}</p>
                                   <p className="text-sm text-primary">{getStatusText(order.status)}</p>
                                 </div>
                               </div>
+                              
+                              {/* Sipariş Detayları */}
+                              <div className="mt-4 pt-4 border-t space-y-2">
+                                <p className="text-sm font-medium">Sipariş Detayları:</p>
+                                {items.map((item: any, idx: number) => (
+                                  <div key={idx} className="flex justify-between text-sm text-muted-foreground">
+                                    <span>{item.name} x {item.quantity}</span>
+                                    <span>₺{(item.price * item.quantity).toFixed(2)}</span>
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Teslimat Adresi */}
+                              <div className="mt-4 pt-4 border-t">
+                                <p className="text-sm font-medium mb-1">Teslimat Adresi:</p>
+                                <p className="text-sm text-muted-foreground">{order.address_line}</p>
+                                <p className="text-sm text-muted-foreground">{order.district} / {order.city}</p>
+                              </div>
+
                               <Button 
                                 variant="outline" 
                                 size="sm" 
                                 className="mt-4 w-full sm:w-auto"
-                                onClick={() => navigate(`/siparis-takip?order=${order.id}`)}
+                                onClick={() => navigate(`/siparis-takip?order=${order.order_number}`)}
                               >
                                 Detayları Görüntüle
                               </Button>

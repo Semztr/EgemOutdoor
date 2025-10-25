@@ -34,7 +34,7 @@ const Index = () => {
         </main>
         {/* Floating WhatsApp button */}
         <a
-          href="https://wa.me/905336407758"
+          href="https://wa.me/905333069456"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="WhatsApp ile iletişim kur"

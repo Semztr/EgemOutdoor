@@ -94,56 +94,39 @@ const Checkout = () => {
       // Form validasyonu
       checkoutSchema.parse(formData);
 
+      // Sipariş numarası oluştur
+      const orderNumber = `EGM${Date.now().toString().slice(-8)}`;
+
       // Sipariş oluştur
-      const shippingAddress = {
-        address: formData.address,
-        city: formData.city,
-        district: formData.district,
-        zipCode: formData.zipCode
-      };
-
-      const billingAddress = sameAddress ? shippingAddress : {
-        address: formData.billingAddress,
-        city: formData.billingCity,
-        district: formData.billingDistrict
-      };
-
-      const { data: order, error: orderError } = await supabase
+      const { data: order, error: orderError } = await (supabase as any)
         .from('orders')
         .insert({
-          user_id: user.id,
+          order_number: orderNumber,
+          customer_name: `${formData.firstName} ${formData.lastName}`,
+          customer_email: formData.email,
+          customer_phone: formData.phone,
+          address_line: formData.address,
+          city: formData.city,
+          district: formData.district,
+          postal_code: formData.zipCode,
+          items: state.items,
           total_amount: state.total,
-          shipping_address: shippingAddress,
-          billing_address: billingAddress,
           payment_method: paymentMethod,
-          status: 'pending'
+          status: 'pending',
+          user_id: user.id
         })
         .select()
         .single();
 
       if (orderError) throw orderError;
 
-      // Sipariş kalemlerini ekle
-      const orderItems = state.items.map(item => ({
-        order_id: order.id,
-        product_id: String(item.id),
-        quantity: item.quantity,
-        price: item.price
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
       toast({
-        title: "Siparişiniz Alındı!",
-        description: `Sipariş numaranız: ${order.id.slice(0, 8)}. En kısa sürede kargoya verilecektir.`,
+        title: "Siparişiniz Alındı! 🎉",
+        description: `Sipariş numaranız: ${orderNumber}. ${paymentMethod === 'bank-transfer' ? 'Havale/EFT bilgilerinizi e-posta ile gönderdik.' : 'En kısa sürede kargoya verilecektir.'}`,
       });
       
       clearCart();
-      navigate(`/siparis-takip?order=${order.id}`);
+      navigate(`/siparis-takip?order=${orderNumber}`);
     } catch (error: any) {
       console.error('Sipariş oluşturulurken hata:', error);
       
@@ -383,6 +366,47 @@ const Checkout = () => {
                           <div>
                             <Label htmlFor="cvc">CVC *</Label>
                             <Input id="cvc" placeholder="123" required />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {paymentMethod === 'bank-transfer' && (
+                      <div className="space-y-4 pt-4 bg-muted/30 p-4 rounded-lg">
+                        <div className="space-y-3">
+                          <h3 className="font-semibold text-foreground">Banka Hesap Bilgileri</h3>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-muted-foreground">Hesap Sahibi:</span>
+                              <span className="font-medium">Egem Spor Malzemeleri</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-muted-foreground">Banka:</span>
+                              <span className="font-medium">Ziraat Bankası</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-muted-foreground">IBAN:</span>
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono font-medium bg-background px-2 py-1 rounded">TR39 0001 0002 1797 5950 3250 01</span>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    navigator.clipboard.writeText('TR390001000217975950325001');
+                                    alert('IBAN kopyalandı!');
+                                  }}
+                                >
+                                  📋 Kopyala
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded text-sm">
+                            <p className="text-blue-900 dark:text-blue-100">
+                              ℹ️ <strong>Önemli:</strong> Havale/EFT açıklamasına sipariş numaranızı yazınız. 
+                              Ödeme onaylandıktan sonra siparişiniz kargoya verilecektir.
+                            </p>
                           </div>
                         </div>
                       </div>

@@ -260,7 +260,6 @@ const Header = () => {
                       <Link to="/dalis-urunleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Dalış Ürünleri</Link>
                       <Link to="/spor-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Spor Malzemeleri</Link>
                       <Link to="/termoslar-ve-mataralar" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Termoslar ve Mataralar</Link>
-                      <Link to="/urun-kategorileri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Tüm Kategoriler</Link>
                     </div>
                   </div>
 
@@ -552,27 +551,19 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
+              <DropdownMenuContent className="w-64 max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
                 <div className="mb-2">
-                  <Link to="/spor-malzemeleri" className="font-semibold text-primary">Tümünü Gör</Link>
+                  <Link to="/spor-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="font-semibold hover:text-primary">Tümünü Gör</Link>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                  <div className="col-span-1 space-y-0.5">
-                    <Link to="/spor-malzemeleri/su-sporlari-ekipmanlari" className="text-sm block py-0.5 hover:text-primary">Su Sporları Ekipmanları</Link>
-                    <Link to="/spor-malzemeleri/tenis-ekipmanlari" className="text-sm block py-0.5 hover:text-primary">Tenis Ekipmanları</Link>
-                  </div>
-                  <div className="col-span-1 space-y-0.5">
-                    <Link to="/spor-malzemeleri/futbol-ekipmanlari" className="text-sm block py-0.5 hover:text-primary">Futbol Ekipmanları</Link>
-                    <Link to="/spor-malzemeleri/basketbol-ekipmanlari" className="text-sm block py-0.5 hover:text-primary">Basketbol Ekipmanları</Link>
-                  </div>
-                  <div className="col-span-1 space-y-0.5">
-                    <Link to="/spor-malzemeleri/kaykay-ve-patenler" className="text-sm block py-0.5 hover:text-primary">Kaykay ve Patenler</Link>
-                    <Link to="/spor-malzemeleri/raketler" className="text-sm block py-0.5 hover:text-primary">Raketler</Link>
-                  </div>
-                  <div className="col-span-1 space-y-0.5">
-                    <Link to="/spor-malzemeleri/jimnastik-ekipmanlari" className="text-sm block py-0.5 hover:text-primary">Jimnastik Ekipmanları</Link>
-                    <Link to="/spor-malzemeleri/toplar" className="text-sm block py-0.5 hover:text-primary">Toplar</Link>
-                  </div>
+                <div className="space-y-1">
+                  <Link to="/spor-malzemeleri/su-sporlari-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Su Sporları Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/tenis-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Tenis Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/futbol-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Futbol Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/basketbol-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Basketbol Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/kaykay-ve-patenler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Kaykay ve Patenler</Link>
+                  <Link to="/spor-malzemeleri/raketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Raketler</Link>
+                  <Link to="/spor-malzemeleri/jimnastik-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Jimnastik Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/toplar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Toplar</Link>
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -580,10 +571,6 @@ const Header = () => {
             {/* Termoslar ve Mataralar - moved after Spor */}
             <Link to="/termoslar-ve-mataralar" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
               Termoslar ve Mataralar
-            </Link>
-
-            <Link to="/urun-kategorileri" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
-              Ürün Kategorileri
             </Link>
           </div>
         </nav>

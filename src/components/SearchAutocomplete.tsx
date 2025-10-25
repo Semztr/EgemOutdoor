@@ -3,46 +3,64 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 
 interface SearchAutocompleteProps {
   className?: string;
 }
 
+interface Product {
+  id: string;
+  name: string;
+  brand: string;
+  category: string;
+}
+
 const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({ className }) => {
   const [query, setQuery] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Mock product data for autocomplete
-  const allProducts = [
-    "Daiwa Ninja X Spinning Rod 2.40m 10-40g",
-    "Shimano Catana EX Spinning 2.70m 5-25g",
-    "Columbia Watertight II Yağmurluk",
-    "The North Face Trekking Pantolon",
-    "Coleman Sundome 4 Kişilik Çadır",
-    "Campingaz Party Grill 600 Ocak",
-    "Penn Battle III Spinning Makara",
-    "Rapala X-Rap Wobler",
-    "Gamakatsu Hooks",
-    "Berkley PowerBait"
-  ];
-
+  // Fetch real products from Supabase
   useEffect(() => {
-    if (query.trim().length > 1) {
-      const filtered = allProducts.filter(product =>
-        product.toLowerCase().includes(query.toLowerCase())
-      ).slice(0, 5);
-      setSuggestions(filtered);
-      setShowSuggestions(true);
-      setSelectedIndex(-1);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
+    const searchProducts = async () => {
+      if (query.trim().length > 1) {
+        setLoading(true);
+        try {
+          const { data, error } = await supabase
+            .from('products')
+            .select('id, name, brand, category')
+            .eq('is_active', true)
+            .or(`name.ilike.%${query}%,brand.ilike.%${query}%,category.ilike.%${query}%`)
+            .limit(8);
+
+          if (error) throw error;
+          
+          setSuggestions(data || []);
+          setShowSuggestions(true);
+          setSelectedIndex(-1);
+        } catch (error) {
+          console.error('Search error:', error);
+          setSuggestions([]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    };
+
+    const debounceTimer = setTimeout(() => {
+      searchProducts();
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(debounceTimer);
   }, [query]);
 
   const handleSearch = (searchQuery: string = query) => {
@@ -70,7 +88,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({ className }) =>
       case 'Enter':
         e.preventDefault();
         if (selectedIndex >= 0) {
-          handleSearch(suggestions[selectedIndex]);
+          handleSearch(suggestions[selectedIndex].name);
         } else {
           handleSearch();
         }
@@ -82,8 +100,8 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({ className }) =>
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    handleSearch(suggestion);
+  const handleSuggestionClick = (suggestion: Product) => {
+    handleSearch(suggestion.name);
   };
 
   // Close suggestions when clicking outside
@@ -128,25 +146,42 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({ className }) =>
       </form>
 
       {/* Suggestions Dropdown */}
-      {showSuggestions && suggestions.length > 0 && (
+      {showSuggestions && (loading || suggestions.length > 0) && (
         <div 
           ref={suggestionsRef}
           className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto"
         >
+          {loading ? (
+            <div className="px-4 py-3 text-center text-sm text-muted-foreground">
+              Aranıyor...
+            </div>
+          ) : suggestions.length === 0 ? (
+            <div className="px-4 py-3 text-center text-sm text-muted-foreground">
+              Sonuç bulunamadı
+            </div>
+          ) : (
+            <>
           {suggestions.map((suggestion, index) => (
             <button
-              key={index}
+              key={suggestion.id}
               className={`w-full text-left px-4 py-3 hover:bg-muted transition-colors border-b border-border last:border-b-0 ${
                 index === selectedIndex ? 'bg-muted' : ''
               }`}
               onClick={() => handleSuggestionClick(suggestion)}
             >
-              <div className="flex items-center gap-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm">{suggestion}</span>
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <Search className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">{suggestion.name}</span>
+                </div>
+                <div className="text-xs text-muted-foreground pl-6">
+                  {suggestion.brand} • {suggestion.category}
+                </div>
               </div>
             </button>
           ))}
+          </>
+          )}
         </div>
       )}
     </div>

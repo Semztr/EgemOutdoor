@@ -41,8 +41,8 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"></div>
       </div>
 
-      {/* Controls - Smaller and more subtle */}
-      <div className="absolute inset-y-0 left-2 sm:left-4 z-20 flex items-center">
+      {/* Controls - Top right corner, side by side */}
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
@@ -52,8 +52,6 @@ const Hero = () => {
         >
           <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
         </Button>
-      </div>
-      <div className="absolute inset-y-0 right-2 sm:right-4 z-20 flex items-center">
         <Button
           variant="ghost"
           size="icon"

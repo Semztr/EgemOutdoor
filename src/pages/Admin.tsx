@@ -29,6 +29,9 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [mainCategory, setMainCategory] = useState<string>('');
   const [subCategory, setSubCategory] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<'products' | 'newsletter' | 'orders'>('products');
+  const [subscribers, setSubscribers] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -51,6 +54,8 @@ const Admin = () => {
   useEffect(() => {
     if (isAdmin) {
       loadProducts();
+      loadSubscribers();
+      loadOrders();
     }
   }, [isAdmin]);
 
@@ -131,6 +136,44 @@ const Admin = () => {
       toast({
         title: 'Hata',
         description: `Ürünler yüklenirken bir hata oluştu${(error as any)?.message ? `: ${(error as any).message}` : ''}`,
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const loadSubscribers = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('newsletter_subscribers')
+        .select('*')
+        .order('subscribed_at', { ascending: false });
+
+      if (error) throw error;
+      setSubscribers(data || []);
+    } catch (error) {
+      console.error('Aboneler yüklenemedi:', error);
+      toast({
+        title: 'Hata',
+        description: 'Aboneler yüklenirken bir hata oluştu.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const loadOrders = async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setOrders(data || []);
+    } catch (error) {
+      console.error('Siparişler yüklenemedi:', error);
+      toast({
+        title: 'Hata',
+        description: 'Siparişler yüklenirken bir hata oluştu.',
         variant: 'destructive',
       });
     }
@@ -459,21 +502,60 @@ const Admin = () => {
         <Header />
         
         <main className="container mx-auto px-4 py-6 md:py-8">
-          {/* Modern Dashboard Header */}
-          <div className="mb-6 md:mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Ürün Yönetimi</h1>
-                <p className="text-sm text-muted-foreground">{products.length} ürün kayıtlı</p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={seedDummyProducts}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Dummy Yükle
-                </Button>
-              </div>
+          {/* Tab Navigation */}
+          <div className="mb-6 border-b border-border">
+            <div className="flex gap-4 overflow-x-auto">
+              <button
+                onClick={() => setActiveTab('products')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
+                  activeTab === 'products'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Ürünler ({products.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('orders')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
+                  activeTab === 'orders'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                📦 Siparişler ({orders.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('newsletter')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
+                  activeTab === 'newsletter'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                📧 Newsletter ({subscribers.length})
+              </button>
             </div>
           </div>
+
+          {/* Products Tab */}
+          {activeTab === 'products' && (
+            <>
+              {/* Modern Dashboard Header */}
+              <div className="mb-6 md:mb-8">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Ürün Yönetimi</h1>
+                    <p className="text-sm text-muted-foreground">{products.length} ürün kayıtlı</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={seedDummyProducts}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Dummy Yükle
+                    </Button>
+                  </div>
+                </div>
+              </div>
 
           <div className="grid lg:grid-cols-2 gap-6 md:gap-8">
             {/* Form */}
@@ -685,6 +767,206 @@ const Admin = () => {
               </div>
             </div>
           </div>
+          </>
+          )}
+
+          {/* Orders Tab */}
+          {activeTab === 'orders' && (
+            <div>
+              <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Siparişler</h1>
+                <p className="text-sm text-muted-foreground">{orders.length} sipariş kayıtlı</p>
+              </div>
+
+              <div className="space-y-4">
+                {orders.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12">
+                      <p className="text-center text-muted-foreground">Henüz sipariş yok.</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  orders.map((order) => (
+                    <Card key={order.id} className="hover:shadow-md transition-shadow">
+                      <CardHeader className="pb-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-lg">Sipariş #{order.order_number}</CardTitle>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {new Date(order.created_at).toLocaleDateString('tr-TR', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </p>
+                          </div>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {order.status === 'pending' ? 'Beklemede' : 
+                             order.status === 'completed' ? 'Tamamlandı' : order.status}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <h4 className="font-semibold text-sm mb-2">Müşteri Bilgileri</h4>
+                            <div className="space-y-1 text-sm">
+                              <p><strong>Ad Soyad:</strong> {order.customer_name}</p>
+                              <p><strong>E-posta:</strong> {order.customer_email}</p>
+                              <p><strong>Telefon:</strong> {order.customer_phone}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-sm mb-2">Teslimat Adresi</h4>
+                            <div className="space-y-1 text-sm">
+                              <p>{order.address_line}</p>
+                              <p>{order.district} / {order.city}</p>
+                              {order.postal_code && <p>Posta Kodu: {order.postal_code}</p>}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <h4 className="font-semibold text-sm mb-2">Sipariş Detayları</h4>
+                          <div className="space-y-2">
+                            {Array.isArray(order.items) && order.items.map((item: any, idx: number) => (
+                              <div key={idx} className="flex justify-between text-sm bg-muted/30 p-2 rounded">
+                                <span>{item.name} x {item.quantity}</span>
+                                <span className="font-medium">₺{(item.price * item.quantity).toFixed(2)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center pt-3 border-t">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Ödeme Yöntemi</p>
+                            <p className="font-medium">
+                              {order.payment_method === 'credit-card' ? '💳 Kredi Kartı' :
+                               order.payment_method === 'bank-transfer' ? '🏦 Havale/EFT' :
+                               order.payment_method === 'cash-on-delivery' ? '📱 Kapıda Ödeme' : order.payment_method}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-muted-foreground">Toplam Tutar</p>
+                            <p className="text-2xl font-bold text-primary">₺{parseFloat(order.total_amount).toFixed(2)}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Newsletter Tab */}
+          {activeTab === 'newsletter' && (
+            <div>
+              <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Newsletter Aboneleri</h1>
+                <p className="text-sm text-muted-foreground">{subscribers.length} abone kayıtlı</p>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Abone Listesi</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {subscribers.length === 0 ? (
+                      <p className="text-muted-foreground text-center py-8">Henüz abone yok.</p>
+                    ) : (
+                      <div className="max-h-[600px] overflow-y-auto">
+                        <table className="w-full">
+                          <thead className="border-b">
+                            <tr>
+                              <th className="text-left py-2 px-4">E-posta</th>
+                              <th className="text-left py-2 px-4">Kayıt Tarihi</th>
+                              <th className="text-left py-2 px-4">Durum</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {subscribers.map((sub) => (
+                              <tr key={sub.id} className="border-b hover:bg-muted/50">
+                                <td className="py-3 px-4 font-medium">{sub.email}</td>
+                                <td className="py-3 px-4 text-sm text-muted-foreground">
+                                  {new Date(sub.subscribed_at).toLocaleDateString('tr-TR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                  })}
+                                </td>
+                                <td className="py-3 px-4">
+                                  <span className={`px-2 py-1 rounded text-xs ${
+                                    sub.is_active 
+                                      ? 'bg-green-100 text-green-800' 
+                                      : 'bg-gray-100 text-gray-800'
+                                  }`}>
+                                    {sub.is_active ? 'Aktif' : 'Pasif'}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {subscribers.length > 0 && (
+                    <div className="mt-4 pt-4 border-t flex gap-2 flex-wrap">
+                      <Button
+                        onClick={() => {
+                          const emails = subscribers.map(s => s.email).join(', ');
+                          navigator.clipboard.writeText(emails);
+                          toast({
+                            title: 'Kopyalandı!',
+                            description: `${subscribers.length} e-posta adresi panoya kopyalandı.`,
+                          });
+                        }}
+                        variant="outline"
+                      >
+                        📋 Tüm E-postaları Kopyala
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          const emails = subscribers.map(s => s.email).join(',');
+                          const subject = 'EgemOutdoor - Kampanya';
+                          const body = 'Merhaba,%0D%0A%0D%0AYeni kampanyalarımız hakkında bilgi vermek istiyoruz...%0D%0A%0D%0AEgemOutdoor Ekibi';
+                          const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=egemoutdoor@gmail.com&bcc=${encodeURIComponent(emails)}&su=${encodeURIComponent(subject)}&body=${body}`;
+                          window.open(gmailUrl, '_blank');
+                        }}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        📧 Gmail ile Toplu Gönder
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          const emails = subscribers.map(s => s.email).join(';');
+                          const subject = 'EgemOutdoor - Kampanya';
+                          const body = 'Merhaba,%0D%0A%0D%0AYeni kampanyalarımız hakkında bilgi vermek istiyoruz...%0D%0A%0D%0AEgemOutdoor Ekibi';
+                          const outlookUrl = `https://outlook.live.com/mail/0/deeplink/compose?to=egemoutdoor@gmail.com&bcc=${encodeURIComponent(emails)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                          window.open(outlookUrl, '_blank');
+                        }}
+                        variant="outline"
+                      >
+                        📨 Outlook ile Gönder
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </main>
 
         <Footer />

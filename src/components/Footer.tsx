@@ -1,9 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Email validation
+    const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Geçersiz E-posta",
+        description: "Lütfen geçerli bir e-posta adresi girin.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await (supabase as any)
+        .from('newsletter_subscribers')
+        .insert([{ email: email.toLowerCase().trim() }]);
+
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation
+          toast({
+            title: "Zaten Abonessiniz",
+            description: "Bu e-posta adresi zaten kayıtlı.",
+            variant: "destructive",
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Başarılı! 🎉",
+          description: "Kampanyalarımızdan haberdar olacaksınız.",
+        });
+        setEmail('');
+      }
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast({
+        title: "Bir Hata Oluştu",
+        description: "Lütfen daha sonra tekrar deneyin.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return <footer className="bg-card border-t border-border">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
@@ -153,7 +209,9 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
               <Mail className="h-5 w-5 text-primary" />
-                <span className="text-muted-foreground">info@egemoutdoor.com</span>
+                <a href="mailto:egemoutdoor@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
+                  egemoutdoor@gmail.com
+                </a>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="h-5 w-5 text-primary mt-1" />
@@ -184,19 +242,62 @@ const Footer = () => {
             {/* Newsletter */}
             <div>
               <h4 className="font-semibold text-foreground mb-3 text-sm">Kampanyalardan Haberdar Olun</h4>
-              <form className="flex gap-2">
+              <form onSubmit={handleNewsletterSubmit} className="flex gap-2">
                 <input 
                   type="email" 
                   placeholder="E-posta adresiniz" 
-                  className="flex-1 px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                  required
+                  className="flex-1 px-3 py-2 text-sm bg-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
                 />
-                <Button type="submit" size="sm" className="whitespace-nowrap">Abone Ol</Button>
+                <Button type="submit" size="sm" className="whitespace-nowrap" disabled={loading}>
+                  {loading ? 'Kaydediliyor...' : 'Abone Ol'}
+                </Button>
               </form>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-border pt-6">
+        {/* Site Haritası */}
+        <div className="border-t border-border mt-10 pt-8">
+          <h4 className="font-semibold text-foreground mb-4 text-center">Site Haritası</h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-xs">
+            <div>
+              <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+                Balık Av Malzemeleri
+              </Link>
+            </div>
+            <div>
+              <Link to="/outdoor-giyim" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+                Outdoor Giyim
+              </Link>
+            </div>
+            <div>
+              <Link to="/kamp-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+                Kamp Malzemeleri
+              </Link>
+            </div>
+            <div>
+              <Link to="/dalis-urunleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+                Dalış Ürünleri
+              </Link>
+            </div>
+            <div>
+              <Link to="/spor-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+                Spor Malzemeleri
+              </Link>
+            </div>
+            <div>
+              <Link to="/termoslar-ve-mataralar" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+                Termoslar ve Mataralar
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-border pt-6 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-muted-foreground text-xs md:text-sm">
               © 2024 EgemOutdoor. Tüm hakları saklıdır.
