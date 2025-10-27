@@ -21,7 +21,9 @@ const checkoutSchema = z.object({
   firstName: z.string().min(2, 'Ad en az 2 karakter olmalı'),
   lastName: z.string().min(2, 'Soyad en az 2 karakter olmalı'),
   email: z.string().email('Geçerli bir e-posta adresi girin'),
-  phone: z.string().min(10, 'Geçerli bir telefon numarası girin'),
+  phone: z.string()
+    .min(10, 'Telefon numarası en az 10 karakter olmalı')
+    .regex(/^[0-9\s\-\+\(\)]+$/, 'Geçerli bir telefon numarası girin'),
   address: z.string().min(10, 'Adres en az 10 karakter olmalı'),
   city: z.string().min(2, 'Şehir giriniz'),
   district: z.string().min(2, 'İlçe giriniz'),
@@ -119,6 +121,32 @@ const Checkout = () => {
         .single();
 
       if (orderError) throw orderError;
+
+      // Stok düşür
+      for (const item of state.items) {
+        // Önce mevcut stok bilgisini al
+        const { data: product } = await supabase
+          .from('products')
+          .select('stock_quantity')
+          .eq('id', String(item.id))
+          .single();
+
+        if (product && product.stock_quantity >= item.quantity) {
+          // Stok yeterli, düşür
+          const { error: stockError } = await supabase
+            .from('products')
+            .update({ 
+              stock_quantity: product.stock_quantity - item.quantity
+            })
+            .eq('id', String(item.id));
+
+          if (stockError) {
+            console.error('Stok güncellenirken hata:', stockError);
+          }
+        } else {
+          console.warn(`Ürün ${item.id} için yetersiz stok!`);
+        }
+      }
 
       toast({
         title: "Siparişiniz Alındı! 🎉",
@@ -228,8 +256,12 @@ const Checkout = () => {
                         type="tel" 
                         value={formData.phone}
                         onChange={handleInputChange}
+                        placeholder="05XX XXX XX XX"
                         required 
                       />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Sipariş durumu için iletişim numaranız
+                      </p>
                     </div>
                   </CardContent>
                 </Card>

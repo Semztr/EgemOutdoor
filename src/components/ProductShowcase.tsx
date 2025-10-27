@@ -5,11 +5,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Heart, ShoppingCart, TrendingUp, Sparkles, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 const ProductShowcase = () => {
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   
   const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
@@ -142,8 +144,18 @@ const ProductShowcase = () => {
             variant="ghost" 
             size="icon" 
             className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleFavorite(product.id);
+            }}
           >
-            <Heart className="h-4 w-4" />
+            <Heart 
+              className={`h-4 w-4 transition-colors ${
+                isFavorite(product.id) 
+                  ? 'fill-red-500 text-red-500' 
+                  : 'text-muted-foreground'
+              }`} 
+            />
           </Button>
 
           <CardContent className="p-2 md:p-3">

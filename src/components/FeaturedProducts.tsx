@@ -5,11 +5,13 @@ import { Heart, ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCart } from '@/contexts/CartContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 const FeaturedProducts = () => {
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -113,8 +115,22 @@ const FeaturedProducts = () => {
                   </div>
 
                   {/* Heart icon */}
-                  <Button variant="ghost" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
-                    <Heart className="h-4 w-4" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleFavorite(product.id);
+                    }}
+                  >
+                    <Heart 
+                      className={`h-4 w-4 transition-colors ${
+                        isFavorite(product.id) 
+                          ? 'fill-red-500 text-red-500' 
+                          : 'text-muted-foreground'
+                      }`} 
+                    />
                   </Button>
 
                   <CardContent className="p-4">
@@ -158,9 +174,15 @@ const FeaturedProducts = () => {
 
                     {/* Buttons */}
                     <div className="flex gap-2">
-                      <Button variant="default" size="sm" className="flex-1" onClick={() => handleAddToCart(product)}>
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="flex-1" 
+                        onClick={() => handleAddToCart(product)}
+                        disabled={(product as any).stock_quantity <= 0}
+                      >
                         <ShoppingCart className="h-4 w-4" />
-                        Sepete Ekle
+                        {(product as any).stock_quantity > 0 ? 'Sepete Ekle' : 'Tükendi'}
                       </Button>
                       <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                         <Button variant="outline" size="sm">İncele</Button>

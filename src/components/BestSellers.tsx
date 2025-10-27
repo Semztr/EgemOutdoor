@@ -5,11 +5,13 @@ import { Heart, ShoppingCart, ChevronLeft, ChevronRight, TrendingUp } from 'luci
 import { Link } from 'react-router-dom';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useCart } from '@/contexts/CartContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 const BestSellers = () => {
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -110,8 +112,22 @@ const BestSellers = () => {
                   </div>
 
                   {/* Heart icon */}
-                  <Button variant="ghost" size="icon" className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
-                    <Heart className="h-4 w-4" />
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      toggleFavorite(product.id);
+                    }}
+                  >
+                    <Heart 
+                      className={`h-4 w-4 transition-colors ${
+                        isFavorite(product.id) 
+                          ? 'fill-red-500 text-red-500' 
+                          : 'text-muted-foreground'
+                      }`} 
+                    />
                   </Button>
 
                   <CardContent className="p-4">

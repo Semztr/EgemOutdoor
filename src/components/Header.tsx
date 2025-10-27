@@ -110,9 +110,6 @@ const Header = () => {
                     <User className="h-4 w-4 mr-2" />
                     Hesabım
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/siparis-takip')}>
-                    Siparişlerim
-                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="h-4 w-4 mr-2" />

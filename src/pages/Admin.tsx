@@ -20,6 +20,7 @@ type Product = Tables<'products'>;
 type ProductInsert = TablesInsert<'products'>;
 
 const Admin = () => {
+  console.log('[Admin] Component rendering...');
   const { user, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Admin = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [mainCategory, setMainCategory] = useState<string>('');
   const [subCategory, setSubCategory] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'products' | 'newsletter' | 'orders'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'newsletter' | 'orders' | 'coupons'>('products');
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [formData, setFormData] = useState({
@@ -42,13 +43,20 @@ const Admin = () => {
     stock_quantity: '',
     colors: '',
     featured: false as boolean,
+    best_seller: false as boolean,
+    new_arrival: false as boolean,
+    badge: '' as string,
     color_options: '',
     extra_images: '',
     agirlik: '',
+    features: '',
+    technical_specs: '',
   });
 
   useEffect(() => {
+    console.log('[Admin] useEffect - checkAdminStatus', { user: user?.id, authLoading });
     checkAdminStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, authLoading]);
 
   useEffect(() => {
@@ -148,15 +156,15 @@ const Admin = () => {
         .select('*')
         .order('subscribed_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Newsletter tablosu bulunamadı:', error);
+        setSubscribers([]);
+        return;
+      }
       setSubscribers(data || []);
     } catch (error) {
       console.error('Aboneler yüklenemedi:', error);
-      toast({
-        title: 'Hata',
-        description: 'Aboneler yüklenirken bir hata oluştu.',
-        variant: 'destructive',
-      });
+      setSubscribers([]);
     }
   };
 
@@ -167,15 +175,15 @@ const Admin = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Orders tablosu bulunamadı:', error);
+        setOrders([]);
+        return;
+      }
       setOrders(data || []);
     } catch (error) {
       console.error('Siparişler yüklenemedi:', error);
-      toast({
-        title: 'Hata',
-        description: 'Siparişler yüklenirken bir hata oluştu.',
-        variant: 'destructive',
-      });
+      setOrders([]);
     }
   };
 
@@ -207,16 +215,40 @@ const Admin = () => {
       colors: formData.colors ? formData.colors.split(',').map(c => c.trim()) : [],
       is_active: true,
       featured: !!formData.featured,
+      badge: formData.badge || null,
       color_options: formData.color_options ? formData.color_options.split(',').map(s => s.trim()).filter(Boolean) : [],
       extra_images: formData.extra_images ? formData.extra_images.split(',').map(s => s.trim()).filter(Boolean) : [],
-    };
+    } as any;
 
-    // JSONB features POC
-    const features: Record<string, any> = {};
-    if (formData.agirlik.trim()) features.agirlik = formData.agirlik.trim();
-    if (Object.keys(features).length > 0) {
-      (productData as any).features = features;
+    // JSONB features - Array format
+    let featuresArray: string[] = [];
+    if (formData.features.trim()) {
+      featuresArray = formData.features.split('\n').map(f => f.trim()).filter(Boolean);
     }
+    if (featuresArray.length > 0) {
+      (productData as any).features = featuresArray;
+    }
+
+    // JSONB technical_specs - Object format
+    let techSpecs: Record<string, string> = {};
+    if (formData.technical_specs.trim()) {
+      const lines = formData.technical_specs.split('\n');
+      lines.forEach(line => {
+        const [key, ...valueParts] = line.split(':');
+        if (key && valueParts.length > 0) {
+          techSpecs[key.trim()] = valueParts.join(':').trim();
+        }
+      });
+    }
+    if (Object.keys(techSpecs).length > 0) {
+      (productData as any).technical_specs = techSpecs;
+    }
+
+    // Legacy features for backward compatibility
+    const legacyFeatures: Record<string, any> = {};
+    if (formData.agirlik.trim()) legacyFeatures.agirlik = formData.agirlik.trim();
+    if (formData.best_seller) legacyFeatures.best_seller = true;
+    if (formData.new_arrival) legacyFeatures.new_arrival = true;
 
     try {
       console.debug('[Admin] Saving product payload:', productData);
@@ -266,6 +298,21 @@ const Admin = () => {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
+    
+    // Parse features array
+    let featuresText = '';
+    if (Array.isArray((product as any).features)) {
+      featuresText = (product as any).features.join('\n');
+    }
+    
+    // Parse technical_specs object
+    let techSpecsText = '';
+    if ((product as any).technical_specs && typeof (product as any).technical_specs === 'object') {
+      techSpecsText = Object.entries((product as any).technical_specs)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('\n');
+    }
+    
     setFormData({
       name: product.name,
       description: product.description || '',
@@ -274,11 +321,16 @@ const Admin = () => {
       category: product.category || '',
       image_url: product.image_url || '',
       stock_quantity: product.stock_quantity.toString(),
-      colors: product.colors?.join(', ') || '',
+      colors: Array.isArray(product.colors) ? product.colors.join(', ') : '',
       featured: !!product.featured,
-      color_options: product.color_options?.join(', ') || '',
-      extra_images: product.extra_images?.join(', ') || '',
+      best_seller: !!(product as any).features?.best_seller,
+      new_arrival: !!(product as any).features?.new_arrival,
+      badge: (product as any).badge || '',
+      color_options: Array.isArray(product.color_options) ? product.color_options.join(', ') : '',
+      extra_images: Array.isArray(product.extra_images) ? product.extra_images.join(', ') : '',
       agirlik: (product as any).features?.agirlik || '',
+      features: featuresText,
+      technical_specs: techSpecsText,
     });
 
     // Kategori seçimlerini doldur
@@ -455,18 +507,27 @@ const Admin = () => {
       stock_quantity: '',
       colors: '',
       featured: false,
+      best_seller: false,
+      new_arrival: false,
+      badge: '',
       color_options: '',
       extra_images: '',
       agirlik: '',
+      features: '',
+      technical_specs: '',
     });
     setMainCategory('');
     setSubCategory('');
   };
 
   if (loading) {
+    console.log('[Admin] Rendering loading state...');
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground">Yükleniyor...</p>
+        </div>
       </div>
     );
   }
@@ -534,6 +595,16 @@ const Admin = () => {
                 }`}
               >
                 📧 Newsletter ({subscribers.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('coupons')}
+                className={`px-4 py-2 font-medium transition-colors border-b-2 whitespace-nowrap ${
+                  activeTab === 'coupons'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                🎟️ Kuponlar
               </button>
             </div>
           </div>
@@ -673,14 +744,60 @@ const Admin = () => {
                     />
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="featured"
-                      type="checkbox"
-                      checked={formData.featured}
-                      onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
-                    />
-                    <Label htmlFor="featured">Öne Çıkan Ürün</Label>
+                  <div className="space-y-3 p-4 border rounded-lg">
+                    <h3 className="font-semibold text-sm">Ürün Etiketleri</h3>
+                    
+                    <div className="flex items-center gap-2">
+                      <input
+                        id="featured"
+                        type="checkbox"
+                        checked={formData.featured}
+                        onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="featured">Öne Çıkan Ürün (Ana Sayfa)</Label>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        id="best_seller"
+                        type="checkbox"
+                        checked={formData.best_seller}
+                        onChange={(e) => setFormData({ ...formData, best_seller: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="best_seller">Çok Satan Ürün</Label>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <input
+                        id="new_arrival"
+                        type="checkbox"
+                        checked={formData.new_arrival}
+                        onChange={(e) => setFormData({ ...formData, new_arrival: e.target.checked })}
+                        className="w-4 h-4"
+                      />
+                      <Label htmlFor="new_arrival">Yeni Gelen Ürün</Label>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="badge">Badge (Rozet)</Label>
+                      <Select
+                        value={formData.badge || "none"}
+                        onValueChange={(val) => setFormData({ ...formData, badge: val === "none" ? "" : val })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seçiniz (opsiyonel)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">Yok</SelectItem>
+                          <SelectItem value="Yeni">Yeni</SelectItem>
+                          <SelectItem value="İndirim">İndirim</SelectItem>
+                          <SelectItem value="Çok Satan">Çok Satan</SelectItem>
+                          <SelectItem value="Özel">Özel</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div>
@@ -713,6 +830,44 @@ const Admin = () => {
                     />
                   </div>
 
+                  {/* Özellikler */}
+                  <div className="space-y-2 p-4 border rounded-lg bg-muted/30">
+                    <h3 className="font-semibold text-sm flex items-center gap-2">
+                      ✨ Ürün Özellikleri
+                      <span className="text-xs font-normal text-muted-foreground">(Her satıra bir özellik)</span>
+                    </h3>
+                    <Textarea
+                      id="features"
+                      value={formData.features}
+                      onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                      placeholder="Su geçirmez yapı&#10;Hafif ve dayanıklı&#10;Kolay temizlenebilir&#10;UV koruma&#10;Ergonomik tasarım"
+                      rows={6}
+                      className="font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      💡 Her satıra bir özellik yazın. Ürün detay sayfasında liste olarak gösterilecek.
+                    </p>
+                  </div>
+
+                  {/* Teknik Özellikler */}
+                  <div className="space-y-2 p-4 border rounded-lg bg-muted/30">
+                    <h3 className="font-semibold text-sm flex items-center gap-2">
+                      🔧 Teknik Özellikler
+                      <span className="text-xs font-normal text-muted-foreground">(Anahtar: Değer formatında)</span>
+                    </h3>
+                    <Textarea
+                      id="technical_specs"
+                      value={formData.technical_specs}
+                      onChange={(e) => setFormData({ ...formData, technical_specs: e.target.value })}
+                      placeholder="Malzeme: Polyester&#10;Ağırlık: 250g&#10;Boyut: 30cm x 20cm x 10cm&#10;Renk Seçenekleri: Mavi, Yeşil, Kırmızı&#10;Garanti Süresi: 2 Yıl&#10;Üretim Yeri: Türkiye"
+                      rows={8}
+                      className="font-mono text-sm"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      💡 Her satıra "Anahtar: Değer" formatında yazın. Örnek: Malzeme: Polyester
+                    </p>
+                  </div>
+
                   <div className="flex gap-2">
                     <Button type="submit" className="flex-1">
                       {editingProduct ? 'Güncelle' : 'Ekle'}
@@ -736,13 +891,31 @@ const Admin = () => {
                     <CardContent className="p-4">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-lg">{product.name}</h3>
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="font-semibold text-lg">{product.name}</h3>
+                            {(product as any).badge && (
+                              <span className="px-2 py-0.5 text-xs font-semibold bg-primary text-primary-foreground rounded">
+                                {(product as any).badge}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-sm text-muted-foreground">{product.brand}</p>
                           <p className="text-xs text-muted-foreground mt-1">Kategori: {product.category || '—'}</p>
                           <p className="text-lg font-bold text-primary mt-2">
                             ₺{product.price.toLocaleString()}
                           </p>
                           <p className="text-sm mt-1">Stok: {product.stock_quantity}</p>
+                          <div className="flex gap-2 mt-2">
+                            {product.featured && (
+                              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Öne Çıkan</span>
+                            )}
+                            {(product as any).features?.best_seller && (
+                              <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Çok Satan</span>
+                            )}
+                            {(product as any).features?.new_arrival && (
+                              <span className="px-2 py-1 text-xs bg-purple-100 text-purple-800 rounded">Yeni</span>
+                            )}
+                          </div>
                         </div>
                         <div className="flex gap-2">
                           <Button
@@ -858,6 +1031,43 @@ const Admin = () => {
                             <p className="text-2xl font-bold text-primary">₺{parseFloat(order.total_amount).toFixed(2)}</p>
                           </div>
                         </div>
+
+                        {/* Sipariş Durumu Güncelleme */}
+                        <div className="pt-4 border-t">
+                          <Label htmlFor={`status-${order.id}`} className="text-sm font-medium mb-2 block">Sipariş Durumu</Label>
+                          <select
+                            id={`status-${order.id}`}
+                            value={order.status}
+                            onChange={async (e) => {
+                              const newStatus = e.target.value;
+                              const { error } = await (supabase as any)
+                                .from('orders')
+                                .update({ status: newStatus })
+                                .eq('id', order.id);
+
+                              if (error) {
+                                toast({
+                                  title: 'Hata',
+                                  description: 'Durum güncellenemedi.',
+                                  variant: 'destructive',
+                                });
+                              } else {
+                                toast({
+                                  title: 'Başarılı',
+                                  description: 'Sipariş durumu güncellendi.',
+                                });
+                                loadOrders(); // Listeyi yenile
+                              }
+                            }}
+                            className="w-full px-3 py-2 border border-border rounded-md bg-background"
+                          >
+                            <option value="pending">Beklemede</option>
+                            <option value="preparing">Hazırlanıyor</option>
+                            <option value="shipped">Kargoda</option>
+                            <option value="delivered">Teslim Edildi</option>
+                            <option value="cancelled">İptal Edildi</option>
+                          </select>
+                        </div>
                       </CardContent>
                     </Card>
                   ))
@@ -963,6 +1173,45 @@ const Admin = () => {
                       </Button>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Coupons Tab */}
+          {activeTab === 'coupons' && (
+            <div>
+              <div className="mb-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Kupon Yönetimi</h1>
+                <p className="text-sm text-muted-foreground">İndirim kuponları oluşturun ve yönetin</p>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>🎟️ Kupon Sistemi</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🚧</div>
+                    <h3 className="text-xl font-semibold mb-2">Kupon Sistemi Yakında!</h3>
+                    <p className="text-muted-foreground mb-6">
+                      Kupon oluşturma ve yönetim özellikleri çok yakında eklenecek.
+                    </p>
+                    <div className="max-w-md mx-auto text-left bg-muted p-4 rounded-lg">
+                      <h4 className="font-semibold mb-2">Planlanan Özellikler:</h4>
+                      <ul className="space-y-1 text-sm">
+                        <li>✅ Yüzde veya sabit tutar indirimi</li>
+                        <li>✅ Minimum sepet tutarı</li>
+                        <li>✅ Kullanım limiti</li>
+                        <li>✅ Geçerlilik tarihi</li>
+                        <li>✅ Tek kullanımlık veya çoklu</li>
+                        <li>✅ Belirli kategorilere özel</li>
+                      </ul>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-6">
+                      Şu an için kupon kodu manuel olarak uygulanabilir.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             </div>

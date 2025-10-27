@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Heart, ShoppingCart, Star, Filter, Grid, List, Search, Fish, Shirt, Tent, Waves, Dumbbell, CupSoda } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { Helmet } from 'react-helmet-async';
 import { categoryFilters } from '@/data/categories';
@@ -19,6 +20,7 @@ const CategoryPage = () => {
   const { categorySlug } = useParams<{ categorySlug: string }>();
   const location = useLocation();
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   const [viewMode, setViewMode] = useState('grid');
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({});
@@ -444,8 +446,22 @@ const CategoryPage = () => {
                       )}
 
                       {/* Heart icon */}
-                      <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover-scale">
-                        <Heart className="h-4 w-4" />
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          toggleFavorite(product.id);
+                        }}
+                      >
+                        <Heart 
+                          className={`h-4 w-4 transition-colors ${
+                            isFavorite(product.id) 
+                              ? 'fill-red-500 text-red-500' 
+                              : 'text-muted-foreground'
+                          }`} 
+                        />
                       </Button>
 
                       <CardContent className="p-6">

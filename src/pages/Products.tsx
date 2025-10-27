@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { Heart, ShoppingCart, Star, Search, Filter, Fish, Shirt, Tent, Waves, Dumbbell, CupSoda } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 
 import { Helmet } from 'react-helmet-async';
@@ -19,6 +20,7 @@ const Products = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const { addItem } = useCart();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   const [localSearchQuery, setLocalSearchQuery] = useState(searchQuery);
   const [supaProducts, setSupaProducts] = useState<any[]>([]);
@@ -191,8 +193,22 @@ const Products = () => {
                           </div>
                         )}
 
-                        <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
-                          <Heart className="h-4 w-4" />
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            toggleFavorite(product.id);
+                          }}
+                        >
+                          <Heart 
+                            className={`h-4 w-4 transition-colors ${
+                              isFavorite(product.id) 
+                                ? 'fill-red-500 text-red-500' 
+                                : 'text-muted-foreground'
+                            }`} 
+                          />
                         </Button>
 
                         <CardContent className="p-4 sm:p-5">
@@ -358,8 +374,22 @@ const Products = () => {
                         {(supaProducts.length > 0 ? supaProducts : filteredProducts).map((product) => (
                           <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
                             <div className="relative">
-                              <Button variant="ghost" size="icon" className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80">
-                                <Heart className="h-4 w-4" />
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  toggleFavorite(product.id);
+                                }}
+                              >
+                                <Heart 
+                                  className={`h-4 w-4 transition-colors ${
+                                    isFavorite(product.id) 
+                                      ? 'fill-red-500 text-red-500' 
+                                      : 'text-muted-foreground'
+                                  }`} 
+                                />
                               </Button>
                               <CardContent className="p-2 md:p-3">
                                 <Link to={`/urun/${product.id}`}>
