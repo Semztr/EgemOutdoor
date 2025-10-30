@@ -1,36 +1,18 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Heart, ShoppingCart, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Heart, ShoppingCart, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import useEmblaCarousel from 'embla-carousel-react';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { formatPrice } from '@/lib/format';
 
 const NewArrivals = () => {
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: 'start',
-    slidesToScroll: 1,
-    containScroll: 'trimSnaps',
-    loop: true,
-  });
-
-  const scrollPrev = () => emblaApi && emblaApi.scrollPrev();
-  const scrollNext = () => emblaApi && emblaApi.scrollNext();
-
-  // Autoplay
-  React.useEffect(() => {
-    if (!emblaApi) return;
-    const id = setInterval(() => {
-      emblaApi.scrollNext();
-    }, 4500);
-    return () => clearInterval(id);
-  }, [emblaApi]);
 
   const handleAddToCart = (product: any) => {
     addItem({
@@ -50,96 +32,90 @@ const NewArrivals = () => {
 
   React.useEffect(() => {
     const load = async () => {
-      // Fetch newest products (last 30 days or most recent)
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+      // Fetch products marked as new arrivals
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, price, brand, image_url, is_active, created_at')
+        .select('id, name, description, price, original_price, brand, image_url, badge, badges, features, is_active, created_at')
         .eq('is_active', true)
-        .gte('created_at', thirtyDaysAgo.toISOString())
-        .order('created_at', { ascending: false })
-        .limit(10);
+        .order('created_at', { ascending: false });
         
-      if (!error && data && data.length > 0) {
-        const mapped = data.map((p: any) => ({
+      if (!error && data) {
+        // Filter products with new_arrival flag in features
+        const newArrivals = data.filter((p: any) => 
+          p.features && typeof p.features === 'object' && p.features.new_arrival === true
+        );
+        
+        const mapped = newArrivals.map((p: any) => ({
           id: p.id,
           name: p.name,
           brand: p.brand ?? '',
+          description: p.description ?? '',
           price: p.price,
-          originalPrice: null,
+          originalPrice: p.original_price || null,
           image: p.image_url ?? '',
-          badge: 'Yeni',
+          badge: p.badge || null,
+          badges: p.badges || [],
         }));
         setProducts(mapped);
-      } else {
-        // Fallback: if no products in last 30 days, get most recent ones
-        const { data: fallbackData } = await supabase
-          .from('products')
-          .select('id, name, price, brand, image_url, is_active, created_at')
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(10);
-          
-        if (fallbackData) {
-          const mapped = fallbackData.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            brand: p.brand ?? '',
-            price: p.price,
-            originalPrice: null,
-            image: p.image_url ?? '',
-            badge: 'Yeni',
-          }));
-          setProducts(mapped);
-        }
       }
     };
     load();
   }, []);
 
   return (
-    <section className="py-20 bg-muted/50">
+    <section className="py-8 md:py-12 bg-muted/30">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <div className="flex items-center gap-3 mb-4">
-              <Sparkles className="h-8 w-8 text-primary" />
-              <h2 className="text-4xl font-bold text-foreground">Yeni Gelenler</h2>
-            </div>
-            <p className="text-lg text-muted-foreground max-w-2xl">
-              Koleksiyonumuza yeni eklenen en güncel ürünleri keşfedin.
-            </p>
+        <div className="text-center mb-6 md:mb-8">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Sparkles className="h-8 w-8 text-primary" />
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground">Yeni Gelenler</h2>
           </div>
-
-          <div className="flex gap-2">
-            <Button variant="outline" size="icon" onClick={scrollPrev} className="hover:bg-primary hover:text-primary-foreground">
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button variant="outline" size="icon" onClick={scrollNext} className="hover:bg-primary hover:text-primary-foreground">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-          </div>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            En yeni ürünlerimizi keşfedin ve trendleri yakalayın.
+          </p>
         </div>
 
-        <div className="embla overflow-hidden" ref={emblaRef}>
-          <div className="embla__container flex gap-5">
-            {products.map((product) => (
-              <div key={product.id} className="embla__slide min-w-0 flex-[0_0_240px] lg:flex-[0_0_calc((100%-5rem)/5)]">
-                <Card className="gradient-card border-border group relative overflow-hidden shadow-card">
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 z-10">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-500 text-white">
-                      {product.badge}
-                    </span>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 items-stretch">
+          {products.map((product) => (
+            <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow h-full flex flex-col">
+              {/* Badges - Sağ Üst */}
+              {(() => {
+                const badgeLabels: Record<string, string> = {
+                  'popular': 'Popüler',
+                  'bestseller': 'Çok Satan',
+                  'new': 'Yeni',
+                  'discount': 'İndirimli',
+                  'featured': 'Öne Çıkan',
+                };
+                const badgeColors: Record<string, string> = {
+                  'popular': 'bg-purple-500 text-white',
+                  'bestseller': 'bg-orange-500 text-white',
+                  'new': 'bg-green-500 text-white',
+                  'discount': 'bg-red-500 text-white',
+                  'featured': 'bg-blue-500 text-white',
+                };
+                const displayBadges = product.badges && product.badges.length > 0 ? product.badges : (product.badge ? [product.badge] : []);
+                
+                return displayBadges.length > 0 ? (
+                  <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 items-end">
+                    {displayBadges.map((badge: string, index: number) => {
+                      const label = badgeLabels[badge] || badge;
+                      const color = badgeColors[badge] || 'bg-orange-500 text-white';
+                      return (
+                        <span key={index} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${color}`}>
+                          {label}
+                        </span>
+                      );
+                    })}
                   </div>
+                ) : null;
+              })()}
 
-                  {/* Heart icon */}
+                  {/* Heart icon - Sol Üst */}
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                    className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
                     onClick={(e) => {
                       e.preventDefault();
                       toggleFavorite(product.id);
@@ -154,21 +130,21 @@ const NewArrivals = () => {
                     />
                   </Button>
 
-                  <CardContent className="p-4">
+                  <CardContent className="p-2 md:p-3 flex flex-col h-full">
                     {/* Product image */}
                     <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
+                      <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
                         <img
                           src={product.image}
                           alt={product.name}
                           loading="lazy"
                           decoding="async"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           onError={(e) => {
                             const target = e.currentTarget as HTMLImageElement;
                             if (target.dataset.fallback !== '1') {
                               target.dataset.fallback = '1';
-                              target.src = `https://via.placeholder.com/500x500.png?text=${encodeURIComponent('EgemOutdoor')}`;
+                              target.src = '/placeholder.svg';
                             }
                           }}
                         />
@@ -176,38 +152,66 @@ const NewArrivals = () => {
                     </Link>
 
                     {/* Brand */}
-                    <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
+                    {product.brand && (
+                      <div className="text-[11px] text-primary font-medium mb-1">
+                        {product.brand}
+                      </div>
+                    )}
 
                     {/* Product name */}
                     <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
+                      <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
                         {product.name}
                       </h3>
                     </Link>
 
-                    {/* Price */}
-                    <div className="flex items-center gap-2 mb-3 mt-1">
-                      <span className="text-lg font-bold text-foreground">₺{product.price.toLocaleString()}</span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
+                    {/* Description */}
+                    <div className="min-h-[32px] mb-2">
+                      {product.description && (
+                        <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-2">
+                          {product.description}
+                        </p>
                       )}
                     </div>
 
-                    {/* Buttons */}
-                    <div className="flex gap-2">
-                      <Button variant="default" size="sm" className="flex-1" onClick={() => handleAddToCart(product)}>
-                        <ShoppingCart className="h-4 w-4" />
-                        Sepete Ekle
+                    {/* Price and Buttons - Together at bottom */}
+                    <div className="mt-auto flex flex-col gap-2">
+                      {/* Price */}
+                      <div className="flex items-center gap-1.5 flex-wrap min-h-[28px]">
+                        {product.originalPrice && product.originalPrice > product.price ? (
+                          <>
+                            <span className="text-xs text-muted-foreground line-through">₺{formatPrice(product.originalPrice)}</span>
+                            <span className="text-lg font-bold text-red-600 dark:text-red-500">₺{formatPrice(product.price)}</span>
+                            <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 px-2 py-0.5 rounded">
+                              %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}
+                            </span>
+                          </>
+                        ) : (
+                          <span className="text-lg font-bold text-primary">₺{formatPrice(product.price)}</span>
+                        )}
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex gap-1.5">
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="flex-1 text-[10px] md:text-xs h-7 md:h-8" 
+                        onClick={() => handleAddToCart(product)}
+                      >
+                        <ShoppingCart className="h-3 w-3 mr-0.5" />
+                        Sepete
                       </Button>
                       <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                        <Button variant="outline" size="sm">İncele</Button>
+                        <Button variant="outline" size="sm" className="text-[10px] md:text-xs h-7 md:h-8 px-2">
+                          İncele
+                        </Button>
                       </Link>
+                    </div>
                     </div>
                   </CardContent>
                 </Card>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
 
         <div className="text-center mt-12">

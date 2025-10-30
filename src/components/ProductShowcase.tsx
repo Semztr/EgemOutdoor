@@ -8,104 +8,91 @@ import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { ProductBadge } from '@/components/ProductBadge';
+import { BADGE_LABELS } from '@/lib/constants';
+import { formatPrice } from '@/lib/format';
 
 const ProductShowcase = () => {
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { toast } = useToast();
   
-  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [popularProducts, setPopularProducts] = useState<any[]>([]);
   const [bestSellers, setBestSellers] = useState<any[]>([]);
-  const [newArrivals, setNewArrivals] = useState<any[]>([]);
+  const [newProducts, setNewProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadAllProducts = async () => {
       setLoading(true);
       
-      // Featured Products
-      const { data: featured } = await supabase
+      // Popüler Ürünler (badges array içinde 'popular' var)
+      const { data: popular } = await supabase
         .from('products')
-        .select('id, name, price, brand, image_url, featured, is_active')
+        .select('id, name, description, price, original_price, brand, image_url, badge, badges, is_active')
         .eq('is_active', true)
-        .eq('featured', true)
+        .contains('badges', ['popular'])
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(12);
       
-      if (featured) {
-        setFeaturedProducts(featured.map((p: any) => ({
+      if (popular) {
+        setPopularProducts(popular.map((p: any) => ({
           id: p.id,
           name: p.name,
           brand: p.brand ?? '',
+          description: p.description ?? '',
           price: p.price,
+          originalPrice: p.original_price,
           image: p.image_url ?? '',
-          badge: 'Öne Çıkan',
-          badgeColor: 'bg-accent text-accent-foreground',
+          badge: p.badge,
+          badges: p.badges || [],
         })));
       }
 
-      // Best Sellers (simulated with recent products)
-      const { data: sellers } = await supabase
+      // Çok Satanlar (badges array içinde 'bestseller' var)
+      const { data: bestsellers } = await supabase
         .from('products')
-        .select('id, name, price, brand, image_url, is_active')
+        .select('id, name, description, price, original_price, brand, image_url, badge, badges, is_active')
         .eq('is_active', true)
+        .contains('badges', ['bestseller'])
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(12);
       
-      if (sellers) {
-        setBestSellers(sellers.map((p: any) => ({
+      if (bestsellers) {
+        setBestSellers(bestsellers.map((p: any) => ({
           id: p.id,
           name: p.name,
           brand: p.brand ?? '',
+          description: p.description ?? '',
           price: p.price,
+          originalPrice: p.original_price,
           image: p.image_url ?? '',
-          badge: 'Çok Satan',
-          badgeColor: 'bg-orange-500 text-white',
+          badge: p.badge,
+          badges: p.badges || [],
         })));
       }
 
-      // New Arrivals (last 30 days)
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+      // Yeni Gelenler (badges array içinde 'new' var)
       const { data: newItems } = await supabase
         .from('products')
-        .select('id, name, price, brand, image_url, is_active, created_at')
+        .select('id, name, description, price, original_price, brand, image_url, badge, badges, is_active')
         .eq('is_active', true)
-        .gte('created_at', thirtyDaysAgo.toISOString())
+        .contains('badges', ['new'])
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(12);
       
-      if (newItems && newItems.length > 0) {
-        setNewArrivals(newItems.map((p: any) => ({
+      if (newItems) {
+        setNewProducts(newItems.map((p: any) => ({
           id: p.id,
           name: p.name,
           brand: p.brand ?? '',
+          description: p.description ?? '',
           price: p.price,
+          originalPrice: p.original_price,
           image: p.image_url ?? '',
-          badge: 'Yeni',
-          badgeColor: 'bg-green-500 text-white',
+          badge: p.badge,
+          badges: p.badges || [],
         })));
-      } else {
-        // Fallback to most recent
-        const { data: fallback } = await supabase
-          .from('products')
-          .select('id, name, price, brand, image_url, is_active')
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(10);
-        
-        if (fallback) {
-          setNewArrivals(fallback.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            brand: p.brand ?? '',
-            price: p.price,
-            image: p.image_url ?? '',
-            badge: 'Yeni',
-            badgeColor: 'bg-green-500 text-white',
-          })));
-        }
       }
 
       setLoading(false);
@@ -128,22 +115,50 @@ const ProductShowcase = () => {
     });
   };
 
-  const ProductGrid = ({ products }: { products: any[] }) => (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-      {products.map((product) => (
-        <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow">
-          {/* Badge */}
-          <div className="absolute top-3 left-3 z-10">
-            <span className={`px-2 py-1 rounded-full text-xs font-medium ${product.badgeColor}`}>
-              {product.badge}
-            </span>
-          </div>
+  const ProductGrid = ({ products }: { products: any[] }) => {
+    const badgeLabels: Record<string, string> = {
+      'popular': 'Popüler',
+      'bestseller': 'Çok Satan',
+      'new': 'Yeni',
+      'discount': 'İndirimli',
+      'featured': 'Öne Çıkan',
+    };
+    
+    const badgeColors: Record<string, string> = {
+      'popular': 'bg-purple-500 text-white',
+      'bestseller': 'bg-orange-500 text-white',
+      'new': 'bg-green-500 text-white',
+      'discount': 'bg-red-500 text-white',
+      'featured': 'bg-blue-500 text-white',
+    };
+    
+    return (
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 items-stretch">
+      {products.map((product) => {
+        const displayBadges = product.badges && product.badges.length > 0 ? product.badges : (product.badge ? [product.badge] : []);
+        
+        return (
+        <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow h-full flex flex-col">
+          {/* Badges - Sağ Üst */}
+          {displayBadges.length > 0 && (
+            <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 items-end">
+              {displayBadges.map((badge: string, index: number) => {
+                const label = badgeLabels[badge] || badge;
+                const color = badgeColors[badge] || 'bg-orange-500 text-white';
+                return (
+                  <span key={index} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${color}`}>
+                    {label}
+                  </span>
+                );
+              })}
+            </div>
+          )}
 
-          {/* Heart icon */}
+          {/* Heart icon - Sol Üst */}
           <Button 
             variant="ghost" 
             size="icon" 
-            className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+            className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
             onClick={(e) => {
               e.preventDefault();
               toggleFavorite(product.id);
@@ -158,7 +173,7 @@ const ProductShowcase = () => {
             />
           </Button>
 
-          <CardContent className="p-2 md:p-3">
+          <CardContent className="p-2 md:p-3 flex flex-col h-full">
             {/* Product image */}
             <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
               <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
@@ -181,27 +196,52 @@ const ProductShowcase = () => {
 
             {/* Brand */}
             {product.brand && (
-              <div className="text-[9px] md:text-[10px] text-primary font-medium mb-0.5 uppercase tracking-wide">
+              <div className="text-[11px] text-primary font-medium mb-1">
                 {product.brand}
               </div>
             )}
 
             {/* Product name */}
             <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-              <h3 className="font-semibold text-foreground mb-1.5 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
+              <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
                 {product.name}
               </h3>
             </Link>
 
-            {/* Price */}
-            <div className="flex items-center gap-1 mb-2">
-              <span className="text-sm md:text-base font-bold text-foreground">
-                ₺{product.price.toLocaleString()}
-              </span>
+            {/* Description */}
+            <div className="min-h-[32px] mb-2">
+              {product.description && (
+                <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-2">
+                  {product.description}
+                </p>
+              )}
             </div>
 
-            {/* Buttons */}
-            <div className="flex gap-1.5">
+            {/* Price and Buttons - Together at bottom */}
+            <div className="mt-auto flex flex-col gap-2">
+              {/* Price */}
+              <div className="flex items-center gap-1.5 flex-wrap min-h-[28px]">
+                {product.originalPrice && product.originalPrice > product.price ? (
+                  <>
+                    <span className="text-xs text-muted-foreground line-through">
+                      ₺{formatPrice(product.originalPrice)}
+                    </span>
+                    <span className="text-lg font-bold text-red-600 dark:text-red-500">
+                      ₺{formatPrice(product.price)}
+                    </span>
+                    <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 px-2 py-0.5 rounded">
+                      %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-lg font-bold text-primary">
+                    ₺{formatPrice(product.price)}
+                  </span>
+                )}
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-1.5">
               <Button 
                 variant="default" 
                 size="sm" 
@@ -217,11 +257,14 @@ const ProductShowcase = () => {
                 </Button>
               </Link>
             </div>
+            </div>
           </CardContent>
         </Card>
-      ))}
+        );
+      })}
     </div>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -247,16 +290,16 @@ const ProductShowcase = () => {
           </h2>
         </div>
 
-        <Tabs defaultValue="featured" className="w-full">
+        <Tabs defaultValue="popular" className="w-full">
           <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-6 md:mb-8 h-auto">
-            <TabsTrigger value="featured" className="flex items-center gap-2 py-3 text-xs md:text-sm">
+            <TabsTrigger value="popular" className="flex items-center gap-2 py-3 text-xs md:text-sm">
               <Star className="h-4 w-4" />
-              <span className="hidden sm:inline">Öne Çıkan</span>
-              <span className="sm:hidden">Öne Çıkan</span>
+              <span className="hidden sm:inline">Popüler Ürünler</span>
+              <span className="sm:hidden">Popüler</span>
             </TabsTrigger>
             <TabsTrigger value="bestsellers" className="flex items-center gap-2 py-3 text-xs md:text-sm">
               <TrendingUp className="h-4 w-4" />
-              <span className="hidden sm:inline">Çok Satan</span>
+              <span className="hidden sm:inline">Çok Satanlar</span>
               <span className="sm:hidden">Çok Satan</span>
             </TabsTrigger>
             <TabsTrigger value="new" className="flex items-center gap-2 py-3 text-xs md:text-sm">
@@ -266,12 +309,12 @@ const ProductShowcase = () => {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="featured" className="mt-0">
-            {featuredProducts.length > 0 ? (
-              <ProductGrid products={featuredProducts} />
+          <TabsContent value="popular" className="mt-0">
+            {popularProducts.length > 0 ? (
+              <ProductGrid products={popularProducts} />
             ) : (
               <div className="text-center py-12">
-                <p className="text-muted-foreground">Öne çıkan ürün bulunamadı.</p>
+                <p className="text-muted-foreground">Popüler ürün bulunamadı.</p>
               </div>
             )}
           </TabsContent>
@@ -287,8 +330,8 @@ const ProductShowcase = () => {
           </TabsContent>
 
           <TabsContent value="new" className="mt-0">
-            {newArrivals.length > 0 ? (
-              <ProductGrid products={newArrivals} />
+            {newProducts.length > 0 ? (
+              <ProductGrid products={newProducts} />
             ) : (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">Yeni ürün bulunamadı.</p>

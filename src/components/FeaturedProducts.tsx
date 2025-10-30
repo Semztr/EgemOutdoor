@@ -8,6 +8,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { formatPrice } from '@/lib/format';
 
 const FeaturedProducts = () => {
   const { addItem } = useCart();
@@ -53,7 +54,7 @@ const FeaturedProducts = () => {
       // Loose typing to avoid build-time type errors if DB types differ locally
       const { data, error } = await (supabase as any)
         .from('products')
-        .select('id, name, price, brand, image_url, featured, is_active, created_at')
+        .select('id, name, description, price, original_price, brand, image_url, featured, is_active, created_at, badge, badges')
         .eq('is_active', true)
         .eq('featured', true)
         .order('created_at', { ascending: false });
@@ -62,10 +63,12 @@ const FeaturedProducts = () => {
           id: p.id,
           name: p.name,
           brand: p.brand ?? '',
+          description: p.description ?? '',
           price: p.price,
-          originalPrice: null,
+          originalPrice: p.original_price || null,
           image: p.image_url ?? '',
-          badge: 'Öne Çıkan',
+          badge: p.badge || 'Öne Çıkan',
+          badges: p.badges || [],
         }));
         setProducts(mapped);
       }
@@ -95,30 +98,48 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="embla overflow-hidden" ref={emblaRef}>
-          <div className="embla__container flex gap-5">
+          <div className="embla__container flex gap-5 items-stretch">
             {products.map((product) => (
-              <div key={product.id} className="embla__slide min-w-0 flex-[0_0_240px] lg:flex-[0_0_calc((100%-5rem)/5)]">
-                <Card className="gradient-card border-border group relative overflow-hidden shadow-card">
-                  {/* Badge */}
-                  <div className="absolute top-3 left-3 z-10">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        product.badge.includes('İndirim')
-                          ? 'bg-destructive text-destructive-foreground'
-                          : product.badge === 'Yeni Ürün'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-accent text-accent-foreground'
-                      }`}
-                    >
-                      {product.badge}
-                    </span>
-                  </div>
+              <div key={product.id} className="embla__slide min-w-0 flex-[0_0_200px] lg:flex-[0_0_calc((100%-5rem)/6)] h-full">
+                <Card className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow h-full flex flex-col">
+                  {/* Badges - Sağ Üst */}
+                  {(() => {
+                    const badgeLabels: Record<string, string> = {
+                      'popular': 'Popüler',
+                      'bestseller': 'Çok Satan',
+                      'new': 'Yeni',
+                      'discount': 'İndirimli',
+                      'featured': 'Öne Çıkan',
+                    };
+                    const badgeColors: Record<string, string> = {
+                      'popular': 'bg-purple-500 text-white',
+                      'bestseller': 'bg-orange-500 text-white',
+                      'new': 'bg-green-500 text-white',
+                      'discount': 'bg-red-500 text-white',
+                      'featured': 'bg-blue-500 text-white',
+                    };
+                    const displayBadges = product.badges && product.badges.length > 0 ? product.badges : (product.badge ? [product.badge] : []);
+                    
+                    return displayBadges.length > 0 ? (
+                      <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 items-end">
+                        {displayBadges.map((badge: string, index: number) => {
+                          const label = badgeLabels[badge] || badge;
+                          const color = badgeColors[badge] || 'bg-orange-500 text-white';
+                          return (
+                            <span key={index} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${color}`}>
+                              {label}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : null;
+                  })()}
 
-                  {/* Heart icon */}
+                  {/* Heart icon - Sol Üst */}
                   <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                    className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
                     onClick={(e) => {
                       e.preventDefault();
                       toggleFavorite(product.id);
@@ -133,10 +154,10 @@ const FeaturedProducts = () => {
                     />
                   </Button>
 
-                  <CardContent className="p-4">
+                  <CardContent className="p-2 md:p-3 flex flex-col h-full">
                     {/* Product image */}
                     <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <div className="aspect-square bg-muted rounded-lg mb-3 overflow-hidden">
+                      <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
                         <img
                           src={product.image}
                           alt={product.name}
@@ -159,33 +180,41 @@ const FeaturedProducts = () => {
 
                     {/* Product name */}
                     <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[40px] group-hover:text-primary transition-colors text-sm">
+                      <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
                         {product.name}
                       </h3>
                     </Link>
 
+                    {/* Description */}
+                    {product.description && (
+                      <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-2 mb-2">
+                        {product.description}
+                      </p>
+                    )}
+
                     {/* Price */}
-                    <div className="flex items-center gap-2 mb-3 mt-1">
-                      <span className="text-lg font-bold text-foreground">₺{product.price.toLocaleString()}</span>
-                      {product.originalPrice && (
-                        <span className="text-xs text-muted-foreground line-through">₺{product.originalPrice.toLocaleString()}</span>
+                    <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                      {product.originalPrice && product.originalPrice > product.price ? (
+                        <>
+                          <span className="text-xs text-muted-foreground line-through">₺{formatPrice(product.originalPrice)}</span>
+                          <span className="text-lg font-bold text-red-600 dark:text-red-500">₺{formatPrice(product.price)}</span>
+                          <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 px-2 py-0.5 rounded">
+                            %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-lg font-bold text-primary">₺{formatPrice(product.price)}</span>
                       )}
                     </div>
 
                     {/* Buttons */}
-                    <div className="flex gap-2">
-                      <Button 
-                        variant="default" 
-                        size="sm" 
-                        className="flex-1" 
-                        onClick={() => handleAddToCart(product)}
-                        disabled={(product as any).stock_quantity <= 0}
-                      >
-                        <ShoppingCart className="h-4 w-4" />
-                        {(product as any).stock_quantity > 0 ? 'Sepete Ekle' : 'Tükendi'}
+                    <div className="flex gap-1.5 mt-auto">
+                      <Button variant="default" size="sm" className="flex-1 text-[10px] md:text-xs h-7 md:h-8" onClick={() => handleAddToCart(product)}>
+                        <ShoppingCart className="h-3 w-3 mr-0.5" />
+                        Sepete
                       </Button>
                       <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                        <Button variant="outline" size="sm">İncele</Button>
+                        <Button variant="outline" size="sm" className="text-[10px] md:text-xs h-7 md:h-8 px-2">İncele</Button>
                       </Link>
                     </div>
                   </CardContent>

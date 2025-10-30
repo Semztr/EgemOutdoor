@@ -32,14 +32,37 @@ const Header = () => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
-  // Scroll detection for compact header
+  // Scroll detection for compact header with hysteresis to prevent jitter
   React.useEffect(() => {
+    let ticking = false;
+    let lastScrollY = 0;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Hysteresis: different thresholds for scrolling down vs up
+          // This prevents jitter when scroll position is exactly at threshold
+          const scrollingDown = currentScrollY > lastScrollY;
+          const threshold = scrollingDown ? 30 : 10;
+          
+          const shouldBeScrolled = currentScrollY > threshold;
+          
+          if (shouldBeScrolled !== isScrolled) {
+            setIsScrolled(shouldBeScrolled);
+          }
+          
+          lastScrollY = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isScrolled]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,9 +73,9 @@ const Header = () => {
   };
 
   return (
-    <header className={`border-b border-border bg-card/95 backdrop-blur-md sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
+    <header className={`border-b border-border bg-card/95 backdrop-blur-md sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
       {/* Top bar - hide on scroll */}
-      <div className={`bg-primary text-primary-foreground px-4 text-center text-sm transition-all duration-300 ${isScrolled ? 'py-1' : 'py-2'}`}>
+      <div className={`bg-primary text-primary-foreground px-4 text-center text-sm overflow-hidden transition-all duration-300 ${isScrolled ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100 py-2'}`}>
         <div className="container mx-auto flex items-center justify-between">
           <span className="text-xs md:text-sm">Tüm Siparişlerinizde 24 Saat İçinde Kargoda!</span>
           <div className="hidden sm:flex items-center gap-3">
@@ -64,7 +87,7 @@ const Header = () => {
       </div>
 
       {/* Main header */}
-      <div className={`container mx-auto px-4 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2 flex-shrink-0">
@@ -333,9 +356,8 @@ const Header = () => {
                     <Link to="/balik-av-malzemeleri/suni-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Suni Yemler</DropdownMenuLabel>
                     </Link>
-                    <Link to="/balik-av-malzemeleri/su-ustu-maketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Su Üstü Maketler</Link>
-                    <Link to="/balik-av-malzemeleri/kasik-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kaşık Yemler</Link>
-                    
+                    <Link to="/balik-av-malzemeleri/suni-yemler/su-ustu-maketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Su Üstü Maketler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/kasik-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kaşık Yemler</Link>
                     <Link to="/balik-av-malzemeleri/suni-yemler/silikon-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Silikon Yemler</Link>
                     <Link to="/balik-av-malzemeleri/suni-yemler/jig-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Jig Yemler</Link>
                     <Link to="/balik-av-malzemeleri/suni-yemler/kasiklar-ve-vibrasyonlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kaşıklar ve Vibrasyonlar</Link>
@@ -432,14 +454,14 @@ const Header = () => {
                     <Link to="/outdoor-giyim/aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Aksesuar</DropdownMenuLabel>
                     </Link>
-                    <Link to="/outdoor-giyim/kadin/canta" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çanta</Link>
-                    <Link to="/outdoor-giyim/kadin/sapka" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şapka</Link>
-                    <Link to="/outdoor-giyim/bere" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Bere</Link>
-                    <Link to="/outdoor-giyim/termal-iclik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Termal İçlik</Link>
-                    <Link to="/outdoor-giyim/erkek/sweatshirts" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Sweatshirts</Link>
-                    <Link to="/outdoor-giyim/erkek/polar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Polar</Link>
-                    <Link to="/outdoor-giyim/erkek/yelek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Yelek</Link>
-                    <Link to="/outdoor-giyim/erkek/sort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şort</Link>
+                    <Link to="/outdoor-giyim/aksesuar/canta" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çanta</Link>
+                    <Link to="/outdoor-giyim/aksesuar/sapka" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şapka</Link>
+                    <Link to="/outdoor-giyim/aksesuar/bere" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Bere</Link>
+                    <Link to="/outdoor-giyim/aksesuar/termal-iclik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Termal İçlik</Link>
+                    <Link to="/outdoor-giyim/aksesuar/sweatshirts" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Sweatshirts</Link>
+                    <Link to="/outdoor-giyim/aksesuar/polar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Polar</Link>
+                    <Link to="/outdoor-giyim/aksesuar/yelek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Yelek</Link>
+                    <Link to="/outdoor-giyim/aksesuar/sort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şort</Link>
                   </div>
                 </div>
               </DropdownMenuContent>
@@ -510,31 +532,31 @@ const Header = () => {
                     <Link to="/dalis-urunleri/ekipman" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Ekipman</DropdownMenuLabel>
                     </Link>
-                    <Link to="/dalis-urunleri/denge-yelegi-bcd" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Denge Yeleği (BCD)</Link>
-                    <Link to="/dalis-urunleri/dalis-bilgisayari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Bilgisayarı</Link>
-                    <Link to="/dalis-urunleri/regulatorler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Regülatörler</Link>
-                    <Link to="/dalis-urunleri/konsol-pusula-manometre" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Konsol & Pusula & Manometre</Link>
-                    <Link to="/dalis-urunleri/dalis-tup-ve-vanalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Tüp ve Vanalar</Link>
+                    <Link to="/dalis-urunleri/ekipman/denge-yelegi-bcd" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Denge Yeleği (BCD)</Link>
+                    <Link to="/dalis-urunleri/ekipman/dalis-bilgisayari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Bilgisayarı</Link>
+                    <Link to="/dalis-urunleri/ekipman/regulatorler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Regülatörler</Link>
+                    <Link to="/dalis-urunleri/ekipman/konsol-pusula-manometre" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Konsol & Pusula & Manometre</Link>
+                    <Link to="/dalis-urunleri/ekipman/dalis-tup-ve-vanalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Tüp ve Vanalar</Link>
                   </div>
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/dalis-urunleri/giyim-parca" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Giyim & Parça</DropdownMenuLabel>
                     </Link>
-                    <Link to="/dalis-urunleri/dalis-elbise-yelek-shorty" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Elbise & Yelek & Shorty</Link>
-                    <Link to="/dalis-urunleri/patik-eldiven-baslik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Patik & Eldiven & Başlık</Link>
-                    <Link to="/dalis-urunleri/dalis-cantalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Çantaları</Link>
-                    <Link to="/dalis-urunleri/yedek-parca-ve-aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Yedek Parça ve Aksesuar</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/elbise-yelek-shorty" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Elbise & Yelek & Shorty</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/patik-eldiven-baslik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Patik & Eldiven & Başlık</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/dalis-cantalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Çantaları</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/yedek-parca-ve-aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Yedek Parça ve Aksesuar</Link>
                   </div>
                   <div className="col-span-2 xl:col-span-1 space-y-0.5">
                     <Link to="/dalis-urunleri/av-aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Av & Aksesuar</DropdownMenuLabel>
                     </Link>
-                    <Link to="/dalis-urunleri/zepkin-modelleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zıpkın Modelleri</Link>
-                    <Link to="/dalis-urunleri/zipkin-yedek-parcalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zıpkın Yedek Parçaları</Link>
-                    <Link to="/dalis-urunleri/dalis-yuzucu-paletleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış & Yüzücü Paletleri</Link>
-                    <Link to="/dalis-urunleri/maske-snorkel-gozluk" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Maske & Şnorkel & Gözlük</Link>
-                    <Link to="/dalis-urunleri/dalis-bicak-ve-makaslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Bıçak ve Makaslar</Link>
-                    <Link to="/dalis-urunleri/dalis-samandiralari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Şamandıraları</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/zipkin-modelleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zıpkın Modelleri</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/zipkin-yedek-parcalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zıpkın Yedek Parçaları</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/dalis-yuzucu-paletleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış & Yüzücü Paletleri</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/maske-snorkel-gozluk" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Maske & Şnorkel & Gözlük</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/dalis-bicak-ve-makaslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Bıçak ve Makaslar</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/dalis-samandiralari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Şamandıraları</Link>
                   </div>
                 </div>
               </DropdownMenuContent>

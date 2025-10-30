@@ -89,7 +89,9 @@ const loadCartFromStorage = (): CartState => {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.error('Failed to load cart from localStorage:', error);
+    if (import.meta.env.DEV) {
+      console.error('Failed to load cart from localStorage:', error);
+    }
   }
   return { items: [], total: 0, itemCount: 0 };
 };
@@ -102,7 +104,9 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state));
     } catch (error) {
-      console.error('Failed to save cart to localStorage:', error);
+      if (import.meta.env.DEV) {
+        console.error('Failed to save cart to localStorage:', error);
+      }
     }
   }, [state]);
 

@@ -15,6 +15,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import { z } from 'zod';
 
 const checkoutSchema = z.object({
@@ -100,7 +101,7 @@ const Checkout = () => {
       const orderNumber = `EGM${Date.now().toString().slice(-8)}`;
 
       // Sipariş oluştur
-      const { data: order, error: orderError } = await (supabase as any)
+      const { error: orderError } = await supabase
         .from('orders')
         .insert({
           order_number: orderNumber,
@@ -111,7 +112,7 @@ const Checkout = () => {
           city: formData.city,
           district: formData.district,
           postal_code: formData.zipCode,
-          items: state.items,
+          items: state.items as unknown as Json,
           total_amount: state.total,
           payment_method: paymentMethod,
           status: 'pending',
@@ -140,10 +141,10 @@ const Checkout = () => {
             })
             .eq('id', String(item.id));
 
-          if (stockError) {
+          if (stockError && import.meta.env.DEV) {
             console.error('Stok güncellenirken hata:', stockError);
           }
-        } else {
+        } else if (import.meta.env.DEV) {
           console.warn(`Ürün ${item.id} için yetersiz stok!`);
         }
       }
@@ -155,13 +156,16 @@ const Checkout = () => {
       
       clearCart();
       navigate(`/siparis-takip?order=${orderNumber}`);
-    } catch (error: any) {
-      console.error('Sipariş oluşturulurken hata:', error);
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Sipariş oluşturulurken hata:', error);
+      }
       
       if (error instanceof z.ZodError) {
+        const firstError = error.issues?.[0];
         toast({
           title: "Form Hatası",
-          description: error.errors[0].message,
+          description: firstError?.message || "Form doğrulama hatası",
           variant: "destructive"
         });
       } else {
@@ -386,19 +390,60 @@ const Checkout = () => {
 
                     {paymentMethod === 'credit-card' && (
                       <div className="space-y-4 pt-4">
+                        <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                          <div className="flex items-start gap-3">
+                            <div className="text-2xl">💳</div>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                                Güvenli Ödeme - İyzico
+                              </h4>
+                              <p className="text-sm text-blue-800 dark:text-blue-200">
+                                Kredi kartı bilgileriniz 256-bit SSL sertifikası ile korunmaktadır.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        
                         <div>
                           <Label htmlFor="cardNumber">Kart Numarası *</Label>
-                          <Input id="cardNumber" placeholder="1234 5678 9012 3456" required />
+                          <Input 
+                            id="cardNumber" 
+                            placeholder="1234 5678 9012 3456" 
+                            maxLength={19}
+                            disabled
+                            className="bg-muted"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            İyzico entegrasyonu tamamlandığında aktif olacak
+                          </p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="expiry">Son Kullanma Tarihi *</Label>
-                            <Input id="expiry" placeholder="AA/YY" required />
+                            <Input 
+                              id="expiry" 
+                              placeholder="AA/YY" 
+                              disabled
+                              className="bg-muted"
+                            />
                           </div>
                           <div>
                             <Label htmlFor="cvc">CVC *</Label>
-                            <Input id="cvc" placeholder="123" required />
+                            <Input 
+                              id="cvc" 
+                              placeholder="123" 
+                              maxLength={4}
+                              disabled
+                              className="bg-muted"
+                            />
                           </div>
+                        </div>
+                        
+                        <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mt-4">
+                          <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                            ⚠️ <strong>Geçici:</strong> Kredi kartı ödemesi şu an aktif değil. 
+                            Lütfen <strong>Havale/EFT</strong> veya <strong>Kapıda Ödeme</strong> seçeneklerini kullanın.
+                          </p>
                         </div>
                       </div>
                     )}

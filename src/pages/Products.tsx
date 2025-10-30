@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
+import { formatPrice } from '@/lib/format';
 
 const Products = () => {
   const [searchParams] = useSearchParams();
@@ -32,9 +33,8 @@ const Products = () => {
   const [priceMin, setPriceMin] = useState<string>('');
   const [priceMax, setPriceMax] = useState<string>('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [minRating, setMinRating] = useState<number>(0);
   const [brandSearch, setBrandSearch] = useState('');
-  const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc' | 'rating_desc'>('newest');
+  const [sortBy, setSortBy] = useState<'newest' | 'price_asc' | 'price_desc'>('newest');
 
   // Use Supabase products as the source
   const allProducts = supaProducts;
@@ -56,7 +56,6 @@ const Products = () => {
       if (selectedBrands.length && !selectedBrands.includes(product.brand)) return false;
       if (selectedCategories.length && !selectedCategories.includes(product.category)) return false;
       if (inStockOnly && !product.inStock) return false;
-      if (minRating && (product.rating ?? 0) < minRating) return false;
       const minOk = priceMin ? product.price >= Number(priceMin) : true;
       const maxOk = priceMax ? product.price <= Number(priceMax) : true;
       return minOk && maxOk;
@@ -67,8 +66,6 @@ const Products = () => {
           return a.price - b.price;
         case 'price_desc':
           return b.price - a.price;
-        case 'rating_desc':
-          return (b.rating ?? 0) - (a.rating ?? 0);
         default:
           return 0;
       }
@@ -98,7 +95,7 @@ const Products = () => {
       try {
         let query = supabase
           .from('products')
-          .select('id, name, brand, price, image_url, category, stock_quantity, is_active, created_at, featured')
+          .select('id, name, description, brand, price, original_price, image_url, category, stock_quantity, is_active, created_at, featured, badge, badges')
           .eq('is_active', true);
 
         // Apply search filter if query exists
@@ -117,14 +114,15 @@ const Products = () => {
             id: p.id,
             name: p.name,
             brand: p.brand ?? '',
+            description: p.description ?? '',
             price: p.price,
-            originalPrice: null,
-            rating: 4.5,
-            reviews: 0,
+            originalPrice: p.original_price || null,
             image: p.image_url ?? '/placeholder.svg',
-            badge: p.featured ? 'Öne Çıkan' : null,
+            badge: p.badge || (p.featured ? 'Öne Çıkan' : null),
+            badges: p.badges || [],
             category: p.category ?? '',
             inStock: (p.stock_quantity ?? 0) > 0,
+            stock_quantity: p.stock_quantity ?? 0,
           }));
           setSupaProducts(mapped);
         }
@@ -187,7 +185,20 @@ const Products = () => {
                       <div className="relative">
                         {product.badge && (
                           <div className="absolute top-3 left-3 z-10">
-                            <Badge variant={product.badge === 'İndirimde' ? 'destructive' : 'default'}>
+                            <Badge 
+                              variant={
+                                product.badge === 'İndirim' ? 'destructive' : 
+                                product.badge === 'Yeni' ? 'default' :
+                                product.badge === 'Çok Satan' ? 'secondary' :
+                                'default'
+                              }
+                              className={
+                                product.badge === 'Yeni' ? 'bg-blue-500 hover:bg-blue-600' :
+                                product.badge === 'Çok Satan' ? 'bg-green-500 hover:bg-green-600' :
+                                product.badge === 'Özel' ? 'bg-purple-500 hover:bg-purple-600' :
+                                ''
+                              }
+                            >
                               {product.badge}
                             </Badge>
                           </div>
@@ -224,16 +235,27 @@ const Products = () => {
                             </h3>
                           </Link>
                           <div className="flex items-center gap-2 mb-2">
-                            <div className="flex items-center">
-                              <Star className="h-4 w-4 fill-accent text-accent" />
-                              <span className="ml-1 text-sm font-medium">{product.rating}</span>
-                            </div>
-                            <span className="text-xs text-muted-foreground">({product.reviews})</span>
+                            {product.inStock ? (
+                              <Badge variant="default" className="bg-green-500 text-xs">
+                                Stokta ({product.stock_quantity} adet)
+                              </Badge>
+                            ) : (
+                              <Badge variant="destructive" className="text-xs">
+                                Stokta Yok
+                              </Badge>
+                            )}
                           </div>
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="text-base sm:text-lg font-semibold text-primary">{product.price}₺</span>
-                            {product.originalPrice && (
-                              <span className="text-xs sm:text-sm text-muted-foreground line-through">{product.originalPrice}₺</span>
+                          <div className="flex items-center gap-2 mb-3 flex-wrap">
+                            {product.originalPrice && product.originalPrice > product.price ? (
+                              <>
+                                <span className="text-xs sm:text-sm text-muted-foreground line-through">{product.originalPrice}₺</span>
+                                <span className="text-base sm:text-lg font-bold text-red-600 dark:text-red-500">{product.price}₺</span>
+                                <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 px-2 py-0.5 rounded">
+                                  %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}
+                                </span>
+                              </>
+                            ) : (
+                              <span className="text-base sm:text-lg font-semibold text-primary">{product.price}₺</span>
                             )}
                           </div>
                           <div className="flex gap-2">
@@ -294,7 +316,6 @@ const Products = () => {
                               <SelectItem value="newest">En yeni</SelectItem>
                               <SelectItem value="price_asc">Fiyat: Artan</SelectItem>
                               <SelectItem value="price_desc">Fiyat: Azalan</SelectItem>
-                              <SelectItem value="rating_desc">Puan: Yüksek</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -315,13 +336,6 @@ const Products = () => {
                                 {p.label}
                               </Button>
                             ))}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium mb-2">Puan (min)</div>
-                          <div className="px-1">
-                            <Slider value={[minRating]} min={0} max={5} step={0.5} onValueChange={(v) => setMinRating(v[0] as number)} />
-                            <div className="text-xs text-muted-foreground mt-1">{minRating}+ yıldız</div>
                           </div>
                         </div>
                         <div>
@@ -358,7 +372,7 @@ const Products = () => {
                             <input type="checkbox" className="accent-primary" checked={inStockOnly} onChange={e => setInStockOnly(e.target.checked)} />
                             <span>Stoktakiler</span>
                           </label>
-                          <Button type="button" variant="outline" size="sm" onClick={() => { setSelectedBrands([]); setSelectedCategories([]); setInStockOnly(false); setPriceMin(''); setPriceMax(''); setMinRating(0); setBrandSearch(''); setSortBy('newest'); }}>Sıfırla</Button>
+                          <Button type="button" variant="outline" size="sm" onClick={() => { setSelectedBrands([]); setSelectedCategories([]); setInStockOnly(false); setPriceMin(''); setPriceMax(''); setBrandSearch(''); setSortBy('newest'); }}>Sıfırla</Button>
                         </div>
                       </div>
                     )}
@@ -370,14 +384,49 @@ const Products = () => {
                       <div className="text-sm text-muted-foreground">{loading ? 'Yükleniyor...' : `${supaProducts.length || filteredProducts.length} ürün`}</div>
                     </div>
                     {(supaProducts.length > 0 ? supaProducts : filteredProducts).length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 items-stretch">
                         {(supaProducts.length > 0 ? supaProducts : filteredProducts).map((product) => (
-                          <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
-                            <div className="relative">
+                          <Card key={product.id} className="group hover:shadow-lg transition-all duration-200 overflow-hidden relative flex flex-col h-full">
+                            <div className="relative flex flex-col h-full">
+                              {/* Badges - Sağ Üst */}
+                              {(() => {
+                                const badgeLabels: Record<string, string> = {
+                                  'popular': 'Popüler',
+                                  'bestseller': 'Çok Satan',
+                                  'new': 'Yeni',
+                                  'discount': 'İndirimli',
+                                  'featured': 'Öne Çıkan',
+                                };
+                                const badgeColors: Record<string, string> = {
+                                  'popular': 'bg-purple-500 text-white',
+                                  'bestseller': 'bg-orange-500 text-white',
+                                  'new': 'bg-green-500 text-white',
+                                  'discount': 'bg-red-500 text-white',
+                                  'featured': 'bg-blue-500 text-white',
+                                };
+                                const displayBadges = (product as any).badges && (product as any).badges.length > 0
+                                  ? (product as any).badges
+                                  : (product.badge ? [product.badge] : []);
+                                return displayBadges.length > 0 ? (
+                                  <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 items-end">
+                                    {displayBadges.map((badge: string, index: number) => {
+                                      const label = badgeLabels[badge] || badge;
+                                      const color = badgeColors[badge] || 'bg-orange-500 text-white';
+                                      return (
+                                        <span key={index} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${color}`}>
+                                          {label}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                ) : null;
+                              })()}
+
+                              {/* Heart - Sol Üst */}
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                                className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   toggleFavorite(product.id);
@@ -391,16 +440,16 @@ const Products = () => {
                                   }`} 
                                 />
                               </Button>
-                              <CardContent className="p-2 md:p-3">
+                              <CardContent className="p-2 md:p-3 flex flex-col h-full">
                                 <Link to={`/urun/${product.id}`}>
-                                  <div className="aspect-[4/5] bg-muted rounded-md mb-3 overflow-hidden flex items-center justify-center">
+                                  <div className="aspect-square bg-muted rounded-md mb-2 overflow-hidden flex items-center justify-center">
                                     {'image' in product && product.image ? (
                                       <img
                                         src={(product as any).image}
                                         alt={product.name}
                                         loading="lazy"
                                         decoding="async"
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                         onError={(e) => {
                                           const t = e.currentTarget as HTMLImageElement;
                                           if (t.dataset.fallback !== '1') { t.dataset.fallback = '1'; t.src = `https://via.placeholder.com/600x750.png?text=${encodeURIComponent('EgemOutdoor')}`; }
@@ -410,26 +459,47 @@ const Products = () => {
                                       <div className="w-full h-full flex items-center justify-center text-6xl">🛒</div>
                                     )}
                                   </div>
-                                  <div className="text-xs text-primary font-medium mb-1">{product.brand}</div>
-                                  <h3 className="font-semibold text-foreground mb-1 line-clamp-2 group-hover:text-primary transition-colors cursor-pointer text-sm sm:text-base">
+                                  <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
+                                  <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors cursor-pointer text-xs md:text-sm">
                                     {product.name}
                                   </h3>
                                 </Link>
-                                <div className="flex items-center gap-2 mb-3">
-                                  <span className="text-base sm:text-lg font-semibold text-primary">{product.price}₺</span>
+                                <div className="min-h-[32px]">
+                                  {product.description && (
+                                    <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-2">
+                                      {product.description}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className="flex gap-2">
+                                
+                                {/* Fiyat ve Butonlar - Birlikte en alta yapış */}
+                                <div className="mt-auto flex flex-col gap-2">
+                                  <div className="flex items-center gap-1.5 flex-wrap min-h-[28px]">
+                                    {product.originalPrice && product.originalPrice > product.price ? (
+                                      <>
+                                        <span className="text-xs text-muted-foreground line-through">₺{formatPrice(product.originalPrice)}</span>
+                                        <span className="text-lg font-bold text-red-600 dark:text-red-500">₺{formatPrice(product.price)}</span>
+                                        <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 px-2 py-0.5 rounded">
+                                          %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}
+                                        </span>
+                                      </>
+                                    ) : (
+                                      <span className="text-lg font-bold text-primary">₺{formatPrice(product.price)}</span>
+                                    )}
+                                  </div>
+                                  <div className="flex gap-1.5">
                                   <Button 
                                     onClick={(e) => { e.stopPropagation(); handleAddToCart(product); }}
                                     size="sm" 
-                                    className="flex-1 hover-scale transition-smooth min-h-10"
+                                    className="flex-1 text-[10px] md:text-xs h-7 md:h-8"
                                   >
-                                    <ShoppingCart className="h-4 w-4 mr-2" />
-                                    Sepete Ekle
+                                    <ShoppingCart className="h-3 w-3 mr-0.5" />
+                                    Sepete
                                   </Button>
                                   <Link to={`/urun/${product.id}`}>
-                                    <Button variant="outline" size="sm" className="min-h-10">İncele</Button>
+                                    <Button variant="outline" size="sm" className="text-[10px] md:text-xs h-7 md:h-8 px-2">İncele</Button>
                                   </Link>
+                                </div>
                                 </div>
                               </CardContent>
                             </div>

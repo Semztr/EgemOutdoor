@@ -1,14 +1,17 @@
-import React, { useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '@/contexts/CartContext';
-import { useToast } from '@/hooks/use-toast';
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import useEmblaCarousel from "embla-carousel-react";
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { useCart } from '@/contexts/CartContext';
+import { useFavorites } from '@/contexts/FavoritesContext';
+import { useToast } from '@/hooks/use-toast';
+import { formatPrice } from '@/lib/format';
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 
 const BrandShowcase = () => {
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     slidesToScroll: 1,
@@ -29,7 +32,7 @@ const BrandShowcase = () => {
     const load = async () => {
       const { data, error } = await supabase
         .from('products')
-        .select('id, name, price, brand, image_url, is_active, created_at, category')
+        .select('id, name, description, price, brand, image_url, is_active, created_at, category, badge, original_price')
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(20);
@@ -38,10 +41,11 @@ const BrandShowcase = () => {
           id: p.id,
           name: p.name,
           brand: p.brand ?? '',
+          description: (p as any).description ?? '',
           price: p.price,
-          originalPrice: null,
+          originalPrice: p.original_price || null,
           image: p.image_url ?? '',
-          badge: 'Popüler',
+          badge: p.badge || null, // Veritabanından gelen badge kullan
         }));
         setQuickProducts(mapped);
       }
@@ -94,17 +98,64 @@ const BrandShowcase = () => {
             <p className="text-sm md:text-base text-muted-foreground">Popüler ürünlerimize hızlıca göz atın</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-            {quickProducts.map((product) => (
+            {quickProducts.map((product) => {
+              // Badge label ve renk mapping
+              const badgeLabels: Record<string, string> = {
+                'popular': 'Popüler',
+                'bestseller': 'Çok Satan',
+                'new': 'Yeni',
+                'discount': 'İndirimli',
+                'featured': 'Öne Çıkan',
+              };
+              
+              const badgeColors: Record<string, string> = {
+                'popular': 'bg-purple-500 text-white',
+                'bestseller': 'bg-orange-500 text-white',
+                'new': 'bg-green-500 text-white',
+                'discount': 'bg-red-500 text-white',
+                'featured': 'bg-blue-500 text-white',
+              };
+              
+              // Çoklu rozet desteği
+              const productBadges = (product as any).badges || [];
+              const displayBadges = productBadges.length > 0 ? productBadges : (product.badge ? [product.badge] : []);
+              
+              return (
               <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow">
-                {/* Badge */}
-                <div className="absolute top-2 left-2 z-10">
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-orange-500 text-white">
-                    {product.badge}
-                  </span>
-                </div>
+                {/* Badges - Sağ Üst */}
+                {displayBadges.length > 0 && (
+                  <div className="absolute top-2 right-2 z-10 flex flex-col gap-1 items-end">
+                    {displayBadges.map((badge: string, index: number) => {
+                      const label = badgeLabels[badge] || badge;
+                      const color = badgeColors[badge] || 'bg-orange-500 text-white';
+                      return (
+                        <span key={index} className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${color}`}>
+                          {label}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+                {/* Heart icon - Sol Üst */}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-2 left-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggleFavorite(product.id);
+                  }}
+                >
+                  <Heart 
+                    className={`h-4 w-4 transition-colors ${
+                      isFavorite(product.id) 
+                        ? 'fill-red-500 text-red-500' 
+                        : 'text-muted-foreground'
+                    }`} 
+                  />
+                </Button>
 
-                {/* Content */}
-                <CardContent className="p-2 md:p-3">
+                <CardContent className="p-2 md:p-3 flex flex-col h-full">
                   {/* Product image */}
                   <Link to={`/urun/${product.id}`}>
                     <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
@@ -127,25 +178,50 @@ const BrandShowcase = () => {
 
                   {/* Brand */}
                   {product.brand && (
-                    <div className="text-[9px] md:text-[10px] text-primary font-medium mb-0.5 uppercase tracking-wide">
+                    <div className="text-[11px] text-primary font-medium mb-1">
                       {product.brand}
                     </div>
                   )}
 
                   {/* Product name */}
                   <Link to={`/urun/${product.id}`}>
-                    <h3 className="font-semibold text-foreground mb-1.5 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
+                    <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
                       {product.name}
                     </h3>
                   </Link>
 
-                  {/* Price */}
-                  <div className="flex items-center gap-1 mb-2">
-                    <span className="text-sm md:text-base font-bold text-foreground">₺{product.price.toLocaleString()}</span>
+                  {/* Description */}
+                  <div className="min-h-[32px] mb-2">
+                    {product.description && (
+                      <p className="text-[10px] md:text-xs text-muted-foreground line-clamp-2">
+                        {product.description}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Buttons */}
-                  <div className="flex gap-1.5">
+                  {/* Price and Buttons - Together at bottom */}
+                  <div className="mt-auto flex flex-col gap-2">
+                    {/* Price */}
+                    <div className="flex items-center gap-1.5 flex-wrap min-h-[28px]">
+                      {product.originalPrice && product.originalPrice > product.price ? (
+                        <>
+                          <span className="text-xs text-muted-foreground line-through">
+                            ₺{formatPrice(product.originalPrice)}
+                          </span>
+                          <span className="text-lg font-bold text-red-600 dark:text-red-500">
+                            ₺{formatPrice(product.price)}
+                          </span>
+                          <span className="text-xs font-semibold bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 px-2 py-0.5 rounded">
+                            %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-lg font-bold text-primary">₺{formatPrice(product.price)}</span>
+                      )}
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-1.5">
                     <Button variant="default" size="sm" className="flex-1 text-[10px] md:text-xs h-7 md:h-8" onClick={() => handleAddToCart(product)}>
                       Sepete
                     </Button>
@@ -153,9 +229,11 @@ const BrandShowcase = () => {
                       <Button variant="outline" size="sm" className="text-[10px] md:text-xs h-7 md:h-8 px-2">İncele</Button>
                     </Link>
                   </div>
+                  </div>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })}
           </div>
           <div className="text-center mt-10">
             <Link to="/urunler">

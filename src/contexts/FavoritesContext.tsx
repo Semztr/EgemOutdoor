@@ -31,19 +31,23 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!user) return;
 
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('favorites')
         .select('product_id')
         .eq('user_id', user.id);
 
       if (error) {
-        console.warn('Favoriler yüklenemedi:', error);
+        if (import.meta.env.DEV) {
+          console.warn('Favoriler yüklenemedi:', error);
+        }
         return;
       }
 
-      setFavorites(data?.map((f: any) => f.product_id) || []);
+      setFavorites(data?.map((f) => f.product_id).filter((id): id is string => id !== null) || []);
     } catch (error) {
-      console.error('Favoriler yüklenirken hata:', error);
+      if (import.meta.env.DEV) {
+        console.error('Favoriler yüklenirken hata:', error);
+      }
     }
   };
 
@@ -68,7 +72,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       if (isCurrentlyFavorite) {
         // Remove from favorites
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from('favorites')
           .delete()
           .eq('user_id', user.id)
@@ -83,7 +87,7 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         });
       } else {
         // Add to favorites
-        const { error } = await (supabase as any)
+        const { error } = await supabase
           .from('favorites')
           .insert({
             user_id: user.id,
@@ -98,11 +102,13 @@ export const FavoritesProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           description: 'Ürün favorilerinize eklendi.',
         });
       }
-    } catch (error: any) {
-      console.error('Favori işlemi hatası:', error);
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.error('Favori işlemi hatası:', error);
+      }
       toast({
         title: 'Hata',
-        description: error.message || 'Favori işlemi başarısız oldu.',
+        description: error instanceof Error ? error.message : 'Favori işlemi başarısız oldu.',
         variant: 'destructive',
       });
     } finally {

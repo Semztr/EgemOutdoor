@@ -13,6 +13,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { formatPrice } from '@/lib/format';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { siteCategories } from '@/data/categories';
@@ -27,6 +28,8 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedShoeSize, setSelectedShoeSize] = useState('');
   const [product, setProduct] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,14 +62,11 @@ const ProductDetail = () => {
       }
 
       try {
-        console.log('[ProductDetail] Loading product:', productId);
         const { data, error } = await supabase
           .from('products')
           .select('*')
           .eq('id', productId as string)
           .single();
-
-        console.log('[ProductDetail] Supabase response:', { data, error });
 
         if (!ignore) {
           if (error || !data) {
@@ -74,34 +74,54 @@ const ProductDetail = () => {
             setError('Ürün bulunamadı');
             setProduct(null);
           } else {
-            console.log('[ProductDetail] Product loaded successfully:', data.name);
-            
-            // Safely parse colors
-            let normalizedColors = [{ name: 'Varsayılan', value: '#000000', available: true }];
+            // Safely parse colors with proper color mapping
+            let normalizedColors: Array<{ name: string; value: string; available: boolean }> = [];
             try {
               const colorsRaw = (data as any).colors;
               if (Array.isArray(colorsRaw) && colorsRaw.length > 0) {
-                normalizedColors = colorsRaw.map((c: any) =>
-                  typeof c === 'string'
-                    ? { name: c, value: '#000000', available: true }
-                    : c
-                );
+                normalizedColors = colorsRaw.map((c: any) => {
+                  if (typeof c === 'string') {
+                    // Renk isimlerini hex kodlarına çevir
+                    const colorMap: Record<string, string> = {
+                      'Siyah': '#000000', 'Black': '#000000',
+                      'Beyaz': '#FFFFFF', 'White': '#FFFFFF',
+                      'Kırmızı': '#DC2626', 'Red': '#DC2626',
+                      'Mavi': '#2563EB', 'Blue': '#2563EB',
+                      'Yeşil': '#16A34A', 'Green': '#16A34A',
+                      'Sarı': '#EAB308', 'Yellow': '#EAB308',
+                      'Turuncu': '#EA580C', 'Orange': '#EA580C',
+                      'Mor': '#9333EA', 'Purple': '#9333EA',
+                      'Pembe': '#EC4899', 'Pink': '#EC4899',
+                      'Gri': '#6B7280', 'Gray': '#6B7280',
+                      'Kahverengi': '#92400E', 'Brown': '#92400E',
+                      'Lacivert': '#1E3A8A', 'Navy': '#1E3A8A',
+                      'Kamuflaj': '#4B5320', 'Camo': '#4B5320',
+                      'Haki': '#8B7355', 'Khaki': '#8B7355',
+                      'Antrasit': '#374151', 'Anthracite': '#374151',
+                      'Bej': '#D4A574', 'Beige': '#D4A574',
+                      'Bordo': '#800020', 'Burgundy': '#800020',
+                      'Yeşil Kamuflaj': '#556B2F', 'Green Camo': '#556B2F',
+                    };
+                    const colorValue = colorMap[c] || colorMap[c.toLowerCase()] || '#6B7280';
+                    return { name: c, value: colorValue, available: true };
+                  }
+                  return c;
+                });
               }
             } catch (err) {
               console.warn('[ProductDetail] Error parsing colors:', err);
             }
 
-            // Safely parse features
-            let features = [];
+            // Safely parse features - always convert to string array
+            let features: string[] = [];
             try {
               const featuresRaw = (data as any).features;
-              if (featuresRaw && typeof featuresRaw === 'object') {
-                features = Object.entries(featuresRaw).map(([key, value]) => ({
-                  label: key,
-                  value: String(value)
-                }));
-              } else if (Array.isArray(featuresRaw)) {
-                features = featuresRaw;
+              if (Array.isArray(featuresRaw)) {
+                // If it's already an array, ensure all items are strings
+                features = featuresRaw.map(f => typeof f === 'string' ? f : JSON.stringify(f));
+              } else if (featuresRaw && typeof featuresRaw === 'object') {
+                // If it's an object, convert to "key: value" strings
+                features = Object.entries(featuresRaw).map(([key, value]) => `${key}: ${value}`);
               }
             } catch (err) {
               console.warn('[ProductDetail] Error parsing features:', err);
@@ -109,6 +129,7 @@ const ProductDetail = () => {
 
             // Safely parse images
             let images = ['/placeholder.svg'];
+            let colorImages: Record<string, string> = {};
             try {
               if (data.image_url) {
                 images = [data.image_url];
@@ -117,29 +138,85 @@ const ProductDetail = () => {
               if (Array.isArray(extraImages) && extraImages.length > 0) {
                 images = [...images, ...extraImages];
               }
+              
+              // Renk bazlı görselleri ekle
+              const colorImagesRaw = (data as any).color_images;
+              if (colorImagesRaw && typeof colorImagesRaw === 'object') {
+                colorImages = colorImagesRaw;
+                // Renk görsellerini images array'ine ekle (eğer yoksa)
+                Object.values(colorImages).forEach((url: any) => {
+                  if (url && !images.includes(url)) {
+                    images.push(url);
+                  }
+                });
+              }
             } catch (err) {
               console.warn('[ProductDetail] Error parsing images:', err);
             }
 
-          setProduct({
-            id: data.id,
-            name: data.name || 'Ürün',
-            brand: data.brand ?? '',
-            category: (data as any).category ?? '',
-            price: data.price || 0,
-            originalPrice: (data as any).original_price ?? null,
-            images: images,
-            badge: (data as any).badge ?? null,
-            inStock: (data.stock_quantity ?? 0) > 0 && (data.is_active ?? true),
-            colors: normalizedColors,
-            specs: (data as any).specs ?? [],
-            description: data.description ?? 'Ürün açıklaması bulunmamaktadır.',
-            features: features,
-            technicalSpecs: (data as any).technical_specs ?? {},
-          });
-          setError(null);
+            // Parse technical specs
+            let technicalSpecs: Record<string, string> = {};
+            try {
+              const specsRaw = (data as any).technical_specs;
+              console.log('[ProductDetail] Raw technical_specs from DB:', specsRaw, 'Type:', typeof specsRaw);
+              
+              if (specsRaw && typeof specsRaw === 'object' && !Array.isArray(specsRaw)) {
+                technicalSpecs = specsRaw;
+                console.log('[ProductDetail] Parsed technical_specs:', technicalSpecs);
+              } else {
+                console.warn('[ProductDetail] technical_specs is not a valid object:', specsRaw);
+              }
+            } catch (err) {
+              console.error('[ProductDetail] Error parsing technical_specs:', err);
+            }
+
+            // Parse sizes
+            let sizes: string[] = [];
+            try {
+              const sizesRaw = (data as any).sizes;
+              if (Array.isArray(sizesRaw)) {
+                sizes = sizesRaw;
+              }
+            } catch (err) {
+              console.warn('[ProductDetail] Error parsing sizes:', err);
+            }
+
+            // Parse shoe_sizes
+            let shoeSizes: string[] = [];
+            try {
+              const shoeSizesRaw = (data as any).shoe_sizes;
+              if (Array.isArray(shoeSizesRaw)) {
+                shoeSizes = shoeSizesRaw;
+              }
+            } catch (err) {
+              console.warn('[ProductDetail] Error parsing shoe_sizes:', err);
+            }
+
+            setProduct({
+              id: data.id,
+              name: data.name || 'Ürün',
+              brand: data.brand ?? '',
+              category: (data as any).category ?? '',
+              price: data.price || 0,
+              originalPrice: (data as any).original_price ?? null,
+              images: images,
+              badge: (data as any).badge ?? null,
+              inStock: (data.stock_quantity ?? 0) > 0 && (data.is_active ?? true),
+              colors: normalizedColors,
+              sizes: sizes,
+              shoeSizes: shoeSizes,
+              specs: (data as any).specs ?? [],
+              description: data.description && data.description.trim() ? data.description : 'Ürün açıklaması bulunmamaktadır.',
+              features: features,
+              technicalSpecs: technicalSpecs,
+              colorImages: colorImages, // Yukarıda parse ettiğimiz colorImages'ı kullan
+            });
+            
+            console.log('[ProductDetail] Product loaded with colorImages:', colorImages);
+            setSelectedImage(0); // İlk görseli göster
+            setError(null);
+            setLoading(false);
           }
-          setLoading(false);
         }
       } catch (err: any) {
         if (!ignore) {
@@ -160,6 +237,41 @@ const ProductDetail = () => {
       setSelectedColor(product.colors[0].name);
     }
   }, [product, selectedColor]);
+
+  // Set default size
+  useEffect(() => {
+    if (product?.sizes?.length && !selectedSize) {
+      setSelectedSize(product.sizes[0]);
+    }
+  }, [product, selectedSize]);
+
+  // Renk değiştiğinde görseli değiştir
+  useEffect(() => {
+    if (selectedColor && product?.colorImages) {
+      console.log('[ProductDetail] Color changed:', selectedColor);
+      console.log('[ProductDetail] Available colorImages:', product.colorImages);
+      console.log('[ProductDetail] All images:', product.images);
+      
+      // colorImages: { "Siyah": "url1.jpg", "Beyaz": "url2.jpg", "Mavi": "url3.jpg" }
+      const colorImage = product.colorImages[selectedColor];
+      console.log('[ProductDetail] Color image for', selectedColor, ':', colorImage);
+      
+      if (colorImage) {
+        // Renk görseli varsa, onu ana görsel yap
+        const colorImageIndex = product.images.findIndex((img: string) => img === colorImage);
+        console.log('[ProductDetail] Color image index:', colorImageIndex);
+        
+        if (colorImageIndex !== -1) {
+          setSelectedImage(colorImageIndex);
+          console.log('[ProductDetail] Changed to image index:', colorImageIndex);
+        } else {
+          console.warn('[ProductDetail] Color image not found in images array');
+        }
+      } else {
+        console.warn('[ProductDetail] No image found for color:', selectedColor);
+      }
+    }
+  }, [selectedColor, product]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -388,23 +500,53 @@ const ProductDetail = () => {
             Geri Dön
           </Button>
 
-          <div className="grid md:grid-cols-2 gap-8 mb-8">
-            {/* Product Images */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
+            {/* Product Images - Modern & Compact */}
             <div className="space-y-4">
-              <div className="aspect-square bg-muted rounded-lg overflow-hidden">
-                <img src={product.images[selectedImage]} alt={product.name} className="w-full h-full object-cover" />
+              {/* Main Image - Smaller & Contained */}
+              <div className="relative bg-muted rounded-xl overflow-hidden border border-border group">
+                <div className="aspect-square max-w-md mx-auto">
+                  <img 
+                    src={product.images[selectedImage]} 
+                    alt={product.name} 
+                    className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" 
+                  />
+                </div>
+                {/* Zoom button */}
+                <button 
+                  onClick={() => setImageZoom(true)}
+                  className="absolute top-4 right-4 p-2 bg-background/80 backdrop-blur-sm rounded-lg hover:bg-background transition-colors"
+                >
+                  <ZoomIn className="h-5 w-5" />
+                </button>
               </div>
-              <div className="flex gap-2">
-                {product.images.map((img, index) => (
-                  <button key={index} onClick={() => setSelectedImage(index)} className={`w-16 h-16 rounded-lg overflow-hidden border-2 ${selectedImage === index ? 'border-primary' : 'border-transparent'}`}>
-                    <img src={img} alt={`${product.name} ${index + 1}`} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
+              
+              {/* Thumbnail Images */}
+              {product.images.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {product.images.map((img, index) => (
+                    <button 
+                      key={index} 
+                      onClick={() => setSelectedImage(index)} 
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === index 
+                          ? 'border-primary ring-2 ring-primary ring-offset-2' 
+                          : 'border-border hover:border-primary'
+                      }`}
+                    >
+                      <img 
+                        src={img} 
+                        alt={`${product.name} ${index + 1}`} 
+                        className="w-full h-full object-contain p-1" 
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Badge variant="secondary">{product.brand}</Badge>
                 {product.badge && <Badge variant="default">{product.badge}</Badge>}
@@ -429,26 +571,93 @@ const ProductDetail = () => {
               )}
 
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-3xl font-bold text-primary">{product.price}₺</span>
-                {product.originalPrice && <span className="text-xl text-muted-foreground line-through">{product.originalPrice}₺</span>}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3">
+                    {product.originalPrice && product.originalPrice > product.price && (
+                      <>
+                        <span className="text-xl text-muted-foreground line-through">{formatPrice(product.originalPrice)}₺</span>
+                        <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}₺</span>
+                        <Badge variant="destructive" className="text-sm font-bold">
+                          %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)} İndirim
+                        </Badge>
+                      </>
+                    )}
+                    {(!product.originalPrice || product.originalPrice <= product.price) && (
+                      <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}₺</span>
+                    )}
+                  </div>
+                  {product.originalPrice && product.originalPrice > product.price && (
+                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                      {formatPrice(product.originalPrice - product.price)}₺ tasarruf ediyorsunuz!
+                    </p>
+                  )}
+                </div>
               </div>
 
               <p className="text-muted-foreground mb-6">{product.description}</p>
 
               {/* Color Selection */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold mb-4">Renk Seçin</h3>
-                <div className="flex flex-wrap gap-3">
-                  {product.colors.map((color) => (
-                    <button key={color.name} onClick={() => color.available && setSelectedColor(color.name)} disabled={!color.available}
-                      className={`w-12 h-12 rounded-full border-2 ${selectedColor === color.name ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-border'} ${!color.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                      style={{ backgroundColor: color.value }}
-                      title={color.name}
-                    />
-                  ))}
+              {product.colors && product.colors.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">Renk Seçin</h3>
+                  <div className="flex flex-wrap gap-3">
+                    {product.colors.map((color) => (
+                      <button key={color.name} onClick={() => color.available && setSelectedColor(color.name)} disabled={!color.available}
+                        className={`w-12 h-12 rounded-full border-2 ${selectedColor === color.name ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-border'} ${!color.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                        style={{ backgroundColor: color.value }}
+                        title={color.name}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Seçilen renk: <span className="font-medium">{selectedColor || 'Seçiniz'}</span></p>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">Seçilen renk: <span className="font-medium">{selectedColor}</span></p>
-              </div>
+              )}
+
+              {/* Size Selection */}
+              {product.sizes && product.sizes.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">Beden Seçin</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.sizes.map((size: string) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-4 py-2 border-2 rounded-lg font-medium transition-all ${
+                          selectedSize === size
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border hover:border-primary'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Seçilen beden: <span className="font-medium">{selectedSize}</span></p>
+                </div>
+              )}
+
+              {/* Shoe Size Selection */}
+              {product.shoeSizes && product.shoeSizes.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-4">Numara Seçin</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {product.shoeSizes.map((size: string) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedShoeSize(size)}
+                        className={`px-4 py-2 border-2 rounded-lg font-medium transition-all ${
+                          selectedShoeSize === size
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border hover:border-primary'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-2">Seçilen numara: <span className="font-medium">{selectedShoeSize}</span></p>
+                </div>
+              )}
 
               {/* Quantity & Add to Cart */}
               <div className="flex items-center gap-4 mb-6">
@@ -457,7 +666,16 @@ const ProductDetail = () => {
                   <span className="px-4 py-2 font-medium">{quantity}</span>
                   <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 hover:bg-muted">+</button>
                 </div>
-                <Button onClick={handleAddToCart} className="flex-1" disabled={!product.inStock || !selectedColor}>
+                <Button 
+                  onClick={handleAddToCart} 
+                  className="flex-1" 
+                  disabled={
+                    !product.inStock || 
+                    (product.colors && product.colors.length > 0 && !selectedColor) ||
+                    (product.sizes && product.sizes.length > 0 && !selectedSize) ||
+                    (product.shoeSizes && product.shoeSizes.length > 0 && !selectedShoeSize)
+                  }
+                >
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   {product.inStock ? 'Sepete Ekle' : 'Stokta Yok'}
                 </Button>
@@ -532,25 +750,42 @@ const ProductDetail = () => {
 
             <TabsContent value="specs" className="mt-6">
               <Card>
-                <CardContent>
-                  {Object.entries(product.technicalSpecs).map(([key, value]) => (
-                    <div key={key} className="flex justify-between py-2 border-b border-border last:border-b-0">
-                      <span className="font-medium">{key}:</span>
-                      <span className="text-muted-foreground">{String(value)}</span>
+                <CardContent className="pt-6">
+                  {Object.keys(product.technicalSpecs || {}).length > 0 ? (
+                    <div className="space-y-3">
+                      {Object.entries(product.technicalSpecs).map(([key, value]) => (
+                        <div key={key} className="flex items-start gap-3 py-2">
+                          <span className="font-medium text-foreground min-w-[140px]">{key}:</span>
+                          <span className="text-muted-foreground flex-1">{String(value)}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Henüz teknik özellik eklenmemiş.</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
 
             <TabsContent value="features" className="mt-6">
               <Card>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {product.features.map((feature, idx) => (
-                      <li key={idx}>{feature}</li>
-                    ))}
-                  </ul>
+                <CardContent className="pt-6">
+                  {product.features && product.features.length > 0 ? (
+                    <ul className="space-y-3">
+                      {product.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <span className="text-primary mt-1">•</span>
+                          <span>{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Henüz özellik eklenmemiş.</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

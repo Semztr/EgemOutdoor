@@ -9,6 +9,7 @@ import { FavoritesProvider } from "@/contexts/FavoritesContext";
 import { lazy, Suspense } from "react";
 import { Loader2 } from "lucide-react";
 import ScrollToTop from "@/components/ScrollToTop";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Eagerly loaded components
 import Index from "./pages/Index";
@@ -42,23 +43,24 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <CartProvider>
-        <FavoritesProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <CartProvider>
+          <FavoritesProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <ScrollToTop />
+                <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/urun-kategorileri" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <UrunKategorileri />
             </Suspense>
           } />
-          <Route path="/kategori/:categorySlug" element={
+          <Route path="/kategori/:categorySlug/*" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <CategoryPage />
             </Suspense>
@@ -254,13 +256,14 @@ const App = () => (
               <NotFound />
             </Suspense>
           } />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-    </FavoritesProvider>
-  </CartProvider>
-  </HelmetProvider>
-  </QueryClientProvider>
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </FavoritesProvider>
+        </CartProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
