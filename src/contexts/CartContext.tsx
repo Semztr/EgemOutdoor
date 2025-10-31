@@ -7,6 +7,9 @@ export interface CartItem {
   quantity: number;
   image: string;
   brand: string;
+  color?: string;  // Seçilen renk
+  size?: string;  // Seçilen beden (XS, S, M, L, XL, XXL)
+  shoeSize?: string;  // Seçilen ayakkabı numarası
 }
 
 interface CartState {
@@ -17,23 +20,34 @@ interface CartState {
 
 type CartAction = 
   | { type: 'ADD_ITEM'; payload: Omit<CartItem, 'quantity'> }
-  | { type: 'REMOVE_ITEM'; payload: { id: number } }
-  | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number } }
+  | { type: 'REMOVE_ITEM'; payload: { id: number; color?: string; size?: string; shoeSize?: string } }
+  | { type: 'UPDATE_QUANTITY'; payload: { id: number; quantity: number; color?: string; size?: string; shoeSize?: string } }
   | { type: 'CLEAR_CART' };
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
-      const existingItem = state.items.find(item => item.id === action.payload.id);
+      // Aynı ürün, aynı renk, aynı beden/numara kombinasyonunu bul
+      const existingItem = state.items.find(item => 
+        item.id === action.payload.id &&
+        item.color === action.payload.color &&
+        item.size === action.payload.size &&
+        item.shoeSize === action.payload.shoeSize
+      );
       
       let newItems;
       if (existingItem) {
+        // Aynı kombinasyon varsa miktarı artır
         newItems = state.items.map(item =>
-          item.id === action.payload.id
+          item.id === action.payload.id &&
+          item.color === action.payload.color &&
+          item.size === action.payload.size &&
+          item.shoeSize === action.payload.shoeSize
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
+        // Farklı kombinasyon ise yeni satır ekle
         newItems = [...state.items, { ...action.payload, quantity: 1 }];
       }
       
@@ -44,7 +58,13 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     
     case 'REMOVE_ITEM': {
-      const newItems = state.items.filter(item => item.id !== action.payload.id);
+      // Aynı ürün, renk, beden/numara kombinasyonunu kaldır
+      const newItems = state.items.filter(item => 
+        !(item.id === action.payload.id &&
+          item.color === action.payload.color &&
+          item.size === action.payload.size &&
+          item.shoeSize === action.payload.shoeSize)
+      );
       const total = newItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0);
       
@@ -52,8 +72,12 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
     
     case 'UPDATE_QUANTITY': {
+      // Aynı ürün, renk, beden/numara kombinasyonunun miktarını güncelle
       const newItems = state.items.map(item =>
-        item.id === action.payload.id
+        item.id === action.payload.id &&
+        item.color === action.payload.color &&
+        item.size === action.payload.size &&
+        item.shoeSize === action.payload.shoeSize
           ? { ...item, quantity: Math.max(0, action.payload.quantity) }
           : item
       ).filter(item => item.quantity > 0);
@@ -75,8 +99,8 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 const CartContext = createContext<{
   state: CartState;
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeItem: (id: number, color?: string, size?: string, shoeSize?: string) => void;
+  updateQuantity: (id: number, quantity: number, color?: string, size?: string, shoeSize?: string) => void;
   clearCart: () => void;
 } | undefined>(undefined);
 
@@ -114,12 +138,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'ADD_ITEM', payload: item });
   };
 
-  const removeItem = (id: number) => {
-    dispatch({ type: 'REMOVE_ITEM', payload: { id } });
+  const removeItem = (id: number, color?: string, size?: string, shoeSize?: string) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { id, color, size, shoeSize } });
   };
 
-  const updateQuantity = (id: number, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity } });
+  const updateQuantity = (id: number, quantity: number, color?: string, size?: string, shoeSize?: string) => {
+    dispatch({ type: 'UPDATE_QUANTITY', payload: { id, quantity, color, size, shoeSize } });
   };
 
   const clearCart = () => {

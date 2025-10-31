@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Pencil, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -17,7 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tables, TablesInsert } from '@/integrations/supabase/types';
 import ImageUpload from '@/components/ImageUpload';
 import MultiImageUpload from '@/components/MultiImageUpload';
-import ColorImageUpload from '@/components/ColorImageUpload';
+import ColorImageUpload, { ColorImages } from '@/components/ColorImageUpload';
 
 type Product = Tables<'products'>;
 type ProductInsert = TablesInsert<'products'>;
@@ -65,7 +66,7 @@ const Admin = () => {
     sizes: [] as string[],
     shoe_sizes: [] as string[],
     color: '',
-    color_images: {} as Record<string, string>,
+    color_images: {} as Record<string, ColorImages>,
   });
 
   useEffect(() => {
@@ -236,6 +237,23 @@ const Admin = () => {
     }
     const parsedStock = parseInt(formData.stock_quantity) || 0;
 
+    // Türkçe karakterleri İngilizce karakterlere çevir (normalize)
+    const normalizeTurkish = (str: string): string => {
+      return str
+        .replace(/ı/g, 'i')
+        .replace(/İ/g, 'I')
+        .replace(/ş/g, 's')
+        .replace(/Ş/g, 'S')
+        .replace(/ğ/g, 'g')
+        .replace(/Ğ/g, 'G')
+        .replace(/ü/g, 'u')
+        .replace(/Ü/g, 'U')
+        .replace(/ö/g, 'o')
+        .replace(/Ö/g, 'O')
+        .replace(/ç/g, 'c')
+        .replace(/Ç/g, 'C');
+    };
+
     // Kategori oluştur: mainCategory / subCategory / detailCategory (varsa)
     let effectiveCategory = '';
     if (mainCategory) {
@@ -250,11 +268,15 @@ const Admin = () => {
       }
     }
 
+    // Kategoriyi normalize et (Türkçe karakterleri İngilizce yap)
+    effectiveCategory = normalizeTurkish(effectiveCategory);
+
     console.log('[Admin] Saving category:', {
       mainCategory,
       subCategory,
       detailCategory,
       effectiveCategory,
+      normalized: true,
     });
 
     // Eski fiyat için de aynı normalizasyon
@@ -292,6 +314,19 @@ const Admin = () => {
       shoe_sizes: formData.shoe_sizes && formData.shoe_sizes.length > 0 ? formData.shoe_sizes : null,
       color_images: formData.color_images || {},
     } as any;
+
+    // 🎨 Ana görsel yoksa, ilk rengin ana görselini kullan
+    if (!productData.image_url && formData.color_images && Object.keys(formData.color_images).length > 0) {
+      const firstColor = Object.keys(formData.color_images)[0];
+      const firstColorImage = formData.color_images[firstColor];
+      if (firstColorImage && firstColorImage.main) {
+        productData.image_url = firstColorImage.main;
+        console.log('[Admin] Ana görsel bulunamadı, ilk rengin ana görseli kullanılıyor:', {
+          color: firstColor,
+          image_url: firstColorImage.main
+        });
+      }
+    }
 
     // JSONB features - Always use object format for consistency
     let featuresData: any = {};
@@ -1120,41 +1155,86 @@ const Admin = () => {
                     </div>
                   </div>
 
-                  {/* Görseller Bölümü */}
-                  <div className="space-y-4 p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl">🖼️</span>
-                      <h3 className="font-semibold text-sm">Ürün Görselleri</h3>
-                    </div>
-                    
-                    {/* Ana Görsel - Dosya Yükleme */}
-                    <ImageUpload
-                      value={formData.image_url}
-                      onChange={(url) => setFormData({ ...formData, image_url: url })}
-                      label="Ana Görsel"
-                      required
-                    />
+                  {/* Görseller bölümü kaldırıldı - Renk seçenekleri ile birleştirildi */}
 
-                    {/* Ek Görseller - Çoklu Dosya Yükleme */}
-                    <MultiImageUpload
-                      value={formData.extra_images}
-                      onChange={(urls) => setFormData({ ...formData, extra_images: urls })}
-                      label="Ek Görseller"
-                      maxImages={5}
-                    />
-                  </div>
-
-                  {/* Renk Seçenekleri Bölümü */}
+                  {/* Renk Seçenekleri ve Görseller Bölümü */}
                   <div className="space-y-4 p-4 border rounded-lg bg-purple-50 dark:bg-purple-950">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl">🎨</span>
-                      <h3 className="font-semibold text-sm">Renk Seçenekleri (Opsiyonel)</h3>
+                      <span className="text-xl">🎨🖼️</span>
+                      <h3 className="font-semibold text-sm">Renk Seçenekleri ve Ürün Görselleri</h3>
+                    </div>
+                    
+                    {/* Renk Olmadan Görseller */}
+                    <div className="space-y-4 p-4 border-2 border-dashed border-purple-300 dark:border-purple-700 rounded-lg bg-white dark:bg-gray-900">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">📸</span>
+                        <h4 className="font-semibold text-sm">Genel Ürün Görselleri (Renk Seçimi Yapılmadıysa)</h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground">💡 Eğer ürününüzde renk seçeneği yoksa, buradan görselleri ekleyin.</p>
+                      
+                      {/* Ana Görsel */}
+                      <ImageUpload
+                        value={formData.image_url}
+                        onChange={(url) => setFormData({ ...formData, image_url: url })}
+                        label="Ana Görsel (Zorunlu)"
+                        required={!formData.colors || formData.colors.length === 0}
+                      />
+
+                      {/* Ek Görseller */}
+                      <MultiImageUpload
+                        value={formData.extra_images}
+                        onChange={(urls) => setFormData({ ...formData, extra_images: urls })}
+                        label="Ek Görseller (Opsiyonel)"
+                        maxImages={5}
+                      />
                     </div>
                     
                     <div>
                       <Label>Mevcut Renkler (Çoklu Seçim)</Label>
                       <div className="grid grid-cols-3 gap-2 mt-2">
-                        {['Siyah', 'Beyaz', 'Mavi', 'Lacivert', 'Kırmızı', 'Yeşil', 'Sarı', 'Turuncu', 'Mor', 'Pembe', 'Gri', 'Antrasit', 'Bej', 'Kahverengi', 'Bordo', 'Kamuflaj', 'Haki', 'Yeşil Kamuflaj'].map((color) => {
+                        {[
+                          'Siyah', 
+                          'Beyaz', 
+                          'Mavi', 
+                          'Açık Mavi',
+                          'Lacivert', 
+                          'Kırmızı', 
+                          'Yeşil',
+                          'Açık Yeşil',
+                          'Koyu Yeşil',
+                          'Sarı', 
+                          'Turuncu',
+                          'Koyu Turuncu',
+                          'Mor', 
+                          'Pembe',
+                          'Açık Pembe',
+                          'Gri',
+                          'Açık Gri',
+                          'Koyu Gri',
+                          'Antrasit',
+                          'Füme',
+                          'Bej', 
+                          'Kahverengi',
+                          'Açık Kahverengi',
+                          'Koyu Kahverengi',
+                          'Bordo',
+                          'Kamuflaj', 
+                          'Haki',
+                          'Yeşil Kamuflaj',
+                          'Hardal',
+                          'Mint',
+                          'Turkuaz',
+                          'Lacivert Mavi',
+                          'Neon Yeşil',
+                          'Neon Sarı',
+                          'Neon Turuncu',
+                          'Metalik Gri',
+                          'Metalik Siyah',
+                          'Şeffaf',
+                          'Beyaz/Siyah',
+                          'Siyah/Beyaz',
+                          'Çok Renkli'
+                        ].map((color) => {
                           const colorArray = formData.colors ? formData.colors.split(',').map(c => c.trim()) : [];
                           return (
                             <label key={color} className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors">
@@ -1196,7 +1276,14 @@ const Admin = () => {
 
                     {/* Renk Bazlı Görseller */}
                     {formData.colors && formData.colors.length > 0 && (
-                      <div className="mt-4">
+                      <div className="mt-4 space-y-4">
+                        <div className="flex items-center gap-2 p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                          <span className="text-lg">🎨</span>
+                          <div>
+                            <h4 className="font-semibold text-sm">Renge Özel Görseller</h4>
+                            <p className="text-xs text-muted-foreground">Her renk için ayrı ana görsel ve ek görseller ekleyebilirsiniz.</p>
+                          </div>
+                        </div>
                         <ColorImageUpload
                           colors={formData.colors.split(',').map(c => c.trim()).filter(Boolean)}
                           value={formData.color_images}
@@ -1424,56 +1511,116 @@ const Admin = () => {
                 <p className="text-sm text-muted-foreground">{orders.length} sipariş kayıtlı</p>
               </div>
 
-              <div className="space-y-4">
-                {orders.length === 0 ? (
-                  <Card>
-                    <CardContent className="py-12">
-                      <p className="text-center text-muted-foreground">Henüz sipariş yok.</p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  orders.map((order) => (
-                    <Card key={order.id} className="hover:shadow-md transition-shadow">
-                      <CardHeader className="pb-3">
-                        <div className="flex justify-between items-start">
-                          <div>
-                            <CardTitle className="text-lg">Sipariş #{order.order_number}</CardTitle>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {new Date(order.created_at).toLocaleDateString('tr-TR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </p>
-                          </div>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            order.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {order.status === 'pending' ? 'Beklemede' : 
-                             order.status === 'completed' ? 'Tamamlandı' : order.status}
-                          </span>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div>
-                            <h4 className="font-semibold text-sm mb-2">Müşteri Bilgileri</h4>
-                            <div className="space-y-1 text-sm">
-                              <p><strong>Ad Soyad:</strong> {order.customer_name}</p>
-                              <p><strong>E-posta:</strong> {order.customer_email}</p>
-                              <p><strong>Telefon:</strong> {order.customer_phone}</p>
+              {orders.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12">
+                    <p className="text-center text-muted-foreground">Henüz sipariş yok.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Accordion type="single" collapsible className="space-y-2">
+                  {orders.map((order) => (
+                    <AccordionItem key={order.id} value={order.id} className="border rounded-lg bg-card">
+                      <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50">
+                        <div className="flex items-center justify-between w-full pr-4">
+                          <div className="flex items-center gap-4">
+                            <div className="text-left">
+                              <p className="font-semibold text-sm">Sipariş #{order.order_number}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(order.created_at).toLocaleDateString('tr-TR', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                            </div>
+                            <div className="hidden md:flex items-center gap-2">
+                              <span className="text-xs text-muted-foreground">{order.customer_name}</span>
+                              <span className="text-xs">•</span>
+                              <span className="text-xs font-medium text-primary">₺{parseFloat(order.total_amount).toFixed(2)}</span>
                             </div>
                           </div>
-                          <div>
-                            <h4 className="font-semibold text-sm mb-2">Teslimat Adresi</h4>
+                          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                              order.status === 'pending' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+                              order.status === 'preparing' ? 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200' :
+                              order.status === 'shipped' ? 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200' :
+                              order.status === 'delivered' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+                              order.status === 'cancelled' ? 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200' :
+                              'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
+                            }`}>
+                              {order.status === 'pending' ? '⏳' : 
+                               order.status === 'preparing' ? '📦' :
+                               order.status === 'shipped' ? '🚚' :
+                               order.status === 'delivered' ? '✅' :
+                               order.status === 'cancelled' ? '❌' : '•'}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={async (e) => {
+                                e.stopPropagation();
+                                if (!confirm(`Sipariş #${order.order_number} silinecek. Emin misiniz?`)) return;
+                                
+                                const { error } = await (supabase as any)
+                                  .from('orders')
+                                  .delete()
+                                  .eq('id', order.id);
+
+                                if (error) {
+                                  toast({
+                                    title: 'Hata',
+                                    description: 'Sipariş silinemedi.',
+                                    variant: 'destructive',
+                                  });
+                                } else {
+                                  toast({
+                                    title: 'Başarılı',
+                                    description: 'Sipariş silindi.',
+                                  });
+                                  loadOrders();
+                                }
+                              }}
+                            >
+                              🗑️
+                            </Button>
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-4 pb-4 pt-2">
+                        <div className="space-y-4">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div className="bg-muted/20 p-3 rounded-lg">
+                            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                              👤 Müşteri Bilgileri
+                            </h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-start gap-2">
+                                <span className="text-muted-foreground min-w-[80px]">Ad Soyad:</span>
+                                <span className="font-medium">{order.customer_name}</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <span className="text-muted-foreground min-w-[80px]">E-posta:</span>
+                                <span className="font-medium break-all">{order.customer_email}</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <span className="text-muted-foreground min-w-[80px]">Telefon:</span>
+                                <span className="font-medium">{order.customer_phone}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="bg-muted/20 p-3 rounded-lg">
+                            <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                              📍 Teslimat Adresi
+                            </h4>
                             <div className="space-y-1 text-sm">
-                              <p>{order.address_line}</p>
-                              <p>{order.district} / {order.city}</p>
-                              {order.postal_code && <p>Posta Kodu: {order.postal_code}</p>}
+                              <p className="font-medium">{order.address_line}</p>
+                              <p className="text-muted-foreground">{order.district} / {order.city}</p>
+                              {order.postal_code && <p className="text-muted-foreground">Posta Kodu: {order.postal_code}</p>}
                             </div>
                           </div>
                         </div>
@@ -1482,33 +1629,65 @@ const Admin = () => {
                           <h4 className="font-semibold text-sm mb-2">Sipariş Detayları</h4>
                           <div className="space-y-2">
                             {Array.isArray(order.items) && order.items.map((item: any, idx: number) => (
-                              <div key={idx} className="flex justify-between text-sm bg-muted/30 p-2 rounded">
-                                <span>{item.name} x {item.quantity}</span>
-                                <span className="font-medium">₺{(item.price * item.quantity).toFixed(2)}</span>
+                              <div key={idx} className="bg-muted/30 p-3 rounded-lg">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div className="flex-1">
+                                    <p className="font-medium text-sm">{item.name}</p>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                      {item.color && (
+                                        <span className="inline-flex items-center gap-1 text-xs bg-background px-2 py-0.5 rounded">
+                                          🎨 {item.color}
+                                        </span>
+                                      )}
+                                      {item.size && (
+                                        <span className="inline-flex items-center gap-1 text-xs bg-background px-2 py-0.5 rounded">
+                                          📏 Beden: {item.size}
+                                        </span>
+                                      )}
+                                      {item.shoeSize && (
+                                        <span className="inline-flex items-center gap-1 text-xs bg-background px-2 py-0.5 rounded">
+                                          👟 Numara: {item.shoeSize}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="text-right ml-4">
+                                    <p className="text-xs text-muted-foreground">Adet: {item.quantity}</p>
+                                    <p className="font-medium text-sm">₺{(item.price * item.quantity).toFixed(2)}</p>
+                                  </div>
+                                </div>
+                                <div className="flex justify-between text-xs text-muted-foreground pt-2 border-t border-border/50">
+                                  <span>Birim Fiyat: ₺{item.price.toFixed(2)}</span>
+                                  {item.brand && <span>Marka: {item.brand}</span>}
+                                </div>
                               </div>
                             ))}
                           </div>
                         </div>
 
-                        <div className="flex justify-between items-center pt-3 border-t">
-                          <div>
-                            <p className="text-sm text-muted-foreground">Ödeme Yöntemi</p>
-                            <p className="font-medium">
-                              {order.payment_method === 'credit-card' ? '💳 Kredi Kartı' :
-                               order.payment_method === 'bank-transfer' ? '🏦 Havale/EFT' :
-                               order.payment_method === 'cash-on-delivery' ? '📱 Kapıda Ödeme' : order.payment_method}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm text-muted-foreground">Toplam Tutar</p>
-                            <p className="text-2xl font-bold text-primary">₺{parseFloat(order.total_amount).toFixed(2)}</p>
+                        <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-xs text-muted-foreground mb-1">Ödeme Yöntemi</p>
+                              <p className="font-semibold text-sm">
+                                {order.payment_method === 'credit-card' ? '💳 Kredi Kartı' :
+                                 order.payment_method === 'bank-transfer' ? '🏦 Havale/EFT' :
+                                 order.payment_method === 'cash-on-delivery' ? '💵 Kapıda Ödeme' : order.payment_method}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-xs text-muted-foreground mb-1">Toplam Tutar</p>
+                              <p className="text-2xl font-bold text-primary">₺{parseFloat(order.total_amount).toFixed(2)}</p>
+                            </div>
                           </div>
                         </div>
 
                         {/* Sipariş Durumu Güncelleme */}
                         <div className="pt-4 border-t space-y-4">
-                          <div>
-                            <Label htmlFor={`status-${order.id}`} className="text-sm font-medium mb-2 block">Sipariş Durumu</Label>
+                          <div className="bg-muted/20 p-3 rounded-lg">
+                            <Label htmlFor={`status-${order.id}`} className="text-sm font-medium mb-2 block flex items-center gap-2">
+                              🔄 Sipariş Durumu
+                            </Label>
                             <select
                               id={`status-${order.id}`}
                               value={order.status}
@@ -1533,13 +1712,13 @@ const Admin = () => {
                                   loadOrders(); // Listeyi yenile
                                 }
                               }}
-                              className="w-full px-3 py-2 border border-border rounded-md bg-background"
+                              className="w-full px-3 py-2 border border-border rounded-md bg-background text-sm font-medium"
                             >
-                              <option value="pending">Beklemede</option>
-                              <option value="preparing">Hazırlanıyor</option>
-                              <option value="shipped">Kargoda</option>
-                              <option value="delivered">Teslim Edildi</option>
-                              <option value="cancelled">İptal Edildi</option>
+                              <option value="pending">⏳ Beklemede</option>
+                              <option value="preparing">📦 Hazırlanıyor</option>
+                              <option value="shipped">🚚 Kargoda</option>
+                              <option value="delivered">✅ Teslim Edildi</option>
+                              <option value="cancelled">❌ İptal Edildi</option>
                             </select>
                           </div>
 
@@ -1637,11 +1816,12 @@ const Admin = () => {
                             />
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                )}
-              </div>
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              )}
             </div>
           )}
 

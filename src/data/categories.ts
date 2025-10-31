@@ -15,9 +15,9 @@ export const siteCategories: SiteCategory[] = [
     count: 456,
     subcategories: [
       // Olta Makineleri
-      { name: 'Olta Makineleri: Spin', slug: 'olta-makineleri/spin' },
-      { name: 'Olta Makineleri: LRF', slug: 'olta-makineleri/lrf' },
-      { name: 'Olta Makineleri: Surf', slug: 'olta-makineleri/surf' },
+      { name: 'Olta Makineleri: Spin', slug: 'olta-makineleri/spin-olta-makineleri' },
+      { name: 'Olta Makineleri: LRF', slug: 'olta-makineleri/lrf-olta-makineleri' },
+      { name: 'Olta Makineleri: Surf', slug: 'olta-makineleri/surf-olta-makineleri' },
       { name: 'Olta Makineleri: Genel Kullanım', slug: 'olta-makineleri/genel-kullanim' },
       // Olta Kamışları
       { name: 'Olta Kamışları: Telespin', slug: 'olta-kamislari/telespin' },
@@ -69,6 +69,7 @@ export const siteCategories: SiteCategory[] = [
     iconKey: 'shirt',
     count: 312,
     subcategories: [
+      // Erkek kategorileri
       { name: 'Erkek: Pantolon', slug: 'erkek/pantolon' },
       { name: 'Erkek: Tişört', slug: 'erkek/tisort' },
       { name: 'Erkek: Gömlek', slug: 'erkek/gomlek' },
@@ -79,11 +80,13 @@ export const siteCategories: SiteCategory[] = [
       { name: 'Erkek: Polar', slug: 'erkek/polar' },
       { name: 'Erkek: Yelek', slug: 'erkek/yelek' },
       { name: 'Erkek: Şort', slug: 'erkek/sort' },
+      // Kadın kategorileri
       { name: 'Kadın: Tişört', slug: 'kadin/tisort' },
       { name: 'Kadın: Ayakkabı', slug: 'kadin/ayakkabi' },
       { name: 'Kadın: Bot', slug: 'kadin/bot' },
-      { name: 'Kadın: Mont & Ceket', slug: 'kadin/mont-ve-ceket' },
+      { name: 'Kadın: Mont & Ceket', slug: 'kadin/mont-ve-ceket-kadin' },
       { name: 'Kadın: Pantolon', slug: 'kadin/pantolon' },
+      // Aksesuar kategorileri
       { name: 'Aksesuar: Çanta', slug: 'kadin/canta' },
       { name: 'Aksesuar: Şapka', slug: 'kadin/sapka' },
       { name: 'Aksesuar: Bere', slug: 'bere' },
@@ -96,22 +99,25 @@ export const siteCategories: SiteCategory[] = [
     iconKey: 'tent',
     count: 289,
     subcategories: [
-      { name: 'Kamp Ocağı', slug: 'kamp-ocagi' },
-      { name: 'Kartuşlar', slug: 'kartuslar' },
-      { name: 'Pürmüz', slug: 'purmuz' },
-      { name: 'Kamp Mutfağı', slug: 'kamp-mutfagi' },
-      { name: 'Çadırlar', slug: 'cadirlar' },
-      { name: 'Uyku Tulumları', slug: 'uyku-tulumlari' },
-      { name: 'Şişme Ürünler ve Matlar', slug: 'sisme-urunler-ve-matlar' },
-      { name: 'Kamp Çantası', slug: 'kamp-cantasi' },
-      { name: 'Aydınlatma', slug: 'aydinlatma' },
-      { name: 'Kafa Lambası', slug: 'fenerler/kafa-lambasi' },
-      { name: 'El Feneri', slug: 'fenerler/el-feneri' },
-      { name: 'Masalar ve Sandalyeler', slug: 'masalar-ve-sandalyeler' },
-      { name: 'Çizmeler', slug: 'cizmeler' },
-      { name: 'Balta , Kürek', slug: 'balta-kurek' },
-      { name: 'Köpek Kovucu', slug: 'kopek-kovucu' },
-      { name: 'Kamp Ekipmanları', slug: 'kamp-ekipmanlari' },
+      // Pişirme kategorisi
+      { name: 'Pişirme: Kamp Ocağı', slug: 'pisirme/kamp-ocagi' },
+      { name: 'Pişirme: Kartuşlar', slug: 'pisirme/kartuslar' },
+      { name: 'Pişirme: Pürmüz', slug: 'pisirme/purmuz' },
+      { name: 'Pişirme: Kamp Mutfağı', slug: 'pisirme/kamp-mutfagi' },
+      // Barınma & Uyku kategorisi
+      { name: 'Barınma & Uyku: Çadırlar', slug: 'barinma-uyku/cadirlar' },
+      { name: 'Barınma & Uyku: Uyku Tulumları', slug: 'barinma-uyku/uyku-tulumlari' },
+      { name: 'Barınma & Uyku: Şişme Ürünler ve Matlar', slug: 'barinma-uyku/sisme-urunler-ve-matlar' },
+      // Aksesuar kategorisi
+      { name: 'Aksesuar: Kamp Çantası', slug: 'aksesuar/kamp-cantasi' },
+      { name: 'Aksesuar: Aydınlatma', slug: 'aksesuar/aydinlatma' },
+      { name: 'Aksesuar: Kafa Lambası', slug: 'aksesuar/kafa-lambasi' },
+      { name: 'Aksesuar: El Feneri', slug: 'aksesuar/el-feneri' },
+      { name: 'Aksesuar: Masalar ve Sandalyeler', slug: 'aksesuar/masalar-ve-sandalyeler' },
+      { name: 'Aksesuar: Çizmeler', slug: 'aksesuar/cizmeler' },
+      { name: 'Aksesuar: Balta, Kürek', slug: 'aksesuar/balta-kurek' },
+      { name: 'Aksesuar: Köpek Kovucu', slug: 'aksesuar/kopek-kovucu' },
+      { name: 'Aksesuar: Kamp Ekipmanları', slug: 'aksesuar/kamp-ekipmanlari' },
     ],
   },
   {
@@ -139,14 +145,10 @@ export const siteCategories: SiteCategory[] = [
   },
   {
     title: 'Termoslar ve Mataralar',
-    slug: 'termoslar-ve-mataralar',
+    slug: 'termoslar-mataralar',
     iconKey: 'cup',
     count: 98,
-    subcategories: [
-      { name: 'Termoslar', slug: 'termoslar' },
-      { name: 'Mataralar', slug: 'mataralar' },
-      { name: 'Yedek Parça & Aksesuar', slug: 'aksesuar' },
-    ],
+    subcategories: [],
   },
   {
     title: 'Spor Malzemeleri',
@@ -201,7 +203,7 @@ export const categoryFilters: Record<string, { name: string; options: string[] }
     { name: 'Kategori', options: ['Regülatör', 'Elbise', 'Palet', 'Maske'] },
     { name: 'Fiyat', options: ['0-1000₺', '1000-3000₺', '3000-6000₺', '6000₺+'] },
   ],
-  'termoslar-ve-mataralar': [
+  'termoslar-mataralar': [
     { name: 'Marka', options: ['Stanley', 'Thermos', 'Contigo', 'CamelBak'] },
     { name: 'Hacim', options: ['350 ml', '500 ml', '750 ml', '1 L', '1.5 L+'] },
     { name: 'Tip', options: ['Termos', 'Matara', 'Termal Kupa'] },

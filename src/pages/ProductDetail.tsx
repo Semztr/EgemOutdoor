@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, ArrowLeft, Share2, ZoomIn, Check, Clock, Package, Award, MessageCircle, ChevronRight, Trash2, Edit } from 'lucide-react';
+import { Star, Heart, ShoppingCart, Truck, Shield, RotateCcw, ArrowLeft, Share2, Check, MessageCircle, Trash2, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useAuth } from '@/hooks/useAuth';
@@ -17,6 +17,76 @@ import { formatPrice } from '@/lib/format';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { siteCategories } from '@/data/categories';
+
+// Renk isimlerini hex kodlarına çeviren fonksiyon
+const getColorHex = (colorName: string): string => {
+  const colorMap: Record<string, string> = {
+    // Temel Renkler
+    'Siyah': '#000000',
+    'Beyaz': '#FFFFFF',
+    'Kırmızı': '#FF0000',
+    'Sarı': '#FFD700',
+    
+    // Mavi Tonları
+    'Mavi': '#0066CC',
+    'Açık Mavi': '#87CEEB',
+    'Lacivert': '#000080',
+    'Lacivert Mavi': '#191970',
+    'Turkuaz': '#40E0D0',
+    
+    // Yeşil Tonları
+    'Yeşil': '#00AA00',
+    'Açık Yeşil': '#90EE90',
+    'Koyu Yeşil': '#006400',
+    'Neon Yeşil': '#39FF14',
+    'Mint': '#98FF98',
+    
+    // Turuncu Tonları
+    'Turuncu': '#FF8C00',
+    'Koyu Turuncu': '#FF6600',
+    'Neon Turuncu': '#FF6600',
+    'Hardal': '#FFDB58',
+    
+    // Gri Tonları
+    'Gri': '#808080',
+    'Açık Gri': '#D3D3D3',
+    'Koyu Gri': '#404040',
+    'Antrasit': '#2F4F4F',
+    'Füme': '#696969',
+    
+    // Kahverengi Tonları
+    'Kahverengi': '#8B4513',
+    'Açık Kahverengi': '#CD853F',
+    'Koyu Kahverengi': '#654321',
+    'Bej': '#F5F5DC',
+    
+    // Diğer Renkler
+    'Mor': '#800080',
+    'Pembe': '#FFC0CB',
+    'Açık Pembe': '#FFB6C1',
+    'Bordo': '#800020',
+    
+    // Kamuflaj & Özel
+    'Kamuflaj': '#78866B',
+    'Haki': '#C3B091',
+    'Yeşil Kamuflaj': '#4B5320',
+    
+    // Neon Renkler
+    'Neon Sarı': '#FFFF00',
+    
+    // Metalik Renkler
+    'Metalik Gri': '#BCC6CC',
+    'Metalik Siyah': '#2C3539',
+    
+    // Özel
+    'Şeffaf': '#FFFFFF00',
+    'Beyaz/Siyah': 'linear-gradient(90deg, #FFFFFF 50%, #000000 50%)',
+    'Siyah/Beyaz': 'linear-gradient(90deg, #000000 50%, #FFFFFF 50%)',
+    'Çok Renkli': 'linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #0000FF, #4B0082, #9400D3)',
+  };
+  
+  return colorMap[colorName] || '#CCCCCC'; // Varsayılan gri
+};
 
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
@@ -33,8 +103,11 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [imageZoom, setImageZoom] = useState(false);
-  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [imageModal, setImageModal] = useState(false);
+  const [imageZoom, setImageZoom] = useState(1);
+  const [imagePan, setImagePan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [reviews, setReviews] = useState<any[]>([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -70,7 +143,9 @@ const ProductDetail = () => {
 
         if (!ignore) {
           if (error || !data) {
-            console.error('[ProductDetail] Product not found:', error);
+            if (import.meta.env.DEV) {
+              console.error('[ProductDetail] Product not found:', error);
+            }
             setError('Ürün bulunamadı');
             setProduct(null);
           } else {
@@ -109,7 +184,9 @@ const ProductDetail = () => {
                 });
               }
             } catch (err) {
-              console.warn('[ProductDetail] Error parsing colors:', err);
+              if (import.meta.env.DEV) {
+                console.warn('[ProductDetail] Error parsing colors:', err);
+              }
             }
 
             // Safely parse features - always convert to string array
@@ -117,57 +194,93 @@ const ProductDetail = () => {
             try {
               const featuresRaw = (data as any).features;
               if (Array.isArray(featuresRaw)) {
-                // If it's already an array, ensure all items are strings
-                features = featuresRaw.map(f => typeof f === 'string' ? f : JSON.stringify(f));
+                // Legacy format: direct array
+                features = featuresRaw
+                  .filter(f => f && typeof f === 'string' && f.trim().length > 0)
+                  .map(f => f.trim());
               } else if (featuresRaw && typeof featuresRaw === 'object') {
-                // If it's an object, convert to "key: value" strings
-                features = Object.entries(featuresRaw).map(([key, value]) => `${key}: ${value}`);
+                // New format: object with 'items' array (from admin panel)
+                if (Array.isArray(featuresRaw.items)) {
+                  features = featuresRaw.items
+                    .filter((f: any) => f && typeof f === 'string' && f.trim().length > 0)
+                    .map((f: string) => f.trim());
+                } else {
+                  // Very old format: object with key-value pairs
+                  // Filter out technical fields that shouldn't be in features
+                  const excludeKeys = ['items', 'best_seller', 'new_arrival', 'is_active', 'created_at', 'updated_at', 'id', 'user_id', 'agirlik'];
+                  features = Object.entries(featuresRaw)
+                    .filter(([key]) => !excludeKeys.includes(key))
+                    .map(([key, value]) => `${key}: ${value}`);
+                }
               }
             } catch (err) {
-              console.warn('[ProductDetail] Error parsing features:', err);
+              if (import.meta.env.DEV) {
+                console.warn('[ProductDetail] Error parsing features:', err);
+              }
             }
 
             // Safely parse images
-            let images = ['/placeholder.svg'];
-            let colorImages: Record<string, string> = {};
+            let images: string[] = [];
+            let colorImages: Record<string, { main: string; extra: string[] }> = {};
+            let mainImageUrl = data.image_url;
+            
             try {
-              if (data.image_url) {
-                images = [data.image_url];
+              // Renk bazlı görselleri parse et
+              const colorImagesRaw = (data as any).color_images;
+              if (colorImagesRaw && typeof colorImagesRaw === 'object') {
+                colorImages = colorImagesRaw;
+                
+                // Ana görsel yoksa, ilk rengin ana görselini kullan
+                if (!mainImageUrl && Object.keys(colorImages).length > 0) {
+                  const firstColor = Object.keys(colorImages)[0];
+                  if (colorImages[firstColor]?.main) {
+                    mainImageUrl = colorImages[firstColor].main;
+                  }
+                }
               }
+              
+              // Ana görseli ekle
+              if (mainImageUrl) {
+                images = [mainImageUrl];
+              }
+              
+              // Ek görselleri ekle
               const extraImages = (data as any).extra_images;
               if (Array.isArray(extraImages) && extraImages.length > 0) {
                 images = [...images, ...extraImages];
               }
               
-              // Renk bazlı görselleri ekle
-              const colorImagesRaw = (data as any).color_images;
-              if (colorImagesRaw && typeof colorImagesRaw === 'object') {
-                colorImages = colorImagesRaw;
-                // Renk görsellerini images array'ine ekle (eğer yoksa)
-                Object.values(colorImages).forEach((url: any) => {
-                  if (url && !images.includes(url)) {
-                    images.push(url);
-                  }
-                });
+              // Placeholder yoksa ekle
+              if (images.length === 0) {
+                images = ['/placeholder.svg'];
               }
             } catch (err) {
-              console.warn('[ProductDetail] Error parsing images:', err);
+              if (import.meta.env.DEV) {
+                console.warn('[ProductDetail] Error parsing images:', err);
+              }
+              images = ['/placeholder.svg'];
             }
 
             // Parse technical specs
             let technicalSpecs: Record<string, string> = {};
             try {
               const specsRaw = (data as any).technical_specs;
-              console.log('[ProductDetail] Raw technical_specs from DB:', specsRaw, 'Type:', typeof specsRaw);
+              if (import.meta.env.DEV) {
+                console.log('[ProductDetail] Raw technical_specs from DB:', specsRaw, 'Type:', typeof specsRaw);
+              }
               
               if (specsRaw && typeof specsRaw === 'object' && !Array.isArray(specsRaw)) {
                 technicalSpecs = specsRaw;
-                console.log('[ProductDetail] Parsed technical_specs:', technicalSpecs);
-              } else {
+                if (import.meta.env.DEV) {
+                  console.log('[ProductDetail] Parsed technical_specs:', technicalSpecs);
+                }
+              } else if (import.meta.env.DEV) {
                 console.warn('[ProductDetail] technical_specs is not a valid object:', specsRaw);
               }
             } catch (err) {
-              console.error('[ProductDetail] Error parsing technical_specs:', err);
+              if (import.meta.env.DEV) {
+                console.error('[ProductDetail] Error parsing technical_specs:', err);
+              }
             }
 
             // Parse sizes
@@ -178,7 +291,9 @@ const ProductDetail = () => {
                 sizes = sizesRaw;
               }
             } catch (err) {
-              console.warn('[ProductDetail] Error parsing sizes:', err);
+              if (import.meta.env.DEV) {
+                console.warn('[ProductDetail] Error parsing sizes:', err);
+              }
             }
 
             // Parse shoe_sizes
@@ -189,7 +304,25 @@ const ProductDetail = () => {
                 shoeSizes = shoeSizesRaw;
               }
             } catch (err) {
-              console.warn('[ProductDetail] Error parsing shoe_sizes:', err);
+              if (import.meta.env.DEV) {
+                console.warn('[ProductDetail] Error parsing shoe_sizes:', err);
+              }
+            }
+
+            // Parse badges array
+            let badges: string[] = [];
+            try {
+              const badgesRaw = (data as any).badges;
+              if (Array.isArray(badgesRaw)) {
+                badges = badgesRaw;
+              } else if ((data as any).badge) {
+                // Backward compatibility: badge string -> badges array
+                badges = [(data as any).badge];
+              }
+            } catch (err) {
+              if (import.meta.env.DEV) {
+                console.warn('[ProductDetail] Error parsing badges:', err);
+              }
             }
 
             setProduct({
@@ -200,7 +333,7 @@ const ProductDetail = () => {
               price: data.price || 0,
               originalPrice: (data as any).original_price ?? null,
               images: images,
-              badge: (data as any).badge ?? null,
+              badges: badges,
               inStock: (data.stock_quantity ?? 0) > 0 && (data.is_active ?? true),
               colors: normalizedColors,
               sizes: sizes,
@@ -212,15 +345,23 @@ const ProductDetail = () => {
               colorImages: colorImages, // Yukarıda parse ettiğimiz colorImages'ı kullan
             });
             
-            console.log('[ProductDetail] Product loaded with colorImages:', colorImages);
-            setSelectedImage(0); // İlk görseli göster
+            if (import.meta.env.DEV) {
+              console.log('[ProductDetail] Product loaded with colorImages:', colorImages);
+            }
+            
+            // İlk görseli belirle - image_url'yi (ana görseli) göster
+            // Renk görselleri varsa ve ilk renk için görsel varsa, o gösterilecek (renk effect'inde)
+            // Ama başlangıçta her zaman image_url (index 0) gösterilmeli
+            setSelectedImage(0);
             setError(null);
             setLoading(false);
           }
         }
       } catch (err: any) {
         if (!ignore) {
-          console.error('Product load error:', err);
+          if (import.meta.env.DEV) {
+            console.error('Product load error:', err);
+          }
           setError(err.message || 'Ürün yüklenirken bir hata oluştu');
           setLoading(false);
         }
@@ -231,12 +372,51 @@ const ProductDetail = () => {
     return () => { ignore = true; };
   }, [productId]);
 
-  // Set default color
+  // Set default color and update images when color changes
   useEffect(() => {
-    if (product?.colors?.length && !selectedColor) {
-      setSelectedColor(product.colors[0].name);
+    if (product?.colors?.length) {
+      if (!selectedColor) {
+        const firstColor = product.colors[0].name;
+        setSelectedColor(firstColor);
+      }
+      
+      // Renk seçildiğinde ilgili rengin görsellerini göster
+      if (selectedColor && product.colorImages && product.colorImages[selectedColor]) {
+        const colorImageData = product.colorImages[selectedColor];
+        
+        // Renk için ana görsel varsa, onu göster
+        if (colorImageData.main) {
+          // Görseller listesini güncelle: renk ana görseli + renk ek görselleri + diğer görseller
+          const newImages: string[] = [colorImageData.main];
+          
+          // Renk ek görselleri ekle
+          if (Array.isArray(colorImageData.extra) && colorImageData.extra.length > 0) {
+            newImages.push(...colorImageData.extra);
+          }
+          
+          // Diğer görselleri de ekle (tekrar eklemeden)
+          product.images.forEach((img: string) => {
+            if (!newImages.includes(img)) {
+              newImages.push(img);
+            }
+          });
+          
+          // Product state'ini güncelle
+          setProduct((prev: any) => ({
+            ...prev,
+            images: newImages
+          }));
+          
+          // İlk görseli göster
+          setSelectedImage(0);
+          
+          if (import.meta.env.DEV) {
+            console.log('[ProductDetail] Color changed to:', selectedColor, 'Images updated:', newImages);
+          }
+        }
+      }
     }
-  }, [product, selectedColor]);
+  }, [selectedColor, product?.colors]);
 
   // Set default size
   useEffect(() => {
@@ -245,29 +425,68 @@ const ProductDetail = () => {
     }
   }, [product, selectedSize]);
 
+  // Reset zoom when modal closes or image changes
+  useEffect(() => {
+    if (!imageModal) {
+      setImageZoom(1);
+      setImagePan({ x: 0, y: 0 });
+    }
+  }, [imageModal]);
+
+  useEffect(() => {
+    setImageZoom(1);
+    setImagePan({ x: 0, y: 0 });
+  }, [selectedImage]);
+
+  // Keyboard navigation for image modal
+  useEffect(() => {
+    if (!imageModal) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setImageModal(false);
+      } else if (e.key === 'ArrowLeft' && product?.images?.length > 1) {
+        setSelectedImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+      } else if (e.key === 'ArrowRight' && product?.images?.length > 1) {
+        setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [imageModal, product]);
+
   // Renk değiştiğinde görseli değiştir
   useEffect(() => {
     if (selectedColor && product?.colorImages) {
-      console.log('[ProductDetail] Color changed:', selectedColor);
-      console.log('[ProductDetail] Available colorImages:', product.colorImages);
-      console.log('[ProductDetail] All images:', product.images);
+      if (import.meta.env.DEV) {
+        console.log('[ProductDetail] Color changed:', selectedColor);
+        console.log('[ProductDetail] Available colorImages:', product.colorImages);
+        console.log('[ProductDetail] All images:', product.images);
+      }
       
       // colorImages: { "Siyah": "url1.jpg", "Beyaz": "url2.jpg", "Mavi": "url3.jpg" }
       const colorImage = product.colorImages[selectedColor];
-      console.log('[ProductDetail] Color image for', selectedColor, ':', colorImage);
+      if (import.meta.env.DEV) {
+        console.log('[ProductDetail] Color image for', selectedColor, ':', colorImage);
+      }
       
       if (colorImage) {
         // Renk görseli varsa, onu ana görsel yap
         const colorImageIndex = product.images.findIndex((img: string) => img === colorImage);
-        console.log('[ProductDetail] Color image index:', colorImageIndex);
+        if (import.meta.env.DEV) {
+          console.log('[ProductDetail] Color image index:', colorImageIndex);
+        }
         
         if (colorImageIndex !== -1) {
           setSelectedImage(colorImageIndex);
-          console.log('[ProductDetail] Changed to image index:', colorImageIndex);
-        } else {
+          if (import.meta.env.DEV) {
+            console.log('[ProductDetail] Changed to image index:', colorImageIndex);
+          }
+        } else if (import.meta.env.DEV) {
           console.warn('[ProductDetail] Color image not found in images array');
         }
-      } else {
+      } else if (import.meta.env.DEV) {
         console.warn('[ProductDetail] No image found for color:', selectedColor);
       }
     }
@@ -275,23 +494,86 @@ const ProductDetail = () => {
 
   const handleAddToCart = () => {
     if (!product) return;
-    for (let i = 0; i < quantity; i++) {
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images[0],
-        brand: product.brand,
-      });
+    
+    // Renk, beden ve numara bilgilerini ekle
+    const cartItem: any = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      brand: product.brand,
+    };
+    
+    // Seçilen renk varsa ekle
+    if (selectedColor) {
+      cartItem.color = selectedColor;
     }
+    
+    // Seçilen beden varsa ekle
+    if (selectedSize) {
+      cartItem.size = selectedSize;
+    }
+    
+    // Seçilen ayakkabı numarası varsa ekle
+    if (selectedShoeSize) {
+      cartItem.shoeSize = selectedShoeSize;
+    }
+    
+    // Belirtilen miktarda sepete ekle
+    for (let i = 0; i < quantity; i++) {
+      addItem(cartItem);
+    }
+
+    // Bilgilendirme mesajı oluştur
+    let description = `${product.name} (${quantity} adet)`;
+    const details: string[] = [];
+    if (selectedColor) details.push(`Renk: ${selectedColor}`);
+    if (selectedSize) details.push(`Beden: ${selectedSize}`);
+    if (selectedShoeSize) details.push(`Numara: ${selectedShoeSize}`);
+    if (details.length > 0) {
+      description += ` - ${details.join(', ')}`;
+    }
+    description += ' sepetinize eklendi.';
 
     toast({
       title: "Ürün sepete eklendi!",
-      description: `${product.name} (${quantity} adet) sepetinize eklendi.`,
+      description,
     });
   };
 
-  const handleShare = () => {
+  const handleImageWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY * -0.01;
+    const newZoom = Math.min(Math.max(1, imageZoom + delta), 3);
+    setImageZoom(newZoom);
+    
+    // Reset pan when zoom is 1
+    if (newZoom === 1) {
+      setImagePan({ x: 0, y: 0 });
+    }
+  };
+
+  const handleImageMouseDown = (e: React.MouseEvent) => {
+    if (imageZoom > 1) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - imagePan.x, y: e.clientY - imagePan.y });
+    }
+  };
+
+  const handleImageMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && imageZoom > 1) {
+      setImagePan({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      });
+    }
+  };
+
+  const handleImageMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleShare = async () => {
     if (navigator.share) {
       navigator.share({
         title: product.name,
@@ -305,7 +587,7 @@ const ProductDetail = () => {
         description: "Ürün linki panoya kopyalandı.",
       });
     }
-    setShowShareMenu(false);
+    // Share completed
   };
 
   // Load reviews
@@ -327,7 +609,9 @@ const ProductDetail = () => {
       if (error) throw error;
       setReviews(data || []);
     } catch (error) {
-      console.error('Yorumlar yüklenirken hata:', error);
+      if (import.meta.env.DEV) {
+        console.error('Yorumlar yüklenirken hata:', error);
+      }
     } finally {
       setReviewsLoading(false);
     }
@@ -368,7 +652,9 @@ const ProductDetail = () => {
       setShowReviewForm(false);
       loadReviews();
     } catch (error) {
-      console.error('Yorum eklenirken hata:', error);
+      if (import.meta.env.DEV) {
+        console.error('Yorum eklenirken hata:', error);
+      }
       toast({
         title: 'Hata',
         description: 'Yorum eklenirken bir hata oluştu.',
@@ -395,7 +681,9 @@ const ProductDetail = () => {
 
       loadReviews();
     } catch (error) {
-      console.error('Yorum silinirken hata:', error);
+      if (import.meta.env.DEV) {
+        console.error('Yorum silinirken hata:', error);
+      }
       toast({
         title: 'Hata',
         description: 'Yorum silinirken bir hata oluştu.',
@@ -455,13 +743,26 @@ const ProductDetail = () => {
         <Link to="/urun-kategorileri" className="hover:text-primary">Ürün Kategorileri</Link>
       );
     }
-    const normalized = cat.replace(/^\//, '');
-    const [root, ...rest] = normalized.split('/');
+    
+    // Normalize and split category path
+    const normalized = cat.replace(/^\//, '').replace(/\/$/, '');
+    const parts = normalized.split('/').filter(Boolean);
+    
+    // Remove duplicate consecutive parts (e.g., "kadin/mont-ve-ceket/kadin" -> "kadin/mont-ve-ceket")
+    const uniqueParts: string[] = [];
+    for (let i = 0; i < parts.length; i++) {
+      if (i === 0 || parts[i] !== parts[i - 1]) {
+        uniqueParts.push(parts[i]);
+      }
+    }
+    
+    const [root, ...rest] = uniqueParts;
     const sub = rest.join('/');
     const rootInfo = siteCategories.find(c => c.slug === root);
     const rootText = rootInfo?.title ?? root.replace(/-/g, ' ');
     const subInfo = sub ? rootInfo?.subcategories.find(s => s.slug === sub) : null;
     const subText = subInfo?.name ?? (sub ? sub.replace(/-/g, ' ') : '');
+    
     return (
       <>
         <Link to={`/${root}`} className="hover:text-primary">{rootText}</Link>
@@ -504,7 +805,10 @@ const ProductDetail = () => {
             {/* Product Images - Modern & Compact */}
             <div className="space-y-4">
               {/* Main Image - Smaller & Contained */}
-              <div className="relative bg-muted rounded-xl overflow-hidden border border-border group">
+              <div 
+                className="relative bg-muted rounded-xl overflow-hidden border border-border group cursor-pointer"
+                onClick={() => setImageModal(true)}
+              >
                 <div className="aspect-square max-w-md mx-auto">
                   <img 
                     src={product.images[selectedImage]} 
@@ -512,19 +816,18 @@ const ProductDetail = () => {
                     className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" 
                   />
                 </div>
-                {/* Zoom button */}
-                <button 
-                  onClick={() => setImageZoom(true)}
-                  className="absolute top-4 right-4 p-2 bg-background/80 backdrop-blur-sm rounded-lg hover:bg-background transition-colors"
-                >
-                  <ZoomIn className="h-5 w-5" />
-                </button>
+                {/* Click to zoom indicator */}
+                <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="bg-white/90 dark:bg-gray-800/90 px-3 py-1.5 rounded-lg shadow-sm">
+                    <p className="text-xs font-medium">Büyütmek için tıklayın</p>
+                  </div>
+                </div>
               </div>
               
               {/* Thumbnail Images */}
               {product.images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
-                  {product.images.map((img, index) => (
+                  {product.images.map((img: string, index: number) => (
                     <button 
                       key={index} 
                       onClick={() => setSelectedImage(index)} 
@@ -547,9 +850,26 @@ const ProductDetail = () => {
 
             {/* Product Info */}
             <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
                 <Badge variant="secondary">{product.brand}</Badge>
-                {product.badge && <Badge variant="default">{product.badge}</Badge>}
+                {product.badges && product.badges.length > 0 && product.badges.map((badge: string) => {
+                  const badgeConfig: Record<string, { label: string; className: string }> = {
+                    'popular': { label: 'Popüler', className: 'bg-purple-500 text-white hover:bg-purple-600' },
+                    'bestseller': { label: 'Çok Satan', className: 'bg-orange-500 text-white hover:bg-orange-600' },
+                    'new': { label: 'Yeni', className: 'bg-green-500 text-white hover:bg-green-600' },
+                    'discount': { label: 'İndirimli', className: 'bg-red-500 text-white hover:bg-red-600' },
+                    'featured': { label: 'Öne Çıkan', className: 'bg-blue-500 text-white hover:bg-blue-600' },
+                  };
+                  
+                  const config = badgeConfig[badge];
+                  if (!config) return null;
+                  
+                  return (
+                    <Badge key={badge} className={config.className}>
+                      {config.label}
+                    </Badge>
+                  );
+                })}
               </div>
 
               <h1 className="text-3xl font-bold text-foreground mb-4">{product.name}</h1>
@@ -570,28 +890,35 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              <div className="flex items-center gap-4 mb-6">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-3">
-                    {product.originalPrice && product.originalPrice > product.price && (
-                      <>
-                        <span className="text-xl text-muted-foreground line-through">{formatPrice(product.originalPrice)}₺</span>
-                        <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}₺</span>
-                        <Badge variant="destructive" className="text-sm font-bold">
-                          %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)} İndirim
-                        </Badge>
-                      </>
-                    )}
-                    {(!product.originalPrice || product.originalPrice <= product.price) && (
-                      <span className="text-3xl font-bold text-primary">{formatPrice(product.price)}₺</span>
-                    )}
+              {/* Price Section */}
+              <div className="mb-6">
+                {product.originalPrice && product.originalPrice > product.price ? (
+                  <div className="space-y-3">
+                    {/* Prices */}
+                    <div className="flex items-baseline gap-3 flex-wrap">
+                      <span className="text-2xl text-muted-foreground line-through">
+                        {formatPrice(product.originalPrice)}₺
+                      </span>
+                      <span className="text-4xl font-bold text-red-600 dark:text-red-500">
+                        {formatPrice(product.price)}₺
+                      </span>
+                    </div>
+                    
+                    {/* Discount Badge and Savings */}
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <Badge variant="destructive" className="text-sm font-bold px-3 py-1">
+                        %{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)} İndirim
+                      </Badge>
+                      <span className="text-sm text-green-600 dark:text-green-400 font-medium">
+                        {formatPrice(product.originalPrice - product.price)}₺ tasarruf ediyorsunuz!
+                      </span>
+                    </div>
                   </div>
-                  {product.originalPrice && product.originalPrice > product.price && (
-                    <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                      {formatPrice(product.originalPrice - product.price)}₺ tasarruf ediyorsunuz!
-                    </p>
-                  )}
-                </div>
+                ) : (
+                  <span className="text-4xl font-bold text-primary">
+                    {formatPrice(product.price)}₺
+                  </span>
+                )}
               </div>
 
               <p className="text-muted-foreground mb-6">{product.description}</p>
@@ -601,13 +928,37 @@ const ProductDetail = () => {
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-4">Renk Seçin</h3>
                   <div className="flex flex-wrap gap-3">
-                    {product.colors.map((color) => (
-                      <button key={color.name} onClick={() => color.available && setSelectedColor(color.name)} disabled={!color.available}
-                        className={`w-12 h-12 rounded-full border-2 ${selectedColor === color.name ? 'border-primary ring-2 ring-primary ring-offset-2' : 'border-border'} ${!color.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                        style={{ backgroundColor: color.value }}
-                        title={color.name}
-                      />
-                    ))}
+                    {product.colors.map((color: { name: string; value: string; available: boolean }) => {
+                      const colorHex = getColorHex(color.name);
+                      const isGradient = colorHex.includes('gradient');
+                      
+                      return (
+                        <button 
+                          key={color.name} 
+                          onClick={() => color.available && setSelectedColor(color.name)} 
+                          disabled={!color.available}
+                          className={`w-12 h-12 rounded-full border-2 ${
+                            selectedColor === color.name 
+                              ? 'border-primary ring-2 ring-primary ring-offset-2' 
+                              : 'border-border'
+                          } ${
+                            !color.available 
+                              ? 'opacity-50 cursor-not-allowed' 
+                              : 'cursor-pointer hover:scale-110 transition-transform'
+                          } ${
+                            color.name === 'Beyaz' || color.name === 'Şeffaf' 
+                              ? 'border-gray-300' 
+                              : ''
+                          }`}
+                          style={
+                            isGradient 
+                              ? { background: colorHex }
+                              : { backgroundColor: colorHex }
+                          }
+                          title={color.name}
+                        />
+                      );
+                    })}
                   </div>
                   <p className="text-sm text-muted-foreground mt-2">Seçilen renk: <span className="font-medium">{selectedColor || 'Seçiniz'}</span></p>
                 </div>
@@ -731,10 +1082,6 @@ const ProductDetail = () => {
                   <span className="text-sm text-muted-foreground">Tahmini Teslimat:</span>
                   <span className="text-sm font-medium">2-3 iş günü</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground pt-2 border-t">
-                  <Clock className="h-4 w-4" />
-                  <span>Son 24 saatte 12 kişi satın aldı</span>
-                </div>
               </div>
 
             </div>
@@ -752,17 +1099,18 @@ const ProductDetail = () => {
               <Card>
                 <CardContent className="pt-6">
                   {Object.keys(product.technicalSpecs || {}).length > 0 ? (
-                    <div className="space-y-3">
+                    <div className="grid gap-3">
                       {Object.entries(product.technicalSpecs).map(([key, value]) => (
-                        <div key={key} className="flex items-start gap-3 py-2">
-                          <span className="font-medium text-foreground min-w-[140px]">{key}:</span>
-                          <span className="text-muted-foreground flex-1">{String(value)}</span>
+                        <div key={key} className="flex items-start gap-3 py-3 px-4 bg-muted/30 rounded-lg">
+                          <span className="font-semibold text-foreground min-w-[160px] capitalize">{key}:</span>
+                          <span className="text-foreground flex-1">{String(value)}</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Henüz teknik özellik eklenmemiş.</p>
+                    <div className="text-center py-12 text-muted-foreground">
+                      <p className="text-lg">Henüz teknik özellik eklenmemiş.</p>
+                      <p className="text-sm mt-2">Ürün özellikleri için "Özellikler" sekmesine bakabilirsiniz.</p>
                     </div>
                   )}
                 </CardContent>
@@ -773,17 +1121,18 @@ const ProductDetail = () => {
               <Card>
                 <CardContent className="pt-6">
                   {product.features && product.features.length > 0 ? (
-                    <ul className="space-y-3">
-                      {product.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <span className="text-primary mt-1">•</span>
-                          <span>{feature}</span>
+                    <ul className="grid gap-3">
+                      {product.features.map((feature: string, idx: number) => (
+                        <li key={idx} className="flex items-start gap-3 py-3 px-4 bg-muted/30 rounded-lg">
+                          <span className="text-primary text-xl leading-none">✓</span>
+                          <span className="flex-1 text-foreground">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <p>Henüz özellik eklenmemiş.</p>
+                    <div className="text-center py-12 text-muted-foreground">
+                      <p className="text-lg">Henüz özellik eklenmemiş.</p>
+                      <p className="text-sm mt-2">Teknik özellikler için "Teknik Özellikler" sekmesine bakabilirsiniz.</p>
                     </div>
                   )}
                 </CardContent>
@@ -961,6 +1310,88 @@ const ProductDetail = () => {
 
         <Footer />
       </div>
+
+      {/* Image Modal */}
+      {imageModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setImageModal(false)}
+        >
+          <div className="relative w-full max-w-5xl max-h-[90vh] bg-background rounded-xl shadow-2xl overflow-hidden">
+            {/* Close Button */}
+            <button
+              onClick={() => setImageModal(false)}
+              className="absolute top-4 right-4 z-10 p-2 bg-background/80 hover:bg-background rounded-full transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            {/* Navigation Buttons */}
+            {product.images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage((prev) => (prev === 0 ? product.images.length - 1 : prev - 1));
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-background/80 hover:bg-background rounded-full transition-colors"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1));
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-background/80 hover:bg-background rounded-full transition-colors"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </>
+            )}
+
+            {/* Image */}
+            <div 
+              className="flex items-center justify-center p-8 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+              onWheel={handleImageWheel}
+              onMouseDown={handleImageMouseDown}
+              onMouseMove={handleImageMouseMove}
+              onMouseUp={handleImageMouseUp}
+              onMouseLeave={handleImageMouseUp}
+              style={{ cursor: imageZoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default' }}
+            >
+              <img
+                src={product.images[selectedImage]}
+                alt={product.name}
+                className="max-w-full max-h-[80vh] object-contain transition-transform select-none"
+                style={{
+                  transform: `scale(${imageZoom}) translate(${imagePan.x / imageZoom}px, ${imagePan.y / imageZoom}px)`,
+                }}
+                draggable={false}
+              />
+            </div>
+
+            {/* Image Counter and Zoom Level */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
+              {product.images.length > 1 && (
+                <div className="bg-background/80 px-4 py-2 rounded-full">
+                  <p className="text-sm font-medium">
+                    {selectedImage + 1} / {product.images.length}
+                  </p>
+                </div>
+              )}
+              {imageZoom > 1 && (
+                <div className="bg-background/80 px-4 py-2 rounded-full">
+                  <p className="text-sm font-medium">
+                    {Math.round(imageZoom * 100)}%
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

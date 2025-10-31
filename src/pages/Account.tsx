@@ -770,62 +770,85 @@ const Account = () => {
                   </CardHeader>
                   <CardContent>
                     {favoriteProducts.length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
                         {favoriteProducts.map((product) => (
-                          <Card key={product.id} className="group overflow-hidden">
-                            <CardContent className="p-3">
-                              <Link to={`/urun/${product.id}`}>
-                                <div className="aspect-square bg-muted rounded-md mb-2 overflow-hidden">
+                          <Card key={product.id} className="gradient-card border-border group relative overflow-hidden shadow-card hover:shadow-xl transition-shadow h-full flex flex-col">
+                            {/* Heart icon - Sol Üst */}
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="absolute top-2 left-2 z-10 bg-background/80 hover:bg-background"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                toggleFavorite(product.id);
+                              }}
+                            >
+                              <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                            </Button>
+
+                            <CardContent className="p-2 md:p-3 flex flex-col h-full">
+                              {/* Product image */}
+                              <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
+                                <div className="aspect-square bg-muted rounded-lg mb-2 overflow-hidden">
                                   <img
                                     src={product.image_url || '/placeholder.svg'}
                                     alt={product.name}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                                    loading="lazy"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                     onError={(e) => {
                                       const target = e.currentTarget as HTMLImageElement;
-                                      target.src = '/placeholder.svg';
+                                      if (target.dataset.fallback !== '1') {
+                                        target.dataset.fallback = '1';
+                                        target.src = `https://via.placeholder.com/500x500.png?text=${encodeURIComponent('EgemOutdoor')}`;
+                                      }
                                     }}
                                   />
                                 </div>
                               </Link>
-                              <div className="space-y-2">
-                                {product.brand && (
-                                  <p className="text-xs text-primary font-medium">{product.brand}</p>
-                                )}
-                                <Link to={`/urun/${product.id}`}>
-                                  <h3 className="font-semibold text-sm line-clamp-2 hover:text-primary transition-colors">
-                                    {product.name}
-                                  </h3>
+
+                              {/* Brand */}
+                              {product.brand && (
+                                <div className="text-[11px] text-primary font-medium mb-1">{product.brand}</div>
+                              )}
+
+                              {/* Product name */}
+                              <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
+                                <h3 className="font-semibold text-foreground mb-1 line-clamp-2 min-h-[32px] group-hover:text-primary transition-colors text-xs md:text-sm">
+                                  {product.name}
+                                </h3>
+                              </Link>
+
+                              {/* Price */}
+                              <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                                <span className="text-lg font-bold text-primary">₺{product.price.toLocaleString()}</span>
+                              </div>
+
+                              {/* Buttons */}
+                              <div className="flex gap-1.5 mt-auto">
+                                <Button 
+                                  variant="default" 
+                                  size="sm" 
+                                  className="flex-1 text-[10px] md:text-xs h-7 md:h-8"
+                                  onClick={() => {
+                                    addItem({
+                                      id: product.id,
+                                      name: product.name,
+                                      price: product.price,
+                                      image: product.image_url,
+                                      brand: product.brand || '',
+                                    });
+                                    toast({
+                                      title: 'Sepete Eklendi',
+                                      description: `${product.name} sepetinize eklendi.`,
+                                    });
+                                  }}
+                                >
+                                  <ShoppingCart className="h-3 w-3 mr-0.5" />
+                                  Sepete
+                                </Button>
+                                <Link to={`/urun/${product.id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
+                                  <Button variant="outline" size="sm" className="text-[10px] md:text-xs h-7 md:h-8 px-2">İncele</Button>
                                 </Link>
-                                <p className="text-lg font-bold">₺{product.price.toLocaleString()}</p>
-                                <div className="flex gap-2">
-                                  <Button
-                                    size="sm"
-                                    className="flex-1"
-                                    onClick={() => {
-                                      addItem({
-                                        id: product.id,
-                                        name: product.name,
-                                        price: product.price,
-                                        image: product.image_url,
-                                        brand: product.brand || '',
-                                      });
-                                      toast({
-                                        title: 'Sepete Eklendi',
-                                        description: `${product.name} sepetinize eklendi.`,
-                                      });
-                                    }}
-                                  >
-                                    <ShoppingCart className="h-4 w-4 mr-1" />
-                                    Sepet
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => toggleFavorite(product.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </div>
                               </div>
                             </CardContent>
                           </Card>

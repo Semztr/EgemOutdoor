@@ -35,9 +35,13 @@ const Checkout = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [paymentMethod, setPaymentMethod] = useState('credit-card');
+  const [paymentMethod, setPaymentMethod] = useState('bank-transfer');
   const [sameAddress, setSameAddress] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+  const [showNewAddress, setShowNewAddress] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -63,13 +67,77 @@ const Checkout = () => {
     }
   }, [user, authLoading, navigate, toast]);
 
+  // Load user profile data
   useEffect(() => {
-    if (user) {
-      setFormData(prev => ({
-        ...prev,
-        email: user.email || ''
-      }));
-    }
+    const loadUserProfile = async () => {
+      if (!user) {
+        setLoadingProfile(false);
+        return;
+      }
+
+      try {
+        // Load profile data
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        // Load all addresses
+        const { data: addresses } = await supabase
+          .from('addresses')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('is_default', { ascending: false });
+
+        if (addresses && addresses.length > 0) {
+          setSavedAddresses(addresses);
+          const defaultAddr = addresses.find(a => a.is_default) || addresses[0];
+          setSelectedAddressId(defaultAddr.id);
+          
+          if (profile) {
+            setFormData(prev => ({
+              ...prev,
+              firstName: profile.full_name?.split(' ')[0] || '',
+              lastName: profile.full_name?.split(' ').slice(1).join(' ') || '',
+              email: user.email || '',
+              phone: profile.phone || '',
+              address: defaultAddr.address_line || '',
+              city: defaultAddr.city || '',
+              district: defaultAddr.district || '',
+              zipCode: defaultAddr.postal_code || '',
+            }));
+          }
+        } else {
+          // Kayıtlı adres yok, yeni adres formu göster
+          setShowNewAddress(true);
+          if (profile) {
+            setFormData(prev => ({
+              ...prev,
+              firstName: profile.full_name?.split(' ')[0] || '',
+              lastName: profile.full_name?.split(' ').slice(1).join(' ') || '',
+              email: user.email || '',
+              phone: profile.phone || '',
+            }));
+          } else {
+            setFormData(prev => ({
+              ...prev,
+              email: user.email || ''
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        setFormData(prev => ({
+          ...prev,
+          email: user.email || ''
+        }));
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    loadUserProfile();
   }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,6 +147,32 @@ const Checkout = () => {
     });
   };
 
+  const handleAddressChange = (addressId: string) => {
+    setSelectedAddressId(addressId);
+    if (addressId === 'new') {
+      setShowNewAddress(true);
+      setFormData(prev => ({
+        ...prev,
+        address: '',
+        city: '',
+        district: '',
+        zipCode: '',
+      }));
+    } else {
+      setShowNewAddress(false);
+      const selected = savedAddresses.find(a => a.id === addressId);
+      if (selected) {
+        setFormData(prev => ({
+          ...prev,
+          address: selected.address_line || '',
+          city: selected.city || '',
+          district: selected.district || '',
+          zipCode: selected.postal_code || '',
+        }));
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -86,6 +180,16 @@ const Checkout = () => {
       toast({
         title: "Hata",
         description: "Giriş yapmalısınız.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Kredi kartı validasyonu
+    if (paymentMethod === 'credit-card') {
+      toast({
+        title: "Kredi Kartı Ödemesi Aktif Değil",
+        description: "Lütfen Havale/EFT veya Kapıda Ödeme seçeneğini kullanın.",
         variant: "destructive"
       });
       return;
@@ -209,288 +313,282 @@ const Checkout = () => {
       <div className="min-h-screen flex flex-col">
         <Header />
         
-        <main className="flex-1 container mx-auto px-4 py-6 md:py-8">
-          <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8 animate-fade-in">Ödeme</h1>
+        <main className="flex-1 container mx-auto px-4 py-4 md:py-6 max-w-6xl">
+          <h1 className="text-xl md:text-2xl font-bold mb-4 animate-fade-in">Ödeme</h1>
           
-          <form onSubmit={handleSubmit}>
-            <div className="grid lg:grid-cols-3 gap-8">
-              {/* Sol Kolon - Form */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* İletişim Bilgileri */}
-                <Card className="animate-fade-in">
-                  <CardHeader>
-                    <CardTitle>İletişim Bilgileri</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="firstName">Ad *</Label>
-                        <Input 
-                          id="firstName" 
-                          value={formData.firstName}
-                          onChange={handleInputChange}
-                          required 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="lastName">Soyad *</Label>
-                        <Input 
-                          id="lastName" 
-                          value={formData.lastName}
-                          onChange={handleInputChange}
-                          required 
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="email">E-posta *</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        disabled
-                        className="bg-muted"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone">Telefon *</Label>
-                      <Input 
-                        id="phone" 
-                        type="tel" 
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="05XX XXX XX XX"
-                        required 
-                      />
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Sipariş durumu için iletişim numaranız
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Teslimat Adresi */}
-                <Card className="animate-fade-in">
-                  <CardHeader>
-                    <CardTitle>Teslimat Adresi</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="address">Adres *</Label>
-                      <Input 
-                        id="address" 
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        required 
-                      />
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city">İl *</Label>
-                        <Input 
-                          id="city" 
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          required 
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="district">İlçe *</Label>
-                        <Input 
-                          id="district" 
-                          value={formData.district}
-                          onChange={handleInputChange}
-                          required 
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label htmlFor="zipCode">Posta Kodu</Label>
-                      <Input 
-                        id="zipCode" 
-                        value={formData.zipCode}
-                        onChange={handleInputChange}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Fatura Adresi */}
-                <Card className="animate-fade-in">
-                  <CardHeader>
-                    <CardTitle>Fatura Adresi</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox 
-                        id="sameAddress" 
-                        checked={sameAddress}
-                        onCheckedChange={(checked) => setSameAddress(checked as boolean)}
-                      />
-                      <Label htmlFor="sameAddress">Teslimat adresiyle aynı</Label>
-                    </div>
-                    
-                    {!sameAddress && (
-                      <div className="space-y-4 pt-4">
+          {loadingProfile ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="grid lg:grid-cols-3 gap-4 md:gap-6">
+                {/* Sol Kolon - Form */}
+                <div className="lg:col-span-2">
+                  {/* Tüm Bilgiler Tek Card'da */}
+                  <Card className="animate-fade-in">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg">Sipariş Bilgileri</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {/* İletişim */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-sm text-primary">İletişim Bilgileri</h3>
+                        <div className="grid md:grid-cols-2 gap-2">
+                          <div>
+                            <Label htmlFor="firstName" className="text-xs">Ad *</Label>
+                            <Input 
+                              id="firstName" 
+                              value={formData.firstName}
+                              onChange={handleInputChange}
+                              required
+                              className="h-9"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="lastName" className="text-xs">Soyad *</Label>
+                            <Input 
+                              id="lastName" 
+                              value={formData.lastName}
+                              onChange={handleInputChange}
+                              required
+                              className="h-9"
+                            />
+                          </div>
+                        </div>
                         <div>
-                          <Label htmlFor="billingAddress">Adres *</Label>
+                          <Label htmlFor="email" className="text-xs">E-posta *</Label>
                           <Input 
-                            id="billingAddress" 
-                            value={formData.billingAddress}
+                            id="email" 
+                            type="email" 
+                            value={formData.email}
                             onChange={handleInputChange}
-                            required 
-                          />
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="billingCity">İl *</Label>
-                            <Input 
-                              id="billingCity" 
-                              value={formData.billingCity}
-                              onChange={handleInputChange}
-                              required 
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="billingDistrict">İlçe *</Label>
-                            <Input 
-                              id="billingDistrict" 
-                              value={formData.billingDistrict}
-                              onChange={handleInputChange}
-                              required 
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Ödeme Yöntemi */}
-                <Card className="animate-fade-in">
-                  <CardHeader>
-                    <CardTitle>Ödeme Yöntemi</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="credit-card" id="credit-card" />
-                        <Label htmlFor="credit-card">Kredi Kartı</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="bank-transfer" id="bank-transfer" />
-                        <Label htmlFor="bank-transfer">Havale/EFT</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="cash-on-delivery" id="cash-on-delivery" />
-                        <Label htmlFor="cash-on-delivery">Kapıda Ödeme</Label>
-                      </div>
-                    </RadioGroup>
-
-                    {paymentMethod === 'credit-card' && (
-                      <div className="space-y-4 pt-4">
-                        <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
-                          <div className="flex items-start gap-3">
-                            <div className="text-2xl">💳</div>
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                                Güvenli Ödeme - İyzico
-                              </h4>
-                              <p className="text-sm text-blue-800 dark:text-blue-200">
-                                Kredi kartı bilgileriniz 256-bit SSL sertifikası ile korunmaktadır.
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <Label htmlFor="cardNumber">Kart Numarası *</Label>
-                          <Input 
-                            id="cardNumber" 
-                            placeholder="1234 5678 9012 3456" 
-                            maxLength={19}
                             disabled
-                            className="bg-muted"
+                            className="bg-muted h-9"
                           />
-                          <p className="text-xs text-muted-foreground mt-1">
-                            İyzico entegrasyonu tamamlandığında aktif olacak
-                          </p>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="expiry">Son Kullanma Tarihi *</Label>
-                            <Input 
-                              id="expiry" 
-                              placeholder="AA/YY" 
-                              disabled
-                              className="bg-muted"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="cvc">CVC *</Label>
-                            <Input 
-                              id="cvc" 
-                              placeholder="123" 
-                              maxLength={4}
-                              disabled
-                              className="bg-muted"
-                            />
-                          </div>
-                        </div>
-                        
-                        <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mt-4">
-                          <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                            ⚠️ <strong>Geçici:</strong> Kredi kartı ödemesi şu an aktif değil. 
-                            Lütfen <strong>Havale/EFT</strong> veya <strong>Kapıda Ödeme</strong> seçeneklerini kullanın.
-                          </p>
+                        <div>
+                          <Label htmlFor="phone" className="text-xs">Telefon *</Label>
+                          <Input 
+                            id="phone" 
+                            type="tel" 
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            placeholder="05XX XXX XX XX"
+                            required
+                            className="h-9"
+                          />
                         </div>
                       </div>
-                    )}
 
-                    {paymentMethod === 'bank-transfer' && (
-                      <div className="space-y-4 pt-4 bg-muted/30 p-4 rounded-lg">
-                        <div className="space-y-3">
-                          <h3 className="font-semibold text-foreground">Banka Hesap Bilgileri</h3>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-muted-foreground">Hesap Sahibi:</span>
-                              <span className="font-medium">Egem Spor Malzemeleri</span>
+                      <Separator />
+
+                      {/* Teslimat Adresi */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-sm text-primary">Teslimat Adresi</h3>
+                        
+                        {/* Kayıtlı Adresler */}
+                        {savedAddresses.length > 0 && (
+                          <div className="space-y-2">
+                            <Label className="text-xs">Kayıtlı Adreslerim</Label>
+                            <RadioGroup value={selectedAddressId} onValueChange={handleAddressChange} className="space-y-2">
+                              {savedAddresses.map((addr) => (
+                                <div key={addr.id} className="flex items-start space-x-2 p-3 border rounded hover:bg-muted/50 transition-colors">
+                                  <RadioGroupItem value={addr.id} id={addr.id} className="mt-1" />
+                                  <Label htmlFor={addr.id} className="flex-1 cursor-pointer text-sm">
+                                    <div className="font-semibold">{addr.title}</div>
+                                    <div className="text-xs text-muted-foreground mt-1">
+                                      {addr.address_line}, {addr.district}/{addr.city}
+                                      {addr.is_default && <span className="ml-2 text-primary">(Varsayılan)</span>}
+                                    </div>
+                                  </Label>
+                                </div>
+                              ))}
+                              <div className="flex items-center space-x-2 p-3 border rounded hover:bg-muted/50 transition-colors">
+                                <RadioGroupItem value="new" id="new" />
+                                <Label htmlFor="new" className="flex-1 cursor-pointer text-sm font-semibold">
+                                  + Yeni Adres Ekle
+                                </Label>
+                              </div>
+                            </RadioGroup>
+                          </div>
+                        )}
+
+                        {/* Yeni Adres Formu */}
+                        {(showNewAddress || savedAddresses.length === 0) && (
+                          <div className="space-y-2 pt-2">
+                            <div>
+                              <Label htmlFor="address" className="text-xs">Adres *</Label>
+                              <Input 
+                                id="address" 
+                                value={formData.address}
+                                onChange={handleInputChange}
+                                required
+                                className="h-9"
+                                placeholder="Mahalle, sokak, bina no, daire no"
+                              />
                             </div>
-                            <div className="flex flex-col gap-1">
-                              <span className="text-muted-foreground">Banka:</span>
-                              <span className="font-medium">Ziraat Bankası</span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                              <span className="text-muted-foreground">IBAN:</span>
-                              <div className="flex items-center gap-2">
-                                <span className="font-mono font-medium bg-background px-2 py-1 rounded">TR39 0001 0002 1797 5950 3250 01</span>
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => {
-                                    navigator.clipboard.writeText('TR390001000217975950325001');
-                                    alert('IBAN kopyalandı!');
-                                  }}
-                                >
-                                  📋 Kopyala
-                                </Button>
+                            <div className="grid md:grid-cols-3 gap-2">
+                              <div>
+                                <Label htmlFor="city" className="text-xs">İl *</Label>
+                                <Input 
+                                  id="city" 
+                                  value={formData.city}
+                                  onChange={handleInputChange}
+                                  required
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="district" className="text-xs">İlçe *</Label>
+                                <Input 
+                                  id="district" 
+                                  value={formData.district}
+                                  onChange={handleInputChange}
+                                  required
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="zipCode" className="text-xs">Posta Kodu</Label>
+                                <Input 
+                                  id="zipCode" 
+                                  value={formData.zipCode}
+                                  onChange={handleInputChange}
+                                  className="h-9"
+                                />
                               </div>
                             </div>
                           </div>
-                          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded text-sm">
-                            <p className="text-blue-900 dark:text-blue-100">
-                              ℹ️ <strong>Önemli:</strong> Havale/EFT açıklamasına sipariş numaranızı yazınız. 
-                              Ödeme onaylandıktan sonra siparişiniz kargoya verilecektir.
+                        )}
+                      </div>
+
+                      <Separator />
+
+                      {/* Fatura Adresi */}
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox 
+                            id="sameAddress" 
+                            checked={sameAddress}
+                            onCheckedChange={(checked) => setSameAddress(checked as boolean)}
+                          />
+                          <Label htmlFor="sameAddress" className="text-sm">Fatura adresi teslimat adresiyle aynı</Label>
+                        </div>
+                        
+                        {!sameAddress && (
+                          <div className="space-y-2 pt-2">
+                            <div>
+                              <Label htmlFor="billingAddress" className="text-xs">Fatura Adresi *</Label>
+                              <Input 
+                                id="billingAddress" 
+                                value={formData.billingAddress}
+                                onChange={handleInputChange}
+                                required
+                                className="h-9"
+                              />
+                            </div>
+                            <div className="grid md:grid-cols-2 gap-2">
+                              <div>
+                                <Label htmlFor="billingCity" className="text-xs">İl *</Label>
+                                <Input 
+                                  id="billingCity" 
+                                  value={formData.billingCity}
+                                  onChange={handleInputChange}
+                                  required
+                                  className="h-9"
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="billingDistrict" className="text-xs">İlçe *</Label>
+                                <Input 
+                                  id="billingDistrict" 
+                                  value={formData.billingDistrict}
+                                  onChange={handleInputChange}
+                                  required
+                                  className="h-9"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <Separator />
+
+                      {/* Ödeme Yöntemi */}
+                      <div className="space-y-2">
+                        <h3 className="font-semibold text-sm text-primary">Ödeme Yöntemi</h3>
+                        <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-2">
+                          <div className="flex items-center space-x-2 p-2 border rounded hover:bg-muted/50 transition-colors">
+                            <RadioGroupItem value="credit-card" id="credit-card" />
+                            <Label htmlFor="credit-card" className="flex-1 cursor-pointer text-sm">💳 Kredi Kartı</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-2 border rounded hover:bg-muted/50 transition-colors">
+                            <RadioGroupItem value="bank-transfer" id="bank-transfer" />
+                            <Label htmlFor="bank-transfer" className="flex-1 cursor-pointer text-sm">🏦 Havale/EFT</Label>
+                          </div>
+                          <div className="flex items-center space-x-2 p-2 border rounded hover:bg-muted/50 transition-colors">
+                            <RadioGroupItem value="cash-on-delivery" id="cash-on-delivery" />
+                            <Label htmlFor="cash-on-delivery" className="flex-1 cursor-pointer text-sm">💵 Kapıda Ödeme</Label>
+                          </div>
+                        </RadioGroup>
+
+                        {paymentMethod === 'credit-card' && (
+                          <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3 mt-2">
+                            <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                              ⚠️ Kredi kartı ödemesi şu an aktif değil. Lütfen Havale/EFT veya Kapıda Ödeme seçin.
                             </p>
                           </div>
-                        </div>
+                        )}
+
+                        {paymentMethod === 'bank-transfer' && (
+                          <div className="bg-muted/50 p-3 rounded-lg mt-2 space-y-3">
+                            <p className="text-xs font-semibold">Banka Hesap Bilgileri:</p>
+                            <div className="text-xs space-y-2">
+                              <div>
+                                <p className="text-muted-foreground mb-1">Hesap Sahibi:</p>
+                                <p className="font-medium">Egem Spor Malzemeleri</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground mb-1">Banka:</p>
+                                <p className="font-medium">Ziraat Bankası</p>
+                              </div>
+                              <div>
+                                <p className="text-muted-foreground mb-1">IBAN:</p>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <p className="font-mono text-sm bg-background px-3 py-2 rounded border break-all">
+                                    TR39 0001 0002 1797 5950 3250 01
+                                  </p>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      navigator.clipboard.writeText('TR390001000217975950 325001');
+                                      toast({
+                                        title: "IBAN Kopyalandı!",
+                                        description: "IBAN numarası panoya kopyalandı.",
+                                      });
+                                    }}
+                                    className="h-8"
+                                  >
+                                    📋 Kopyala
+                                  </Button>
+                                </div>
+                              </div>
+                              <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded p-2 mt-2">
+                                <p className="text-xs text-blue-900 dark:text-blue-100">
+                                  ℹ️ Havale/EFT açıklamasına sipariş numaranızı yazınız.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
+                    </CardContent>
+                  </Card>
+                </div>
 
               {/* Sağ Kolon - Sipariş Özeti */}
               <div className="lg:col-span-1">
@@ -539,8 +637,9 @@ const Checkout = () => {
                   </CardContent>
                 </Card>
               </div>
-            </div>
-          </form>
+              </div>
+            </form>
+          )}
         </main>
         
         <Footer />

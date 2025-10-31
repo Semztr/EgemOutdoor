@@ -130,7 +130,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/termoslar-ve-mataralar" onClick={() => window.scrollTo({
+                <Link to="/termoslar-mataralar" onClick={() => window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
               })} className="text-muted-foreground hover:text-primary transition-colors">
@@ -290,7 +290,7 @@ const Footer = () => {
               </Link>
             </div>
             <div>
-              <Link to="/termoslar-ve-mataralar" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
+              <Link to="/termoslar-mataralar" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="text-muted-foreground hover:text-primary transition-colors font-medium block mb-2">
                 Termoslar ve Mataralar
               </Link>
             </div>

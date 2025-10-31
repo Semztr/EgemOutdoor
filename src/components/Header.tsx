@@ -221,17 +221,17 @@ const Header = () => {
                           <AccordionTrigger className="px-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Kamp Malzemeleri</AccordionTrigger>
                           <AccordionContent>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                              <Link to="/kamp-malzemeleri/kamp-ocagi" className="px-3 py-3 rounded-lg bg-card border">Kamp Ocağı</Link>
-                              <Link to="/kamp-malzemeleri/kartuslar" className="px-3 py-3 rounded-lg bg-card border">Kartuşlar</Link>
-                              <Link to="/kamp-malzemeleri/cizmeler" className="px-3 py-3 rounded-lg bg-card border">Çizmeler</Link>
-                              <Link to="/kamp-malzemeleri/sisme-urunler-ve-matlar" className="px-3 py-3 rounded-lg bg-card border">Şişme Ürünler ve Matlar</Link>
-                              <Link to="/kamp-malzemeleri/purmuz" className="px-3 py-3 rounded-lg bg-card border">Pürmüz</Link>
-                              <Link to="/kamp-malzemeleri/kamp-cantasi" className="px-3 py-3 rounded-lg bg-card border">Kamp Çantası</Link>
-                              <Link to="/kamp-malzemeleri/aydinlatma" className="px-3 py-3 rounded-lg bg-card border">Aydınlatma</Link>
-                              <Link to="/kamp-malzemeleri/cadirlar" className="px-3 py-3 rounded-lg bg-card border">Çadırlar</Link>
-                              <Link to="/kamp-malzemeleri/uyku-tulumlari" className="px-3 py-3 rounded-lg bg-card border">Uyku Tulumları</Link>
-                              <Link to="/kamp-malzemeleri/fenerler/kafa-lambasi" className="px-3 py-3 rounded-lg bg-card border">Kafa Lambası</Link>
-                              <Link to="/kamp-malzemeleri/fenerler/el-feneri" className="px-3 py-3 rounded-lg bg-card border">El Feneri</Link>
+                              <Link to="/kamp-malzemeleri/pisirme/kamp-ocagi" className="px-3 py-3 rounded-lg bg-card border">Kamp Ocağı</Link>
+                              <Link to="/kamp-malzemeleri/pisirme/kartuslar" className="px-3 py-3 rounded-lg bg-card border">Kartuşlar</Link>
+                              <Link to="/kamp-malzemeleri/aksesuar/cizmeler" className="px-3 py-3 rounded-lg bg-card border">Çizmeler</Link>
+                              <Link to="/kamp-malzemeleri/barinma-uyku/sisme-urunler-ve-matlar" className="px-3 py-3 rounded-lg bg-card border">Şişme Ürünler ve Matlar</Link>
+                              <Link to="/kamp-malzemeleri/pisirme/purmuz" className="px-3 py-3 rounded-lg bg-card border">Pürmüz</Link>
+                              <Link to="/kamp-malzemeleri/aksesuar/kamp-cantasi" className="px-3 py-3 rounded-lg bg-card border">Kamp Çantası</Link>
+                              <Link to="/kamp-malzemeleri/aksesuar/aydinlatma" className="px-3 py-3 rounded-lg bg-card border">Aydınlatma</Link>
+                              <Link to="/kamp-malzemeleri/barinma-uyku/cadirlar" className="px-3 py-3 rounded-lg bg-card border">Çadırlar</Link>
+                              <Link to="/kamp-malzemeleri/barinma-uyku/uyku-tulumlari" className="px-3 py-3 rounded-lg bg-card border">Uyku Tulumları</Link>
+                              <Link to="/kamp-malzemeleri/aksesuar/kafa-lambasi" className="px-3 py-3 rounded-lg bg-card border">Kafa Lambası</Link>
+                              <Link to="/kamp-malzemeleri/aksesuar/el-feneri" className="px-3 py-3 rounded-lg bg-card border">El Feneri</Link>
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -279,7 +279,7 @@ const Header = () => {
                       <Link to="/kamp-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Kamp Malzemeleri</Link>
                       <Link to="/dalis-urunleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Dalış Ürünleri</Link>
                       <Link to="/spor-malzemeleri" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Spor Malzemeleri</Link>
-                      <Link to="/termoslar-ve-mataralar" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Termoslar ve Mataralar</Link>
+                      <Link to="/termoslar-mataralar" className="px-3 py-3 rounded-lg bg-secondary hover:bg-secondary-glow transition-smooth">Termoslar ve Mataralar</Link>
                     </div>
                   </div>
 
@@ -484,32 +484,32 @@ const Header = () => {
                     <Link to="/kamp-malzemeleri/pisirme" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Pişirme</DropdownMenuLabel>
                     </Link>
-                    <Link to="/kamp-malzemeleri/kamp-ocagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Ocağı</Link>
-                    <Link to="/kamp-malzemeleri/kartuslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kartuşlar</Link>
-                    <Link to="/kamp-malzemeleri/purmuz" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Pürmüz</Link>
-                    <Link to="/kamp-malzemeleri/kamp-mutfagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Mutfağı</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/kamp-ocagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Ocağı</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/kartuslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kartuşlar</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/purmuz" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Pürmüz</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/kamp-mutfagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Mutfağı</Link>
                   </div>
                   <div className="space-y-0.5">
                     <Link to="/kamp-malzemeleri/barinma-uyku" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Barınma & Uyku</DropdownMenuLabel>
                     </Link>
-                    <Link to="/kamp-malzemeleri/cadirlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çadırlar</Link>
-                    <Link to="/kamp-malzemeleri/uyku-tulumlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Uyku Tulumları</Link>
-                    <Link to="/kamp-malzemeleri/sisme-urunler-ve-matlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şişme Ürünler ve Matlar</Link>
+                    <Link to="/kamp-malzemeleri/barinma-uyku/cadirlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çadırlar</Link>
+                    <Link to="/kamp-malzemeleri/barinma-uyku/uyku-tulumlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Uyku Tulumları</Link>
+                    <Link to="/kamp-malzemeleri/barinma-uyku/sisme-urunler-ve-matlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şişme Ürünler ve Matlar</Link>
                   </div>
                   <div className="space-y-0.5">
                     <Link to="/kamp-malzemeleri/aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
                       <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Aksesuar</DropdownMenuLabel>
                     </Link>
-                    <Link to="/kamp-malzemeleri/kamp-cantasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Çantası</Link>
-                    <Link to="/kamp-malzemeleri/aydinlatma" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Aydınlatma</Link>
-                    <Link to="/kamp-malzemeleri/fenerler/kafa-lambasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kafa Lambası</Link>
-                    <Link to="/kamp-malzemeleri/fenerler/el-feneri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">El Feneri</Link>
-                    <Link to="/kamp-malzemeleri/masalar-ve-sandalyeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Masalar ve Sandalyeler</Link>
-                    <Link to="/kamp-malzemeleri/cizmeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çizmeler</Link>
-                    <Link to="/kamp-malzemeleri/balta-kurek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Balta , Kürek</Link>
-                    <Link to="/kamp-malzemeleri/kopek-kovucu" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Köpek Kovucu</Link>
-                    <Link to="/kamp-malzemeleri/kamp-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Ekipmanları</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kamp-cantasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Çantası</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/aydinlatma" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Aydınlatma</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kafa-lambasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kafa Lambası</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/el-feneri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">El Feneri</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/masalar-ve-sandalyeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Masalar ve Sandalyeler</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/cizmeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çizmeler</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/balta-kurek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Balta , Kürek</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kopek-kovucu" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Köpek Kovucu</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kamp-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Ekipmanları</Link>
                   </div>
                 </div>
               </DropdownMenuContent>
@@ -588,7 +588,7 @@ const Header = () => {
             </DropdownMenu>
 
             {/* Termoslar ve Mataralar - moved after Spor */}
-            <Link to="/termoslar-ve-mataralar" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
+            <Link to="/termoslar-mataralar" className="text-foreground hover:text-primary transition-smooth font-medium px-4 py-2">
               Termoslar ve Mataralar
             </Link>
           </div>

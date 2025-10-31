@@ -128,12 +128,12 @@ const App = () => (
               <CategoryPage />
             </Suspense>
           } />
-          <Route path="/termoslar-ve-mataralar" element={
+          <Route path="/termoslar-mataralar" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <CategoryPage />
             </Suspense>
           } />
-          <Route path="/termoslar-ve-mataralar/*" element={
+          <Route path="/termoslar-mataralar/*" element={
             <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
               <CategoryPage />
             </Suspense>

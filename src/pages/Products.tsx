@@ -95,7 +95,7 @@ const Products = () => {
       try {
         let query = supabase
           .from('products')
-          .select('id, name, description, brand, price, original_price, image_url, category, stock_quantity, is_active, created_at, featured, badge, badges')
+          .select('id, name, description, brand, price, original_price, image_url, category, stock_quantity, is_active, created_at, featured, badge, badges, color_images')
           .eq('is_active', true);
 
         // Apply search filter if query exists
@@ -110,20 +110,32 @@ const Products = () => {
         if (error) throw error;
 
         if (!ignore && data) {
-          const mapped = data.map((p: any) => ({
-            id: p.id,
-            name: p.name,
-            brand: p.brand ?? '',
-            description: p.description ?? '',
-            price: p.price,
-            originalPrice: p.original_price || null,
-            image: p.image_url ?? '/placeholder.svg',
-            badge: p.badge || (p.featured ? 'Öne Çıkan' : null),
-            badges: p.badges || [],
-            category: p.category ?? '',
-            inStock: (p.stock_quantity ?? 0) > 0,
-            stock_quantity: p.stock_quantity ?? 0,
-          }));
+          const mapped = data.map((p: any) => {
+            // Ana görsel yoksa, ilk rengin ana görselini kullan
+            let finalImageUrl = p.image_url;
+            if (!finalImageUrl && p.color_images && typeof p.color_images === 'object') {
+              const firstColor = Object.keys(p.color_images)[0];
+              if (firstColor && p.color_images[firstColor]?.main) {
+                finalImageUrl = p.color_images[firstColor].main;
+              }
+            }
+            
+            return {
+              id: p.id,
+              name: p.name,
+              brand: p.brand ?? '',
+              description: p.description ?? '',
+              price: p.price,
+              originalPrice: (p as any).original_price || null,
+              image: finalImageUrl ?? '/placeholder.svg',
+              badge: p.badge || (p.featured ? 'Öne Çıkan' : null),
+              badges: p.badges || [],
+              category: p.category ?? '',
+              inStock: (p.stock_quantity ?? 0) > 0,
+              stock_quantity: p.stock_quantity ?? 0,
+              color_images: p.color_images || null,
+            };
+          });
           setSupaProducts(mapped);
         }
       } catch (err) {
@@ -524,7 +536,7 @@ const Products = () => {
                     { name: "Kamp Malzemeleri", icon: Tent, path: "/kamp-malzemeleri" },
                     { name: "Dalış Ürünleri", icon: Waves, path: "/dalis-urunleri" },
                     { name: "Spor Malzemeleri", icon: Dumbbell, path: "/spor-malzemeleri" },
-                    { name: "Termoslar ve Mataralar", icon: CupSoda, path: "/termoslar-ve-mataralar" }
+                    { name: "Termoslar ve Mataralar", icon: CupSoda, path: "/termoslar-mataralar" }
                   ].map((category, index) => (
                     <Link
                       key={index}

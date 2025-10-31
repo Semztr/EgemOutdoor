@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Heart, ShoppingCart, Star, Filter, Search, Fish, Shirt, Tent, Waves, Dumbbell, CupSoda } from 'lucide-react';
+import { Heart, ShoppingCart, Filter, Search, Fish, Shirt, Tent, Waves, Dumbbell, CupSoda } from 'lucide-react';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { useToast } from '@/hooks/use-toast';
@@ -17,7 +16,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { formatPrice } from '@/lib/format';
 
 const CategoryPage = () => {
-  const { categorySlug } = useParams<{ categorySlug: string }>();
   const location = useLocation();
   const { addItem } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -48,7 +46,7 @@ const CategoryPage = () => {
     'spor-malzemeleri',
     'caki-bicak',
     'kisiye-ozel',
-    'termoslar-ve-mataralar',
+    'termoslar-mataralar',
   ];
   const rootPath = roots.find(slug => currentPath === `/${slug}` || currentPath.startsWith(`/${slug}/`));
   const normalizedPath = rootPath ? `/${rootPath}` : currentPath;
@@ -57,6 +55,14 @@ const CategoryPage = () => {
   const subPath = rootPath && currentPath.length > rootPath.length + 1
     ? currentPath.slice(rootPath.length + 2) // remove leading '/{root}/'
     : '';
+
+  // DEBUG: URL parsing'i console'da göster
+  console.log('[CategoryPage] URL Parsing:', {
+    currentPath,
+    rootPath,
+    subPath,
+    fullCategory: rootPath && subPath ? `${rootPath}/${subPath}` : rootPath,
+  });
 
   const getCategoryData = () => {
     switch (normalizedPath) {
@@ -87,12 +93,12 @@ const CategoryPage = () => {
           products: []
         };
       
-      case '/termoslar-ve-mataralar':
+      case '/termoslar-mataralar':
         return {
           title: "Termoslar ve Mataralar",
           description: "Doğada, sporda ve günlük kullanımda içeceklerinizi ideal ısıda tutan termos ve mataralar.",
           totalProducts: 0,
-          filters: categoryFilters['termoslar-ve-mataralar'] || [],
+          filters: categoryFilters['termoslar-mataralar'] || [],
           products: []
         };
       
@@ -157,12 +163,17 @@ const CategoryPage = () => {
           .select('brand, badge, category, sizes')
           .eq('is_active', true);
         
-        // Kategori filtresi
+        // BASİT KATEGORİ FİLTRESİ - Türkçe karakter yok, sadece wildcard
         if (rootPath) {
           if (subPath) {
-            query = query.like('category', `${rootPath}/${subPath}%`);
+            // Detay kategori: /ana-kategori/alt-kategori veya /ana-kategori/alt-kategori/detay
+            const filterPattern = `${rootPath}/${subPath}%`;
+            console.log('[CategoryPage] Filters Query:', { pattern: filterPattern });
+            query = query.like('category', filterPattern);
           } else {
-            query = query.or(`category.eq.${rootPath},category.like.${rootPath}/%,category.eq./${rootPath},category.like./${rootPath}/%`);
+            // Ana kategori: tüm alt kategorileri de içerir
+            console.log('[CategoryPage] Filters Query:', { rootPath, type: 'main category' });
+            query = query.or(`category.eq.${rootPath},category.like.${rootPath}/%`);
           }
         }
         
@@ -319,14 +330,17 @@ const CategoryPage = () => {
           .select('id, name, description, brand, price, image_url, is_active, stock_quantity, original_price, category, features, badge, badges, featured, sizes, created_at', { count: 'exact' })
           .eq('is_active', true);
 
-        // Category scoping by prefix if category field exists
+        // BASİT KATEGORİ FİLTRESİ - Türkçe karakter yok, sadece wildcard
         if (rootPath) {
           if (subPath) {
-            base = base.like('category', `${rootPath}/${subPath}%`);
+            // Detay kategori: /ana-kategori/alt-kategori veya /ana-kategori/alt-kategori/detay
+            const filterPattern = `${rootPath}/${subPath}%`;
+            console.log('[CategoryPage] Main Query:', { pattern: filterPattern });
+            base = base.like('category', filterPattern);
           } else {
-            // Include exact root category and any child subcategories
-            // Support legacy values saved with a leading '/'
-            base = base.or(`category.eq.${rootPath},category.like.${rootPath}/%,category.eq./${rootPath},category.like./${rootPath}/%`);
+            // Ana kategori: tüm alt kategorileri de içerir
+            console.log('[CategoryPage] Main Query:', { rootPath, type: 'main category' });
+            base = base.or(`category.eq.${rootPath},category.like.${rootPath}/%`);
           }
         }
 
@@ -394,16 +408,18 @@ const CategoryPage = () => {
           }
         }
 
-        // Count (toplam ürün) - filtreleri yeniden uygula
+        // Count (toplam ürün) - BASİT FİLTRE
         let countQ = supabase
           .from('products')
           .select('id', { count: 'exact', head: true })
           .eq('is_active', true);
         if (rootPath) {
           if (subPath) {
+            // Detay kategori
             countQ = countQ.like('category', `${rootPath}/${subPath}%`);
           } else {
-            countQ = countQ.or(`category.eq.${rootPath},category.like.${rootPath}/%,category.eq./${rootPath},category.like./${rootPath}/%`);
+            // Ana kategori
+            countQ = countQ.or(`category.eq.${rootPath},category.like.${rootPath}/%`);
           }
         }
         if (markaVals.length > 0) {
@@ -423,10 +439,17 @@ const CategoryPage = () => {
         const from = (currentPage - 1) * PAGE_SIZE;
         const to = from + PAGE_SIZE - 1;
         const { data, error } = await base.range(from, to);
+        
+        if (error) {
+          console.error('[CategoryPage] ❌ Query Error:', error);
+        }
+        
         if (!error && data && !ignore) {
+          console.log('[CategoryPage] ✅ Products Found:', data.length);
           console.log('[CategoryPage] Raw products from DB:', data.map((p: any) => ({
             id: p.id,
             name: p.name,
+            category: p.category,
             stock_quantity: p.stock_quantity,
             is_active: p.is_active,
           })));
@@ -812,7 +835,7 @@ const CategoryPage = () => {
 
                         {/* Specs */}
                         <div className="flex flex-wrap gap-1 mb-3">
-                          {product.specs.map((spec, index) => (
+                          {product.specs.map((spec: string, index: number) => (
                             <span key={index} className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded">
                               {spec}
                             </span>
@@ -973,7 +996,7 @@ const CategoryPage = () => {
                     { name: "Kamp Malzemeleri", icon: Tent, path: "/kamp-malzemeleri" },
                     { name: "Dalış Ürünleri", icon: Waves, path: "/dalis-urunleri" },
                     { name: "Spor Malzemeleri", icon: Dumbbell, path: "/spor-malzemeleri" },
-                    { name: "Termoslar ve Mataralar", icon: CupSoda, path: "/termoslar-ve-mataralar" }
+                    { name: "Termoslar ve Mataralar", icon: CupSoda, path: "/termoslar-mataralar" }
                   ].map((category, index) => (
                     <Link 
                       key={index} 

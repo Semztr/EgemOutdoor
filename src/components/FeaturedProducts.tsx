@@ -54,22 +54,33 @@ const FeaturedProducts = () => {
       // Loose typing to avoid build-time type errors if DB types differ locally
       const { data, error } = await (supabase as any)
         .from('products')
-        .select('id, name, description, price, original_price, brand, image_url, featured, is_active, created_at, badge, badges')
+        .select('id, name, description, price, original_price, brand, image_url, featured, is_active, created_at, badge, badges, color_images')
         .eq('is_active', true)
         .eq('featured', true)
         .order('created_at', { ascending: false });
       if (!error && data) {
-        const mapped = data.map((p: any) => ({
-          id: p.id,
-          name: p.name,
-          brand: p.brand ?? '',
-          description: p.description ?? '',
-          price: p.price,
-          originalPrice: p.original_price || null,
-          image: p.image_url ?? '',
-          badge: p.badge || 'Öne Çıkan',
-          badges: p.badges || [],
-        }));
+        const mapped = data.map((p: any) => {
+          // Ana görsel yoksa, ilk rengin ana görselini kullan
+          let finalImageUrl = p.image_url;
+          if (!finalImageUrl && p.color_images && typeof p.color_images === 'object') {
+            const firstColor = Object.keys(p.color_images)[0];
+            if (firstColor && p.color_images[firstColor]?.main) {
+              finalImageUrl = p.color_images[firstColor].main;
+            }
+          }
+          
+          return {
+            id: p.id,
+            name: p.name,
+            brand: p.brand ?? '',
+            description: p.description ?? '',
+            price: p.price,
+            originalPrice: (p as any).original_price || null,
+            image: finalImageUrl ?? '',
+            badge: p.badge || 'Öne Çıkan',
+            badges: p.badges || [],
+          };
+        });
         setProducts(mapped);
       }
     };

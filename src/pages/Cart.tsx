@@ -17,17 +17,17 @@ const Cart = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleRemoveItem = (id: number) => {
-    removeItem(id);
+  const handleRemoveItem = (id: number, color?: string, size?: string, shoeSize?: string) => {
+    removeItem(id, color, size, shoeSize);
     toast({
       title: "Ürün sepetten kaldırıldı",
       description: "Ürün başarıyla sepetinizden kaldırıldı.",
     });
   };
 
-  const handleUpdateQuantity = (id: number, newQuantity: number) => {
+  const handleUpdateQuantity = (id: number, newQuantity: number, color?: string, size?: string, shoeSize?: string) => {
     if (newQuantity > 0) {
-      updateQuantity(id, newQuantity);
+      updateQuantity(id, newQuantity, color, size, shoeSize);
     }
   };
 
@@ -54,39 +54,64 @@ const Cart = () => {
           {state.items.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-4">
-                {state.items.map((item) => (
-                  <Card key={item.id} className="group hover:shadow-lg transition-all duration-200 animate-fade-in">
+                {state.items.map((item, index) => (
+                  <Card key={`${item.id}-${item.color}-${item.size}-${item.shoeSize}-${index}`} className="group hover:shadow-lg transition-all duration-200 animate-fade-in">
                     <CardContent className="p-6">
                       <div className="flex gap-4">
                         {/* Product Image */}
-                        <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex items-center justify-center">
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                        <Link to={`/urun/${item.id}`} className="flex-shrink-0">
+                          <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer">
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </Link>
                         
                         {/* Product Info */}
                         <div className="flex-1">
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <h3 className="font-semibold text-foreground">{item.name}</h3>
+                              <Link to={`/urun/${item.id}`} className="hover:text-primary transition-colors">
+                                <h3 className="font-semibold text-foreground">{item.name}</h3>
+                              </Link>
                               <p className="text-sm text-primary">{item.brand}</p>
+                              
+                              {/* Renk, Beden, Numara Bilgileri */}
+                              {(item.color || item.size || item.shoeSize) && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {item.color && (
+                                    <Badge variant="outline" className="text-xs">
+                                      🎨 {item.color}
+                                    </Badge>
+                                  )}
+                                  {item.size && (
+                                    <Badge variant="outline" className="text-xs">
+                                      👕 Beden: {item.size}
+                                    </Badge>
+                                  )}
+                                  {item.shoeSize && (
+                                    <Badge variant="outline" className="text-xs">
+                                      👟 Numara: {item.shoeSize}
+                                    </Badge>
+                                  )}
+                                </div>
+                              )}
                             </div>
                             <Button 
                               variant="ghost" 
                               size="icon" 
                               className="text-destructive hover:text-destructive hover-scale transition-smooth"
-                              onClick={() => handleRemoveItem(item.id)}
+                              onClick={() => handleRemoveItem(item.id, item.color, item.size, item.shoeSize)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                           
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between mt-3">
                             <div className="flex items-center gap-2">
                               <span className="font-bold text-foreground">₺{item.price.toLocaleString()}</span>
                             </div>
@@ -97,7 +122,7 @@ const Cart = () => {
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-8 w-8 hover-scale transition-smooth"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                                  onClick={() => handleUpdateQuantity(item.id, item.quantity - 1, item.color, item.size, item.shoeSize)}
                                 >
                                   <Minus className="h-3 w-3" />
                                 </Button>
@@ -106,7 +131,7 @@ const Cart = () => {
                                   variant="ghost" 
                                   size="icon" 
                                   className="h-8 w-8 hover-scale transition-smooth"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                                  onClick={() => handleUpdateQuantity(item.id, item.quantity + 1, item.color, item.size, item.shoeSize)}
                                 >
                                   <Plus className="h-3 w-3" />
                                 </Button>

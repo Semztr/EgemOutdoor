@@ -35,7 +35,7 @@ const CategoryCards = () => {
     },
     {
       name: 'Termoslar',
-      slug: 'termoslar-ve-mataralar',
+      slug: 'termoslar-mataralar',
       icon: CupSoda,
       color: 'from-red-500 to-pink-500',
       count: '100+',
