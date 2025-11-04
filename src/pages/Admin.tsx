@@ -312,6 +312,7 @@ const Admin = () => {
       extra_images: formData.extra_images ? formData.extra_images.split(',').map(s => s.trim()).filter(Boolean) : [],
       sizes: formData.sizes && formData.sizes.length > 0 ? formData.sizes : null,
       shoe_sizes: formData.shoe_sizes && formData.shoe_sizes.length > 0 ? formData.shoe_sizes : null,
+      weights: formData.weights && formData.weights.length > 0 ? formData.weights : null,
       color_images: formData.color_images || {},
     } as any;
 
@@ -1389,6 +1390,53 @@ const Admin = () => {
                     )}
                   </div>
 
+                  {/* Ağırlık Seçeneği (Balıkçılık Ürünleri için) */}
+                  <div className="space-y-4 p-4 border rounded-lg bg-purple-50 dark:bg-purple-950">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xl">⚖️</span>
+                      <h3 className="font-semibold text-sm">Ağırlık (Opsiyonel - Balıkçılık Ürünleri İçin)</h3>
+                    </div>
+                    
+                    <div>
+                      <Label>Mevcut Ağırlıklar (Çoklu Seçim)</Label>
+                      <div className="grid grid-cols-4 gap-2 mt-2 max-h-64 overflow-y-auto">
+                        {['2gr', '3gr', '4gr', '5gr', '7gr', '10gr', '15gr', '20gr', '25gr', '30gr', '35gr', '40gr', '50gr', '60gr', '75gr', '100gr', '125gr', '150gr', '200gr', '250gr', '300gr', '400gr', '500gr'].map((weight) => (
+                          <label key={weight} className="flex items-center gap-2 cursor-pointer p-2 border rounded hover:bg-purple-100 dark:hover:bg-purple-900 transition-colors">
+                            <input
+                              type="checkbox"
+                              checked={formData.weights?.includes(weight) || false}
+                              onChange={(e) => {
+                                const currentWeights = formData.weights || [];
+                                if (e.target.checked) {
+                                  setFormData({ ...formData, weights: [...currentWeights, weight] });
+                                } else {
+                                  setFormData({ ...formData, weights: currentWeights.filter(w => w !== weight) });
+                                }
+                              }}
+                              className="rounded border-border"
+                            />
+                            <span className="text-sm font-medium">{weight}</span>
+                          </label>
+                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        💡 Ürünün mevcut olduğu ağırlıkları seçin (ör: jig, silikon yem, kurşun). Müşteriler bu ağırlıklar arasından seçim yapabilecek.
+                      </p>
+                    </div>
+
+                    {formData.weights && formData.weights.length > 0 && (
+                      <div className="bg-white dark:bg-gray-800 p-3 rounded border">
+                        <p className="text-xs font-medium mb-2">✅ Seçili Ağırlıklar:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {formData.weights.map((weight) => (
+                            <span key={weight} className="px-2 py-1 bg-purple-500 text-white text-xs rounded-full">
+                              {weight}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Özellikler */}
                   <div className="space-y-2 p-4 border rounded-lg bg-muted/30">

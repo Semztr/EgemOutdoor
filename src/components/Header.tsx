@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, User, Search, Menu, Phone, LogOut, ChevronDown, Facebook, Instagram } from 'lucide-react';
+import { ShoppingCart, User, Menu, Phone, LogOut, ChevronDown, Facebook, Instagram } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
@@ -14,9 +14,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
 } from '@/components/ui/dropdown-menu';
 
 const Header = () => {
@@ -24,7 +21,6 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Helper function to check if link is active
@@ -64,13 +60,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrolled]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/urunler?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-    }
-  };
+  // removed unused handleSearch
 
   return (
     <header className={`border-b border-border bg-card/95 backdrop-blur-md sticky top-0 z-50 transition-shadow duration-300 ${isScrolled ? 'shadow-md' : ''}`}>
@@ -90,7 +80,18 @@ const Header = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2 flex-shrink-0">
+          <Link 
+            to="/" 
+            onClick={(e) => {
+              if (location.pathname === '/') {
+                e.preventDefault();
+                window.location.reload();
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }} 
+            className="flex items-center space-x-2 flex-shrink-0"
+          >
             <img src="/favicon.png" alt="EgemOutdoor Logo" className="h-8 w-8 md:h-10 md:w-10 rounded" />
             <div className="hidden sm:block">
               <h1 className="text-lg md:text-xl font-bold text-foreground">EgemOutdoor</h1>
@@ -188,8 +189,8 @@ const Header = () => {
                               <Link to="/balik-av-malzemeleri/misineler" className="px-3 py-3 rounded-lg bg-card border">Misineler</Link>
                               <Link to="/balik-av-malzemeleri/igne-jighead" className="px-3 py-3 rounded-lg bg-card border">İğne ve Jighead</Link>
                               <Link to="/balik-av-malzemeleri/aksesuarlar" className="px-3 py-3 rounded-lg bg-card border">Aksesuarlar</Link>
-                              <Link to="/balik-av-malzemeleri/su-ustu-maketler" className="px-3 py-3 rounded-lg bg-card border">Su Üstü Maketler</Link>
-                              <Link to="/balik-av-malzemeleri/kasik-yemler" className="px-3 py-3 rounded-lg bg-card border">Kaşık Yemler</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/su-ustu-maketler" className="px-3 py-3 rounded-lg bg-card border">Su Üstü Maketler</Link>
+                              <Link to="/balik-av-malzemeleri/suni-yemler/kasik-yemler" className="px-3 py-3 rounded-lg bg-card border">Kaşık Yemler</Link>
                               
                               <Link to="/balik-av-malzemeleri/suni-yemler/silikon-yemler" className="px-3 py-3 rounded-lg bg-card border">Silikon Yemler</Link>
                               <Link to="/balik-av-malzemeleri/suni-yemler/jig-yemler" className="px-3 py-3 rounded-lg bg-card border">Jig Yemler</Link>
@@ -326,90 +327,90 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
-                <div className="mb-2">
-                  <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="font-semibold hover:text-primary">Tümünü Gör</Link>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-6 rounded-md border shadow-md">
+                <div className="mb-4 pb-3 border-b border-border/30">
+                  <Link to="/balik-av-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="inline-block font-bold text-base hover:text-primary transition-colors">Tümünü Gör →</Link>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/balik-av-malzemeleri/olta-makineleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className={`px-0 cursor-pointer hover:text-primary transition-colors ${isLinkActive('/balik-av-malzemeleri/olta-makineleri') ? 'text-primary font-bold' : ''}`}>Olta Makineleri</DropdownMenuLabel>
+                      <DropdownMenuLabel className={`text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors ${isLinkActive('/balik-av-malzemeleri/olta-makineleri') ? 'text-primary font-bold' : ''}`}>Olta Makineleri</DropdownMenuLabel>
                     </Link>
-                    <Link to="/balik-av-malzemeleri/olta-makineleri/spin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Spin Olta Makineleri</Link>
-                    <Link to="/balik-av-malzemeleri/olta-makineleri/lrf" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">LRF Olta Makineleri</Link>
-                    <Link to="/balik-av-malzemeleri/olta-makineleri/surf" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Surf Olta Makineleri</Link>
-                    <Link to="/balik-av-malzemeleri/olta-makineleri/genel-kullanim" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Genel Kullanım</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/spin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Spin Olta Makineleri</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/lrf" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">LRF Olta Makineleri</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/surf" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Surf Olta Makineleri</Link>
+                    <Link to="/balik-av-malzemeleri/olta-makineleri/genel-kullanim" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Genel Kullanım</Link>
                   </div>
-                  <div className="col-span-1 xl:col-span-1 space-y-0.5">
+                  <div className="col-span-1 xl:col-span-1 space-y-0.5 -ml-4">
                     <Link to="/balik-av-malzemeleri/olta-kamislari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Olta Kamışları</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Olta Kamışları</DropdownMenuLabel>
                     </Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/telespin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Telespin</Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/teleskopik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Teleskopik</Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/spin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Spin</Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/lrf" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">LRF</Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/bot-tekne" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Bot - Tekne</Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/tatli-su" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Tatlı Su</Link>
-                    <Link to="/balik-av-malzemeleri/olta-kamislari/light-spin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Light Spin</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/telespin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Telespin</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/teleskopik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Teleskopik</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/spin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Spin</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/lrf" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">LRF</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/bot-tekne" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Bot - Tekne</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/tatli-su" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Tatlı Su</Link>
+                    <Link to="/balik-av-malzemeleri/olta-kamislari/light-spin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Light Spin</Link>
                   </div>
-                  <div className="col-span-1 xl:col-span-1 space-y-0.5">
+                  <div className="col-span-1 xl:col-span-1 space-y-0.5 -ml-9">
                     <Link to="/balik-av-malzemeleri/suni-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Suni Yemler</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Suni Yemler</DropdownMenuLabel>
                     </Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/su-ustu-maketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Su Üstü Maketler</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/kasik-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kaşık Yemler</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/silikon-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Silikon Yemler</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/jig-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Jig Yemler</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/kasiklar-ve-vibrasyonlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kaşıklar ve Vibrasyonlar</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/zokalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zokalar</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/meppsler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Meppsler</Link>
-                    <Link to="/balik-av-malzemeleri/suni-yemler/sazan-yemleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Sazan Yemleri</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/su-ustu-maketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Su Üstü Maketler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/kasik-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kaşık Yemler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/silikon-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Silikon Yemler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/jig-yemler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Jig Yemler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/kasiklar-ve-vibrasyonlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kaşıklar ve Vibrasyonlar</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/zokalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Zokalar</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/meppsler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Meppsler</Link>
+                    <Link to="/balik-av-malzemeleri/suni-yemler/sazan-yemleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Sazan Yemleri</Link>
                   </div>
-                  <div className="col-span-1 xl:col-span-1 space-y-1">
+                  <div className="col-span-1 xl:col-span-1 space-y-0.5 -ml-8">
                     <Link to="/balik-av-malzemeleri/misineler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Misineler</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Misineler</DropdownMenuLabel>
                     </Link>
-                    <Link to="/balik-av-malzemeleri/misineler/monofilament" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Monofilament</Link>
-                    <Link to="/balik-av-malzemeleri/misineler/fluorocarbon" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Fluorocarbon</Link>
-                    <Link to="/balik-av-malzemeleri/misineler/ip-orgu" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">İp - Örgü</Link>
+                    <Link to="/balik-av-malzemeleri/misineler/monofilament" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Monofilament</Link>
+                    <Link to="/balik-av-malzemeleri/misineler/fluorocarbon" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Fluorocarbon</Link>
+                    <Link to="/balik-av-malzemeleri/misineler/ip-orgu" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">İp - Örgü</Link>
                   </div>
-                  <div className="group col-span-2 xl:col-span-1">
+                  <div className="group col-span-2 xl:col-span-1 space-y-0.5 min-h-[12rem]">
                     <Link to="/balik-av-malzemeleri/igne-jighead" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">İğne ve Jighead</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">İğne ve Jighead</DropdownMenuLabel>
                     </Link>
-                    <div className="mt-1 space-y-0.5 max-h-0 group-hover:max-h-96 overflow-hidden transition-all duration-300">
-                      <Link to="/balik-av-malzemeleri/igne-jighead/kursunlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kurşunlar</Link>
-                      <Link to="/balik-av-malzemeleri/igne-jighead/jighead-zoka" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Jighead - Zoka</Link>
-                      <Link to="/balik-av-malzemeleri/igne-jighead/assist-jig-igneleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Assist Jig İğneleri</Link>
-                      <Link to="/balik-av-malzemeleri/igne-jighead/uclu-igneler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Üçlü İğneler</Link>
-                      <Link to="/balik-av-malzemeleri/igne-jighead/firdondu-klips-halkalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Fırdöndü - Klips - Halkalar</Link>
-                      <Link to="/balik-av-malzemeleri/igne-jighead/tekli-igneler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Tekli İğneler</Link>
-                      <Link to="/balik-av-malzemeleri/igne-jighead/ofset-igneler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Ofset İğneler</Link>
+                    <div className="mt-0.5 space-y-0.5 max-h-0 group-hover:max-h-96 overflow-hidden transition-[max-height] duration-300 ease-in-out">
+                      <Link to="/balik-av-malzemeleri/igne-jighead/kursunlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kurşunlar</Link>
+                      <Link to="/balik-av-malzemeleri/igne-jighead/jighead-zoka" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Jighead - Zoka</Link>
+                      <Link to="/balik-av-malzemeleri/igne-jighead/assist-jig-igneleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Assist Jig İğneleri</Link>
+                      <Link to="/balik-av-malzemeleri/igne-jighead/uclu-igneler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Üçlü İğneler</Link>
+                      <Link to="/balik-av-malzemeleri/igne-jighead/firdondu-klips-halkalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Fırdöndü - Klips - Halkalar</Link>
+                      <Link to="/balik-av-malzemeleri/igne-jighead/tekli-igneler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Tekli İğneler</Link>
+                      <Link to="/balik-av-malzemeleri/igne-jighead/ofset-igneler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Ofset İğneler</Link>
                     </div>
                   </div>
-                  <div className="group col-span-2 xl:col-span-1">
+                  <div className="group col-span-2 xl:col-span-1 space-y-0.5 min-h-[12rem] -ml-5">
                     <Link to="/balik-av-malzemeleri/aksesuarlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Aksesuarlar</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Aksesuarlar</DropdownMenuLabel>
                     </Link>
-                    <div className="mt-1 space-y-0.5 max-h-0 group-hover:max-h-96 overflow-hidden transition-all duration-300">
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/cizmeler-ve-tulum-cizmeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çizmeler - Tulum</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/samandira-ve-stopler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şamandıra ve Stopler</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/fenerler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Fenerler</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/pense-gripper-makas" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Pense - Gripper - Makas</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/kepce-livar-kakic-tripod" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kepçe - Livar - Kakıç - Tripod</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/sisme-yataklar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şişme Yataklar</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/alarm-zil-fosfor-boncuk" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Alarm - Zil - Fosfor - Boncuk</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/gozlukler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Gözlükler</Link>
-                      <Link to="/balik-av-malzemeleri/aksesuarlar/digerleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Diğerleri</Link>
+                    <div className="mt-0.5 space-y-0.5 max-h-0 group-hover:max-h-96 overflow-hidden transition-[max-height] duration-300 ease-in-out">
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/cizmeler-ve-tulum-cizmeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Çizmeler - Tulum</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/samandira-ve-stopler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Şamandıra ve Stopler</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/fenerler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Fenerler</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/pense-gripper-makas" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Pense - Gripper - Makas</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/kepce-livar-kakic-tripod" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kepçe - Livar - Kakıç - Tripod</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/sisme-yataklar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Şişme Yataklar</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/alarm-zil-fosfor-boncuk" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Alarm - Zil - Fosfor - Boncuk</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/gozlukler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Gözlükler</Link>
+                      <Link to="/balik-av-malzemeleri/aksesuarlar/digerleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Diğerleri</Link>
                     </div>
                   </div>
-                  <div className="group col-span-2 xl:col-span-1">
+                  <div className="group col-span-2 xl:col-span-1 space-y-0.5 min-h-[12rem] -ml-10">
                     <Link to="/balik-av-malzemeleri/diger" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Diğer</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Diğer</DropdownMenuLabel>
                     </Link>
-                    <div className="mt-1 space-y-0.5 max-h-0 group-hover:max-h-96 overflow-hidden transition-all duration-300">
-                      <Link to="/balik-av-malzemeleri/balikci-kiyafetleri-ve-eldivenler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Balıkçı Kıyafetleri ve Eldivenler</Link>
-                      <Link to="/balik-av-malzemeleri/canta-ve-kutular" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çanta ve Kutular</Link>
+                    <div className="mt-0.5 space-y-0.5 max-h-0 group-hover:max-h-96 overflow-hidden transition-[max-height] duration-300 ease-in-out">
+                      <Link to="/balik-av-malzemeleri/balikci-kiyafetleri-ve-eldivenler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Balıkçı Kıyafetleri ve Eldivenler</Link>
+                      <Link to="/balik-av-malzemeleri/canta-ve-kutular" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Çanta ve Kutular</Link>
                     </div>
                   </div>
                 </div>
@@ -424,44 +425,44 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
-                <div className="mb-2">
-                  <Link to="/outdoor-giyim" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="font-semibold hover:text-primary">Tümünü Gör</Link>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-6 rounded-md border shadow-md">
+                <div className="mb-4 pb-3 border-b border-border/30">
+                  <Link to="/outdoor-giyim" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="inline-block font-bold text-base hover:text-primary transition-colors">Tümünü Gör →</Link>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4">
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/outdoor-giyim/erkek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Erkek</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Erkek</DropdownMenuLabel>
                     </Link>
-                    <Link to="/outdoor-giyim/erkek/pantolon" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Pantolon</Link>
-                    <Link to="/outdoor-giyim/erkek/tisort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Tişört</Link>
-                    <Link to="/outdoor-giyim/erkek/gomlek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Gömlek</Link>
-                    <Link to="/outdoor-giyim/erkek/mont-ve-ceket" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Mont ve Ceket</Link>
-                    <Link to="/outdoor-giyim/erkek/ayakkabi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Ayakkabı</Link>
-                    <Link to="/outdoor-giyim/erkek/bot" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Bot</Link>
+                    <Link to="/outdoor-giyim/erkek/pantolon" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Pantolon</Link>
+                    <Link to="/outdoor-giyim/erkek/tisort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Tişört</Link>
+                    <Link to="/outdoor-giyim/erkek/gomlek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Gömlek</Link>
+                    <Link to="/outdoor-giyim/erkek/mont-ve-ceket" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Mont ve Ceket</Link>
+                    <Link to="/outdoor-giyim/erkek/ayakkabi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Ayakkabı</Link>
+                    <Link to="/outdoor-giyim/erkek/bot" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Bot</Link>
                   </div>
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/outdoor-giyim/kadin" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Kadın</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Kadın</DropdownMenuLabel>
                     </Link>
-                    <Link to="/outdoor-giyim/kadin/tisort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Tişört</Link>
-                    <Link to="/outdoor-giyim/kadin/ayakkabi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Ayakkabı</Link>
-                    <Link to="/outdoor-giyim/kadin/bot" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Bot</Link>
-                    <Link to="/outdoor-giyim/kadin/mont-ve-ceket" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Mont ve Ceket</Link>
-                    <Link to="/outdoor-giyim/kadin/pantolon" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Pantolon</Link>
+                    <Link to="/outdoor-giyim/kadin/tisort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Tişört</Link>
+                    <Link to="/outdoor-giyim/kadin/ayakkabi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Ayakkabı</Link>
+                    <Link to="/outdoor-giyim/kadin/bot" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Bot</Link>
+                    <Link to="/outdoor-giyim/kadin/mont-ve-ceket" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Mont ve Ceket</Link>
+                    <Link to="/outdoor-giyim/kadin/pantolon" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Pantolon</Link>
                   </div>
                   <div className="col-span-2 xl:col-span-1 space-y-0.5">
                     <Link to="/outdoor-giyim/aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Aksesuar</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Aksesuar</DropdownMenuLabel>
                     </Link>
-                    <Link to="/outdoor-giyim/aksesuar/canta" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çanta</Link>
-                    <Link to="/outdoor-giyim/aksesuar/sapka" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şapka</Link>
-                    <Link to="/outdoor-giyim/aksesuar/bere" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Bere</Link>
-                    <Link to="/outdoor-giyim/aksesuar/termal-iclik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Termal İçlik</Link>
-                    <Link to="/outdoor-giyim/aksesuar/sweatshirts" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Sweatshirts</Link>
-                    <Link to="/outdoor-giyim/aksesuar/polar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Polar</Link>
-                    <Link to="/outdoor-giyim/aksesuar/yelek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Yelek</Link>
-                    <Link to="/outdoor-giyim/aksesuar/sort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şort</Link>
+                    <Link to="/outdoor-giyim/aksesuar/canta" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Çanta</Link>
+                    <Link to="/outdoor-giyim/aksesuar/sapka" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Şapka</Link>
+                    <Link to="/outdoor-giyim/aksesuar/bere" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Bere</Link>
+                    <Link to="/outdoor-giyim/aksesuar/termal-iclik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Termal İçlik</Link>
+                    <Link to="/outdoor-giyim/aksesuar/sweatshirts" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Sweatshirts</Link>
+                    <Link to="/outdoor-giyim/aksesuar/polar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Polar</Link>
+                    <Link to="/outdoor-giyim/aksesuar/yelek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Yelek</Link>
+                    <Link to="/outdoor-giyim/aksesuar/sort" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Şort</Link>
                   </div>
                 </div>
               </DropdownMenuContent>
@@ -475,41 +476,41 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
-                <div className="mb-2">
-                  <Link to="/kamp-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="font-semibold hover:text-primary">Tümünü Gör</Link>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-6 rounded-md border shadow-md">
+                <div className="mb-4 pb-3 border-b border-border/30">
+                  <Link to="/kamp-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="inline-block font-bold text-base hover:text-primary transition-colors">Tümünü Gör →</Link>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4">
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/kamp-malzemeleri/pisirme" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Pişirme</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Pişirme</DropdownMenuLabel>
                     </Link>
-                    <Link to="/kamp-malzemeleri/pisirme/kamp-ocagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Ocağı</Link>
-                    <Link to="/kamp-malzemeleri/pisirme/kartuslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kartuşlar</Link>
-                    <Link to="/kamp-malzemeleri/pisirme/purmuz" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Pürmüz</Link>
-                    <Link to="/kamp-malzemeleri/pisirme/kamp-mutfagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Mutfağı</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/kamp-ocagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kamp Ocağı</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/kartuslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kartuşlar</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/purmuz" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Pürmüz</Link>
+                    <Link to="/kamp-malzemeleri/pisirme/kamp-mutfagi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kamp Mutfağı</Link>
                   </div>
-                  <div className="space-y-0.5">
+                  <div className="col-span-1 xl:col-span-1 space-y-0.5 -ml-7">
                     <Link to="/kamp-malzemeleri/barinma-uyku" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Barınma & Uyku</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Barınma & Uyku</DropdownMenuLabel>
                     </Link>
-                    <Link to="/kamp-malzemeleri/barinma-uyku/cadirlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çadırlar</Link>
-                    <Link to="/kamp-malzemeleri/barinma-uyku/uyku-tulumlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Uyku Tulumları</Link>
-                    <Link to="/kamp-malzemeleri/barinma-uyku/sisme-urunler-ve-matlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Şişme Ürünler ve Matlar</Link>
+                    <Link to="/kamp-malzemeleri/barinma-uyku/cadirlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Çadırlar</Link>
+                    <Link to="/kamp-malzemeleri/barinma-uyku/uyku-tulumlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Uyku Tulumları</Link>
+                    <Link to="/kamp-malzemeleri/barinma-uyku/sisme-urunler-ve-matlar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Şişme Ürünler ve Matlar</Link>
                   </div>
-                  <div className="space-y-0.5">
+                  <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/kamp-malzemeleri/aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Aksesuar</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Aksesuar</DropdownMenuLabel>
                     </Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/kamp-cantasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Çantası</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/aydinlatma" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Aydınlatma</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/kafa-lambasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kafa Lambası</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/el-feneri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">El Feneri</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/masalar-ve-sandalyeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Masalar ve Sandalyeler</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/cizmeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Çizmeler</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/balta-kurek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Balta , Kürek</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/kopek-kovucu" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Köpek Kovucu</Link>
-                    <Link to="/kamp-malzemeleri/aksesuar/kamp-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Kamp Ekipmanları</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kamp-cantasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kamp Çantası</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/aydinlatma" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Aydınlatma</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kafa-lambasi" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kafa Lambası</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/el-feneri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">El Feneri</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/masalar-ve-sandalyeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Masalar ve Sandalyeler</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/cizmeler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Çizmeler</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/balta-kurek" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Balta , Kürek</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kopek-kovucu" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Köpek Kovucu</Link>
+                    <Link to="/kamp-malzemeleri/aksesuar/kamp-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kamp Ekipmanları</Link>
                   </div>
                 </div>
               </DropdownMenuContent>
@@ -523,40 +524,40 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
-                <div className="mb-2">
-                  <Link to="/dalis-urunleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="font-semibold hover:text-primary">Tümünü Gör</Link>
+              <DropdownMenuContent className="sm:max-w-[90vw] max-h-[70vh] overflow-y-auto bg-card z-50 p-6 rounded-md border shadow-md">
+                <div className="mb-4 pb-3 border-b border-border/30">
+                  <Link to="/dalis-urunleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="inline-block font-bold text-base hover:text-primary transition-colors">Tümünü Gör →</Link>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-4">
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/dalis-urunleri/ekipman" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Ekipman</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Ekipman</DropdownMenuLabel>
                     </Link>
-                    <Link to="/dalis-urunleri/ekipman/denge-yelegi-bcd" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Denge Yeleği (BCD)</Link>
-                    <Link to="/dalis-urunleri/ekipman/dalis-bilgisayari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Bilgisayarı</Link>
-                    <Link to="/dalis-urunleri/ekipman/regulatorler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Regülatörler</Link>
-                    <Link to="/dalis-urunleri/ekipman/konsol-pusula-manometre" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Konsol & Pusula & Manometre</Link>
-                    <Link to="/dalis-urunleri/ekipman/dalis-tup-ve-vanalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Tüp ve Vanalar</Link>
+                    <Link to="/dalis-urunleri/ekipman/denge-yelegi-bcd" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Denge Yeleği (BCD)</Link>
+                    <Link to="/dalis-urunleri/ekipman/dalis-bilgisayari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Dalış Bilgisayarı</Link>
+                    <Link to="/dalis-urunleri/ekipman/regulatorler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Regülatörler</Link>
+                    <Link to="/dalis-urunleri/ekipman/konsol-pusula-manometre" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Konsol & Pusula & Manometre</Link>
+                    <Link to="/dalis-urunleri/ekipman/dalis-tup-ve-vanalar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Dalış Tüp ve Vanalar</Link>
                   </div>
                   <div className="col-span-1 xl:col-span-1 space-y-0.5">
                     <Link to="/dalis-urunleri/giyim-parca" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Giyim & Parça</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Giyim & Parça</DropdownMenuLabel>
                     </Link>
-                    <Link to="/dalis-urunleri/giyim-parca/elbise-yelek-shorty" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Elbise & Yelek & Shorty</Link>
-                    <Link to="/dalis-urunleri/giyim-parca/patik-eldiven-baslik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Patik & Eldiven & Başlık</Link>
-                    <Link to="/dalis-urunleri/giyim-parca/dalis-cantalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Çantaları</Link>
-                    <Link to="/dalis-urunleri/giyim-parca/yedek-parca-ve-aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Yedek Parça ve Aksesuar</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/elbise-yelek-shorty" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Elbise & Yelek & Shorty</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/patik-eldiven-baslik" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Patik & Eldiven & Başlık</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/dalis-cantalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Dalış Çantaları</Link>
+                    <Link to="/dalis-urunleri/giyim-parca/yedek-parca-ve-aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Yedek Parça ve Aksesuar</Link>
                   </div>
                   <div className="col-span-2 xl:col-span-1 space-y-0.5">
                     <Link to="/dalis-urunleri/av-aksesuar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })}>
-                      <DropdownMenuLabel className="px-0 cursor-pointer hover:text-primary">Av & Aksesuar</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-sm block py-0.5 px-0 cursor-pointer hover:text-primary transition-colors">Av & Aksesuar</DropdownMenuLabel>
                     </Link>
-                    <Link to="/dalis-urunleri/av-aksesuar/zipkin-modelleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zıpkın Modelleri</Link>
-                    <Link to="/dalis-urunleri/av-aksesuar/zipkin-yedek-parcalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Zıpkın Yedek Parçaları</Link>
-                    <Link to="/dalis-urunleri/av-aksesuar/dalis-yuzucu-paletleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış & Yüzücü Paletleri</Link>
-                    <Link to="/dalis-urunleri/av-aksesuar/maske-snorkel-gozluk" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Maske & Şnorkel & Gözlük</Link>
-                    <Link to="/dalis-urunleri/av-aksesuar/dalis-bicak-ve-makaslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Bıçak ve Makaslar</Link>
-                    <Link to="/dalis-urunleri/av-aksesuar/dalis-samandiralari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary pl-2">Dalış Şamandıraları</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/zipkin-modelleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Zıpkın Modelleri</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/zipkin-yedek-parcalari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Zıpkın Yedek Parçaları</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/dalis-yuzucu-paletleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Dalış & Yüzücü Paletleri</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/maske-snorkel-gozluk" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Maske & Şnorkel & Gözlük</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/dalis-bicak-ve-makaslar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Dalış Bıçak ve Makaslar</Link>
+                    <Link to="/dalis-urunleri/av-aksesuar/dalis-samandiralari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Dalış Şamandıraları</Link>
                   </div>
                 </div>
               </DropdownMenuContent>
@@ -570,19 +571,19 @@ const Header = () => {
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-64 max-h-[70vh] overflow-y-auto bg-card z-50 p-4">
-                <div className="mb-2">
-                  <Link to="/spor-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="font-semibold hover:text-primary">Tümünü Gör</Link>
+              <DropdownMenuContent className="w-64 max-h-[70vh] overflow-y-auto bg-card z-50 p-6 rounded-md border shadow-md">
+                <div className="mb-4 pb-3 border-b border-border/30">
+                  <Link to="/spor-malzemeleri" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="inline-block font-bold text-base hover:text-primary transition-colors">Tümünü Gör →</Link>
                 </div>
-                <div className="space-y-1">
-                  <Link to="/spor-malzemeleri/su-sporlari-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Su Sporları Ekipmanları</Link>
-                  <Link to="/spor-malzemeleri/tenis-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Tenis Ekipmanları</Link>
-                  <Link to="/spor-malzemeleri/futbol-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Futbol Ekipmanları</Link>
-                  <Link to="/spor-malzemeleri/basketbol-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Basketbol Ekipmanları</Link>
-                  <Link to="/spor-malzemeleri/kaykay-ve-patenler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Kaykay ve Patenler</Link>
-                  <Link to="/spor-malzemeleri/raketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Raketler</Link>
-                  <Link to="/spor-malzemeleri/jimnastik-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Jimnastik Ekipmanları</Link>
-                  <Link to="/spor-malzemeleri/toplar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-1.5 hover:text-primary pl-2">Toplar</Link>
+                <div className="space-y-0.5">
+                  <Link to="/spor-malzemeleri/su-sporlari-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Su Sporları Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/tenis-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Tenis Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/futbol-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Futbol Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/basketbol-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Basketbol Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/kaykay-ve-patenler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Kaykay ve Patenler</Link>
+                  <Link to="/spor-malzemeleri/raketler" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Raketler</Link>
+                  <Link to="/spor-malzemeleri/jimnastik-ekipmanlari" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Jimnastik Ekipmanları</Link>
+                  <Link to="/spor-malzemeleri/toplar" onClick={() => window.scrollTo({ top: 0, behavior: 'auto' })} className="text-sm block py-0.5 hover:text-primary hover:bg-primary/5 rounded transition-colors">Toplar</Link>
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>

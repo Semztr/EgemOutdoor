@@ -160,7 +160,7 @@ const CategoryPage = () => {
       try {
         let query = supabase
           .from('products')
-          .select('brand, badge, category, sizes')
+          .select('brand, badge, category, sizes, shoe_sizes, weights')
           .eq('is_active', true);
         
         // BASİT KATEGORİ FİLTRESİ - Türkçe karakter yok, sadece wildcard
@@ -181,7 +181,7 @@ const CategoryPage = () => {
         
         if (!error && data && !ignore) {
           // Marka filtresini oluştur
-          const brands = [...new Set(data.map((p: any) => p.brand).filter(Boolean))].sort();
+          const brands = [...new Set(data.map((p: any) => p.brand).filter(b => b && typeof b === 'string' && b.trim()))].sort();
           
           // Badge filtresini oluştur (KALDIRILDI - artık kullanılmıyor)
           // const badges = [...new Set(data.map(p => p.badge).filter(Boolean))].sort();
@@ -242,7 +242,7 @@ const CategoryPage = () => {
             data.forEach(p => {
               if (Array.isArray((p as any).sizes)) {
                 (p as any).sizes.forEach((size: string) => {
-                  if (!sizes.includes(size)) {
+                  if (size && typeof size === 'string' && size.trim() && !sizes.includes(size)) {
                     sizes.push(size);
                   }
                 });
@@ -257,13 +257,36 @@ const CategoryPage = () => {
           const shoeSizes: string[] = [];
           if (rootPath === 'outdoor-giyim') {
             data.forEach(p => {
-              const shoeSize = (p as any).shoe_size;
-              if (shoeSize && !shoeSizes.includes(shoeSize)) {
-                shoeSizes.push(shoeSize);
+              if (Array.isArray((p as any).shoe_sizes)) {
+                (p as any).shoe_sizes.forEach((shoeSize: string) => {
+                  if (shoeSize && typeof shoeSize === 'string' && shoeSize.trim() && !shoeSizes.includes(shoeSize)) {
+                    shoeSizes.push(shoeSize);
+                  }
+                });
               }
             });
             // Numara sıralaması: 39, 39.5, 40, 40.5, ...
             shoeSizes.sort((a, b) => parseFloat(a) - parseFloat(b));
+          }
+          
+          // Ağırlık filtresini oluştur (balıkçılık ürünleri için)
+          const weights: string[] = [];
+          if (rootPath === 'balik-av-malzemeleri') {
+            data.forEach(p => {
+              if (Array.isArray((p as any).weights)) {
+                (p as any).weights.forEach((weight: string) => {
+                  if (weight && typeof weight === 'string' && weight.trim() && !weights.includes(weight)) {
+                    weights.push(weight);
+                  }
+                });
+              }
+            });
+            // Ağırlık sıralaması: 2gr, 3gr, 5gr, 10gr, ...
+            weights.sort((a, b) => {
+              const numA = parseInt(a.replace('gr', ''));
+              const numB = parseInt(b.replace('gr', ''));
+              return numA - numB;
+            });
           }
           
           // Renk filtresini oluştur
@@ -271,7 +294,7 @@ const CategoryPage = () => {
           if (rootPath === 'outdoor-giyim') {
             data.forEach(p => {
               const color = (p as any).color;
-              if (color && !colors.includes(color)) {
+              if (color && typeof color === 'string' && color.trim() && !colors.includes(color)) {
                 colors.push(color);
               }
             });
@@ -298,6 +321,10 @@ const CategoryPage = () => {
             filters.push({ name: 'Numara', options: shoeSizes });
           }
           
+          if (weights.length > 0) {
+            filters.push({ name: 'Ağırlık', options: weights });
+          }
+          
           if (colors.length > 0) {
             filters.push({ name: 'Renk', options: colors });
           }
@@ -308,6 +335,8 @@ const CategoryPage = () => {
             brands: brands.length,
             categories: categories.length,
             sizes: sizes.length,
+            shoeSizes: shoeSizes.length,
+            weights: weights.length,
           });
         }
       } catch (e) {
@@ -386,26 +415,30 @@ const CategoryPage = () => {
           }
         }
         
-        // Numara filter (shoe_size)
+        // Numara filter (shoe_sizes array)
         const numaraVals = activeFilters['Numara'] || [];
         if (numaraVals.length > 0) {
-          base = base.in('shoe_size', numaraVals);
+          // shoe_sizes @> '["42"]' (JSONB contains)
+          const ors = numaraVals.map((size) => `shoe_sizes.cs.["${size}"]`).join(',');
+          if (ors) {
+            base = base.or(ors);
+          }
+        }
+        
+        // Ağırlık filter (weights array)
+        const agirlikVals = activeFilters['Ağırlık'] || [];
+        if (agirlikVals.length > 0) {
+          // weights @> '["10gr"]' (JSONB contains)
+          const ors = agirlikVals.map((weight) => `weights.cs.["${weight}"]`).join(',');
+          if (ors) {
+            base = base.or(ors);
+          }
         }
         
         // Renk filter (color)
         const renkVals = activeFilters['Renk'] || [];
         if (renkVals.length > 0) {
           base = base.in('color', renkVals);
-        }
-
-        // Ağırlık filter via JSONB features->>agirlik (POC)
-        const agirlikVals = activeFilters['Ağırlık'] || activeFilters['Agirlik'] || activeFilters['A��rlık'] || [];
-        if (agirlikVals.length > 0) {
-          // Build OR expression: features->>agirlik.eq.X,features->>agirlik.eq.Y
-          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
-          if (ors) {
-            base = base.or(ors);
-          }
         }
 
         // Count (toplam ürün) - BASİT FİLTRE
@@ -425,9 +458,16 @@ const CategoryPage = () => {
         if (markaVals.length > 0) {
           countQ = countQ.in('brand', markaVals);
         }
-        // Rozet filtresi kaldırıldı
+        if (bedenVals.length > 0) {
+          const ors = bedenVals.map((size) => `sizes.cs.["${size}"]`).join(',');
+          if (ors) countQ = countQ.or(ors);
+        }
+        if (numaraVals.length > 0) {
+          const ors = numaraVals.map((size) => `shoe_sizes.cs.["${size}"]`).join(',');
+          if (ors) countQ = countQ.or(ors);
+        }
         if (agirlikVals.length > 0) {
-          const ors = agirlikVals.map((v) => `features->>agirlik.eq.${v}`).join(',');
+          const ors = agirlikVals.map((weight) => `weights.cs.["${weight}"]`).join(',');
           if (ors) countQ = countQ.or(ors);
         }
         const countResp = await countQ;
@@ -539,11 +579,12 @@ const CategoryPage = () => {
   const handleFilterChange = (filterName: string, value: string, checked: boolean) => {
     setActiveFilters(prev => {
       const currentValues = prev[filterName] || [];
-      if (checked) {
-        return { ...prev, [filterName]: [...currentValues, value] };
-      } else {
-        return { ...prev, [filterName]: currentValues.filter(v => v !== value) };
-      }
+      const newFilters = checked 
+        ? { ...prev, [filterName]: [...currentValues, value] }
+        : { ...prev, [filterName]: currentValues.filter(v => v !== value) };
+      
+      console.log('[CategoryPage] Filter changed:', { filterName, value, checked, newFilters });
+      return newFilters;
     });
   };
 
@@ -605,7 +646,10 @@ const CategoryPage = () => {
             <select 
               className="border border-border rounded-md px-4 py-2 bg-background text-sm min-w-[200px] cursor-pointer hover:border-primary transition-colors" 
               value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value as any)}
+              onChange={(e) => {
+                console.log('[CategoryPage] Sort changed:', e.target.value);
+                setSortBy(e.target.value as any);
+              }}
             >
               <option value="newest">Yeni Eklenenler</option>
               <option value="price_asc">En Düşük Fiyat</option>
@@ -699,10 +743,14 @@ const CategoryPage = () => {
                   )}
                   <div className="space-y-1 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800">
                     {filterGroup.options
-                      .filter(o => filterGroup.name !== 'Marka' || o.toLowerCase().includes(brandSearch.toLowerCase()))
+                      .filter(o => filterGroup.name !== 'Marka' || (o && typeof o === 'string' && o.toLowerCase().includes(brandSearch.toLowerCase())))
                       .map((option, optionIndex) => {
-                        const isIndented = option.startsWith('  ');
-                        const displayText = option.trim();
+                        const optionStr = String(option || '');
+                        const isIndented = optionStr.startsWith('  ');
+                        const displayText = optionStr.trim();
+                        
+                        // Boş değerleri atla
+                        if (!displayText) return null;
                         
                         return (
                           <label 
